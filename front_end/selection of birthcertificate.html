@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Service Selection - Sovereign Portal</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@700;800;900&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#9e3b00",
+                        "secondary-fixed-dim": "#bac7de",
+                        "tertiary-fixed": "#ffdbcd",
+                        "surface-dim": "#d2daf0",
+                        "surface": "#f9f9ff",
+                        "on-surface": "#141b2c",
+                        "primary": "#003d9b",
+                        "surface-variant": "#dbe2f9",
+                        "secondary": "#525f73",
+                        "on-secondary-container": "#586579",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-tertiary-container": "#ffc7b0",
+                        "on-secondary-fixed-variant": "#3b485a",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#360f00",
+                        "secondary-fixed": "#d6e3fb",
+                        "on-primary-fixed": "#001848",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "outline": "#737685",
+                        "secondary-container": "#d6e3fb",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b2c5ff",
+                        "background": "#f9f9ff",
+                        "surface-container-high": "#e0e8ff",
+                        "surface-container": "#e9edff",
+                        "on-secondary-fixed": "#0f1c2d",
+                        "tertiary-fixed-dim": "#ffb597",
+                        "tertiary": "#782b00",
+                        "surface-tint": "#0c56d0",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "primary-container": "#0052cc",
+                        "surface-container-highest": "#dbe2f9",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#293041",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#dae2ff",
+                        "outline-variant": "#c3c6d6",
+                        "on-background": "#141b2c",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#c4d2ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#434654"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Public Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Public Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-nav { backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+        .sovereign-glow { box-shadow: 0 20px 40px rgba(20, 27, 44, 0.06); }
+        .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm border-none">
+<div class="flex justify-between items-center h-16 px-6 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-800 dark:text-blue-200">Sovereign Portal</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-blue-700 dark:text-blue-400 font-bold border-b-2 border-blue-700 dark:border-blue-400 pb-1 font-sans text-sm tracking-wide" href="#">Dashboard</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 font-sans text-sm tracking-wide font-medium" href="#">My Requests</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 font-sans text-sm tracking-wide font-medium" href="#">Resources</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 font-sans text-sm tracking-wide font-medium" href="#">Contact</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors rounded-full">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden bg-surface-container-high ml-2 border border-outline-variant/15">
+<img class="w-full h-full object-cover" data-alt="close-up profile portrait of a professional citizen against a soft architectural background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRnxUKq9uGpIqzZ3WQvroN1PzsGd-3ZuHBZiFFlraaLptcvSYViKZ0JUypgaZxghym29y1Ny0aTTu9HgRJi1Ew51umfwr7wL7kow9WRPla7p4s6ncWmiusyrbYTyvPZUp2pJy5fnNhB6SKL1Be2rHcYiFlNwkPUz190ucYqiyo3nNrBoIxW1DGJApvXtccuBQ1s4UBjcxKYyDLMUqHt7HUZlE-9wGY3rej3jdGD9iN-qfl4G31OXEm9B4mwa8mdnH2zw9iHbM4Sa4"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Stage -->
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<h1 class="text-4xl md:text-5xl font-extrabold font-headline text-on-surface tracking-tight mb-4">
+                Emergence-Connect
+            </h1>
+<p class="text-on-surface-variant text-lg max-w-2xl leading-relaxed">
+                Select your required document service below. Each application path is optimized for secure digital processing and verified through the National Registry.
+            </p>
+</header>
+<!-- Bento Grid Service Selection -->
+<div class="bento-grid">
+<!-- Newborn Card (0-3 yrs) -->
+<div class="bg-surface-container-lowest sovereign-glow rounded-full p-6 flex flex-col justify-between transition-all hover:translate-y-[-4px] group border border-outline-variant/5">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="h-14 w-14 bg-primary-fixed rounded-full flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">child_care</span>
+</div>
+<span class="bg-surface-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase">High Priority</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-2 text-on-surface">Newborn Registration</h3>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Dedicated path for infants aged 0 to 3 years. Immediate processing available.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<span class="text-xs font-semibold text-on-surface-variant">Primary Requirement:</span>
+</div>
+<p class="text-sm font-bold text-on-surface mt-1">Hospital Attestation</p>
+</div>
+<button class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2">
+                    Start Application
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Late Registration Card (3-5 yrs) -->
+<div class="bg-surface-container-lowest sovereign-glow rounded-full p-6 flex flex-col justify-between transition-all hover:translate-y-[-4px] border border-outline-variant/5">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="h-14 w-14 bg-tertiary-fixed rounded-full flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">history</span>
+</div>
+<span class="bg-tertiary-container text-on-tertiary px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase">Legal Review</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-2 text-on-surface">Late Registration</h3>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Application path for children aged 3 to 5 years requiring judicial confirmation.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-sm">info</span>
+<span class="text-xs font-semibold text-on-surface-variant">Primary Requirement:</span>
+</div>
+<p class="text-sm font-bold text-on-surface mt-1">Vaccination Booklet</p>
+</div>
+<button class="w-full py-3 bg-surface-container-high text-on-primary-fixed-variant rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2 hover:bg-surface-container-highest">
+                    Begin Review
+                    <span class="material-symbols-outlined text-sm">gavel</span>
+</button>
+</div>
+<!-- Exam Emergency Card -->
+<div class="bg-surface-container-lowest sovereign-glow rounded-full p-6 flex flex-col justify-between transition-all hover:translate-y-[-4px] border border-outline-variant/5">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="h-14 w-14 bg-secondary-fixed rounded-full flex items-center justify-center text-on-secondary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">assignment_late</span>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase">Urgent</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-2 text-on-surface">Exam Emergency</h3>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Expedited issuance for candidates registered for upcoming national exams.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-sm">info</span>
+<span class="text-xs font-semibold text-on-surface-variant">Primary Requirement:</span>
+</div>
+<p class="text-sm font-bold text-on-surface mt-1">School Certificate</p>
+</div>
+<button class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2">
+                    Request Expedited
+                    <span class="material-symbols-outlined text-sm">bolt</span>
+</button>
+</div>
+<!-- Adult Replacement -->
+<div class="bg-surface-container-lowest sovereign-glow rounded-full p-6 flex flex-col justify-between transition-all hover:translate-y-[-4px] border border-outline-variant/5">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="h-14 w-14 bg-primary-fixed rounded-full flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">person_pin</span>
+</div>
+<span class="bg-surface-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase">Renewal</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-2 text-on-surface">Adult Replacement</h3>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Replacement of lost or damaged birth certificates for citizens over 18.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+<span class="text-xs font-semibold text-on-surface-variant">Primary Requirement:</span>
+</div>
+<p class="text-sm font-bold text-on-surface mt-1">Police Report</p>
+</div>
+<button class="w-full py-3 bg-surface-container-high text-on-primary-fixed-variant rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2 hover:bg-surface-container-highest">
+                    Apply Now
+                    <span class="material-symbols-outlined text-sm">description</span>
+</button>
+</div>
+<!-- ID-Based Recovery -->
+<div class="bg-surface-container-lowest sovereign-glow rounded-full p-6 flex flex-col justify-between transition-all hover:translate-y-[-4px] border border-outline-variant/5">
+<div>
+<div class="flex justify-between items-start mb-6">
+<div class="h-14 w-14 bg-tertiary-fixed rounded-full flex items-center justify-center text-on-tertiary-fixed-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">id_card</span>
+</div>
+<span class="bg-surface-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase">Auto-Sync</span>
+</div>
+<h3 class="text-xl font-bold font-headline mb-2 text-on-surface">ID-Based Recovery</h3>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Sync with your National ID for seamless certificate data retrieval.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 mb-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-sm">info</span>
+<span class="text-xs font-semibold text-on-surface-variant">Primary Requirement:</span>
+</div>
+<p class="text-sm font-bold text-on-surface mt-1">Valid National ID</p>
+</div>
+<button class="w-full py-3 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold text-sm tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2">
+                    Launch Biometric Sync
+                    <span class="material-symbols-outlined text-sm">fingerprint</span>
+</button>
+</div>
+<!-- Informational Banner -->
+<div class="bg-on-surface rounded-full p-8 flex flex-col justify-center items-start text-surface border border-white/10 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl rounded-full"></div>
+<h4 class="text-2xl font-bold font-headline mb-2 leading-tight">Need Assistance?</h4>
+<p class="text-surface-dim text-sm mb-6 max-w-xs">Our registry officers are available 24/7 to guide you through the emergence process.</p>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 font-bold text-primary-fixed-dim hover:text-white transition-colors">
+<span class="material-symbols-outlined">support_agent</span>
+                        Live Chat
+                    </button>
+</div>
+</div>
+</div>
+<!-- System Verification Status -->
+<section class="mt-16 bg-surface-container-low rounded-full p-8 flex flex-col md:flex-row items-center justify-between gap-8 border border-outline-variant/15">
+<div class="flex items-center gap-6">
+<div class="h-16 w-16 rounded-full bg-surface-container-lowest flex items-center justify-center sovereign-glow">
+<span class="material-symbols-outlined text-3xl text-primary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary uppercase tracking-widest mb-1">System Health</p>
+<h3 class="text-xl font-bold font-headline text-on-surface">Registry Online &amp; Synchronized</h3>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-full">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-bold text-on-surface-variant">Central Database Connected</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-full">
+<span class="material-symbols-outlined text-xs text-on-surface-variant">timer</span>
+<span class="text-xs font-bold text-on-surface-variant">Avg. Wait: 4.2 Hours</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Shell (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 h-20 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl z-50 rounded-t-2xl shadow-[0_-4px_12px_rgba(0,0,0,0.05)] border-t border-slate-100 dark:border-slate-800">
+<button class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl px-4 py-1 transition-transform duration-200 active:scale-90">
+<span class="material-symbols-outlined">home</span>
+<span class="font-sans text-[11px] font-semibold">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:bg-slate-100 transition-transform duration-200 active:scale-90">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-sans text-[11px] font-semibold">Documents</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:bg-slate-100 transition-transform duration-200 active:scale-90">
+<span class="material-symbols-outlined">chat_bubble</span>
+<span class="font-sans text-[11px] font-semibold">Messages</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 active:bg-slate-100 transition-transform duration-200 active:scale-90">
+<span class="material-symbols-outlined">person</span>
+<span class="font-sans text-[11px] font-semibold">Profile</span>
+</button>
+</nav>
+</body></html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sovereign Portal | Newborn Registration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#9e3b00",
+                        "secondary-fixed-dim": "#bac7de",
+                        "tertiary-fixed": "#ffdbcd",
+                        "surface-dim": "#d2daf0",
+                        "surface": "#f9f9ff",
+                        "on-surface": "#141b2c",
+                        "primary": "#003d9b",
+                        "surface-variant": "#dbe2f9",
+                        "secondary": "#525f73",
+                        "on-secondary-container": "#586579",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-tertiary-container": "#ffc7b0",
+                        "on-secondary-fixed-variant": "#3b485a",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#360f00",
+                        "secondary-fixed": "#d6e3fb",
+                        "on-primary-fixed": "#001848",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "on-tertiary-fixed-variant": "#7d2d00",
+                        "outline": "#737685",
+                        "secondary-container": "#d6e3fb",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b2c5ff",
+                        "background": "#f9f9ff",
+                        "surface-container-high": "#e0e8ff",
+                        "surface-container": "#e9edff",
+                        "on-secondary-fixed": "#0f1c2d",
+                        "tertiary-fixed-dim": "#ffb597",
+                        "tertiary": "#782b00",
+                        "surface-tint": "#0c56d0",
+                        "on-primary-fixed-variant": "#0040a2",
+                        "primary-container": "#0052cc",
+                        "surface-container-highest": "#dbe2f9",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#293041",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed": "#dae2ff",
+                        "outline-variant": "#c3c6d6",
+                        "on-background": "#141b2c",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#c4d2ff",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#434654"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Public Sans"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .brand-font { font-family: 'Public Sans', sans-serif; }
+        .glass-nav {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen">
+<!-- TopNavBar: Execution of Shared Component JSON -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 backdrop-blur-md shadow-sm">
+<div class="flex justify-between items-center h-16 px-6 max-w-full">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tight text-blue-800 brand-font">Sovereign Portal</span>
+<nav class="hidden md:flex gap-6 items-center font-sans text-sm tracking-wide font-medium">
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#">Dashboard</a>
+<a class="text-blue-700 font-bold border-b-2 border-blue-700 pb-1" href="#">My Requests</a>
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#">Resources</a>
+<a class="text-slate-600 hover:text-blue-600 transition-colors" href="#">Contact</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img alt="User profile avatar" data-alt="Close-up portrait of a professional man with a neutral expression, clean lighting, corporate headshot style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiHqA3kxBl0yApzuCrDmQayqYS3TC04nV0Slgf8HEnIDPQEo9UV0Wot5JOAG_zEJMhCKxlfA0R1wggCjy0FHAUxBMm7_tnnsfyJR0XcaVJv6YZf0Oyc-ccA3tePcdLGLbXsEePeFnzqs_iR1caxgPawFG6yqFHPPCRz8UO8lqnNhSU2tECgAIIQDwUk7JLj1dztkFXLsHTFFSbYBLo1ht5n7ONWKkHsvYAh8SALpSRuK19Q6FV6_MQYF_V88F-xUt5YluppKmImZI"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto">
+<!-- Progress Stepper -->
+<div class="max-w-2xl mx-auto mb-12">
+<div class="flex justify-between items-center relative">
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container -translate-y-1/2 z-0"></div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold">1</div>
+<span class="text-xs font-bold text-primary font-label">Hospital Details</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-bold">2</div>
+<span class="text-xs font-medium text-on-surface-variant font-label">Parent Identity</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center font-bold">3</div>
+<span class="text-xs font-medium text-on-surface-variant font-label">Review &amp; Submit</span>
+</div>
+</div>
+</div>
+<!-- Hero Section -->
+<div class="mb-12 text-center">
+<h1 class="text-4xl md:text-5xl font-black text-on-surface tracking-tight mb-4">Newborn Registration</h1>
+<p class="text-lg text-on-surface-variant max-w-xl mx-auto leading-relaxed">
+                Welcome to the Emergence-Connect portal. Please provide the hospital attestation and birth details to begin your application for a birth certificate.
+            </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Form Canvas -->
+<div class="lg:col-span-8 space-y-8">
+<!-- Section 1: Child's Identity -->
+<section class="bg-surface-container-lowest p-8 rounded-full shadow-[0_20px_40px_rgba(20,27,44,0.04)]">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined" data-icon="child_care">child_care</span>
+</div>
+<h2 class="text-2xl font-bold text-on-surface">Child's Birth Details</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant px-1 font-label">Full Name of Child</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 transition-all" placeholder="As written on hospital record" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant px-1 font-label">Date of Birth</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 transition-all" type="date"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant px-1 font-label">Time of Birth</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 transition-all" type="time"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant px-1 font-label">Gender</label>
+<select class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 transition-all">
+<option>Select gender</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Section 2: Hospital Attestation -->
+<section class="bg-surface-container-lowest p-8 rounded-full shadow-[0_20px_40px_rgba(20,27,44,0.04)]">
+<div class="flex items-center gap-4 mb-8">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined" data-icon="local_hospital">local_hospital</span>
+</div>
+<h2 class="text-2xl font-bold text-on-surface">Hospital Attestation</h2>
+</div>
+<div class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant px-1 font-label">Hospital Name</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 transition-all" placeholder="e.g. Saint Mary's Medical Center" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-semibold text-on-surface-variant px-1 font-label">Attending Physician/Midwife</label>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-xl px-4 py-3 transition-all" placeholder="Full name of professional" type="text"/>
+</div>
+</div>
+<div class="mt-8 border-2 border-dashed border-outline-variant/30 rounded-full p-12 text-center bg-surface-container-low group cursor-pointer hover:bg-surface-container transition-colors">
+<div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="text-lg font-bold text-on-surface mb-1">Upload Attestation Letter</h3>
+<p class="text-on-surface-variant text-sm mb-6">PDF, JPG, or PNG (Max 10MB)</p>
+<button class="bg-surface-container-high text-on-secondary-fixed-variant font-bold px-8 py-3 rounded-full hover:bg-surface-container-highest transition-colors">
+                                Browse Files
+                            </button>
+</div>
+</div>
+</section>
+<div class="flex justify-between items-center pt-8">
+<button class="text-on-surface-variant font-bold flex items-center gap-2 px-6 py-3 rounded-full hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+                        Back to Portal
+                    </button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold px-12 py-4 rounded-full flex items-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all">
+                        Continue to Step 2
+                        <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Sidebar Info -->
+<div class="lg:col-span-4 space-y-6">
+<div class="bg-surface-container p-6 rounded-full">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="info" style="font-variation-settings: 'FILL' 1;">info</span>
+<h3 class="font-bold text-on-surface">Registration Guide</h3>
+</div>
+<ul class="space-y-4">
+<li class="flex gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></div>
+<p class="text-sm text-on-surface-variant leading-snug">Ensure the hospital attestation contains the formal facility stamp.</p>
+</li>
+<li class="flex gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></div>
+<p class="text-sm text-on-surface-variant leading-snug">Child's name must match exactly with the hospital record for automatic verification.</p>
+</li>
+<li class="flex gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></div>
+<p class="text-sm text-on-surface-variant leading-snug">Document scans must be clear and legible in all four corners.</p>
+</li>
+</ul>
+</div>
+<div class="bg-primary text-on-primary p-8 rounded-full overflow-hidden relative group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-3xl mb-4 block" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<h3 class="text-xl font-bold mb-2">Secure Processing</h3>
+<p class="text-on-primary-container text-sm leading-relaxed mb-6">
+                            Your data is encrypted end-to-end. We use Sovereign-Shield protocols to ensure the privacy of your family records.
+                        </p>
+<a class="text-sm font-bold underline decoration-2 underline-offset-4 hover:text-white transition-colors" href="#">Learn about our security</a>
+</div>
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded-full overflow-hidden shadow-sm">
+<img alt="Secure newborn registration" class="w-full h-48 object-cover rounded-full" data-alt="Soft-focus artistic shot of a newborn baby's tiny hand holding an adult's finger, warm natural morning light, gentle emotional atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyzJxm5-Bk_bqun7BpRkyQnOmpc7atELRXVZKQJe35JzcDeb8Wy1n5tlwaXesPFTuhYFmqzWqa_e3qRlSAkDjQjs73bpTY_yHCYgayw-n1CSUQ4afX3QI11_Itd7NDCApXpaiT4UJeK2tNci0DdBAic_o6UI5EvegbfemZ9B4Q7sXUgnU8M1IZhUrt8oXxuV7rP7eo6xr5Sar6Mi2fCFin8nOsdKsaukU1Gj3koXq_iAsm8qkOyfhOpdF-a_QRZWe7Fp8qed3PQUI"/>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar: Execution of Shared Component JSON (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 h-20 pb-safe bg-white/90 backdrop-blur-xl border-t border-slate-100 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] md:hidden z-50 rounded-t-2xl">
+<div class="flex flex-col items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-sans text-[11px] font-semibold">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-xl px-4 py-1">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-sans text-[11px] font-semibold">Documents</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-sans text-[11px] font-semibold">Messages</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-sans text-[11px] font-semibold">Profile</span>
+</div>
+</nav>
+</body></html>
