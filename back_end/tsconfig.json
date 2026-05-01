@@ -1,13 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    /* Standards and Target */
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    
+    /* Project Structure */
     "rootDir": "./src",
     "outDir": "./dist",
+    
+    /* Interop and Constraints */
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
+    
+    /* Metadata (Useful for Frameworks like NestJS or TypeORM) */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
