@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 
 import authRoutes from './routes/authRoutes';
 import documentRoutes from './routes/documentRoutes';
+import birthDeclarationRoutes from './routes/birthDeclarationRoutes';
 import { AppDataSource } from './config/database'; // 👈 DB CONFIG IMPORTED
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/documents', documentRoutes);
+app.use('/api/v1/birth-declarations', birthDeclarationRoutes);
 
 // 👈 DATABASE INITIALIZATION ADDED BACK
 AppDataSource.initialize()

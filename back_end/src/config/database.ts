@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { Document } from '../entities/Document'; 
+import { BirthDeclaration } from '../entities/BirthDeclaration'; 
 
 dotenv.config();
 
@@ -14,7 +15,8 @@ export const AppDataSource = new DataSource({
   synchronize: true, // 👈 This magic command builds the tables automatically based on your classes
   logging: false,
   entities: [
-    Document 
+    Document,
+    BirthDeclaration 
   ],
   subscribers: [],
   migrations: [],
