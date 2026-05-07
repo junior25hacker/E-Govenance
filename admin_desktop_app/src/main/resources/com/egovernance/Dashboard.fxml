@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.egovernance.DashboardController" styleClass="root">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-padding: 20; -fx-background-color: rgba(5, 13, 31, 0.9); -fx-border-color: rgba(201, 168, 76, 0.18); -fx-border-width: 0 0 1 0;">
+         <children>
+            <Label styleClass="title-label" text="Emergence Connect" />
+            <Label styleClass="subtitle-label" text="// Admin Dashboard" style="-fx-padding: 0;" />
+         </children>
+      </HBox>
+      <SplitPane dividerPositions="0.4" styleClass="split-pane" VBox.vgrow="ALWAYS">
+        <items>
+          <VBox spacing="20.0" styleClass="glass-panel">
+               <children>
+                  <Label styleClass="title-label" text="Citizen Record" style="-fx-font-size: 20px;" />
+                  <Button mnemonicParsing="false" onAction="#fetchData" styleClass="btn-secondary" text="Fetch Pending Request" />
+                  <GridPane hgap="15.0" vgap="15.0">
+                     <children>
+                        <Label styleClass="data-label" text="Full Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label fx:id="nameLabel" styleClass="data-value" text="---" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        
+                        <Label styleClass="data-label" text="National ID:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="idLabel" styleClass="data-value" text="---" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        
+                        <Label styleClass="data-label" text="Doc Type:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="docTypeLabel" styleClass="data-value" text="---" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        
+                        <Label styleClass="data-label" text="DOB:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label fx:id="dobLabel" styleClass="data-value" text="---" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+               </children>
+            </VBox>
+          <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="glass-panel">
+               <children>
+                  <Label styleClass="title-label" text="Document Verification" style="-fx-font-size: 20px;" />
+                  <VBox alignment="CENTER" style="-fx-border-color: rgba(201, 168, 76, 0.3); -fx-border-width: 2px; -fx-border-style: dashed; -fx-padding: 20;" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-text-fill: rgba(205, 200, 180, 0.4); -fx-font-family: 'DM Sans';" text="[ Uploaded Document Viewer ]" />
+                     </children>
+                  </VBox>
+                  <Button mnemonicParsing="false" onAction="#verifyWithAI" styleClass="btn-primary" text="Verify with AI Automation" prefWidth="300.0" />
+                  <Label fx:id="aiResultLabel" styleClass="subtitle-label" text="AI Status: Ready for analysis" wrapText="true" textAlignment="CENTER" />
+               </children>
+            </VBox>
+        </items>
+      </SplitPane>
+   </children>
+</VBox>

@@ -1,0 +1,107 @@
+/* E-Governance Admin Portal - High End Luxury Aesthetic */
+
+.root {
+    -fx-background-color: #050d1f; /* Deep Navy */
+    -fx-font-family: "Cinzel", "DM Sans", sans-serif;
+}
+
+.label {
+    -fx-text-fill: #f2eedf; /* Cream */
+}
+
+/* Titles */
+.title-label {
+    -fx-font-family: "Cinzel";
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c9a84c; /* Gold */
+}
+
+.subtitle-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #cdc8b4; /* Dim Cream */
+    -fx-padding: 0 0 20 0;
+}
+
+/* Panels */
+.glass-panel {
+    -fx-background-color: rgba(10, 24, 51, 0.85); /* Navy 2 with transparency */
+    -fx-border-color: rgba(201, 168, 76, 0.18); /* Subtle Gold Border */
+    -fx-border-radius: 16px;
+    -fx-background-radius: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 10);
+    -fx-padding: 30;
+}
+
+/* Text Fields */
+.text-field, .password-field {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: rgba(201, 168, 76, 0.18);
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #cdc8b4;
+    -fx-padding: 12px;
+    -fx-font-family: "DM Sans";
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #c9a84c;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Buttons */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #7a5f20, #c9a84c);
+    -fx-text-fill: #050d1f;
+    -fx-font-weight: bold;
+    -fx-font-family: "DM Sans";
+    -fx-font-size: 14px;
+    -fx-padding: 12 24 12 24;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #c9a84c, #e8c96a);
+    -fx-effect: dropshadow(gaussian, rgba(201, 168, 76, 0.3), 15, 0, 0, 5);
+}
+
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-border-color: #c9a84c;
+    -fx-text-fill: #c9a84c;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 12 24 12 24;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(201, 168, 76, 0.1);
+}
+
+/* Data Grid */
+.data-label {
+    -fx-font-family: "JetBrains Mono", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #c9a84c;
+    -fx-text-transform: uppercase;
+}
+
+.data-value {
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Split Pane */
+.split-pane {
+    -fx-background-color: #050d1f;
+    -fx-padding: 20;
+}
+.split-pane *.split-pane-divider {
+    -fx-background-color: rgba(201, 168, 76, 0.18);
+    -fx-pref-width: 2px;
+}
