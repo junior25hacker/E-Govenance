@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergence-Connect Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <section id="s1" class="screen active">
+        <header class="navbar">
+            <span class="logo">Emergence-Connect</span>
+            <div class="profile-icon"></div>
+        </header>
+
+        <div class="hero-block">
+            <h1>Welcome to your Citizen Portal</h1>
+            <p>Securely manage your vital life events in our Single Window Environment. Streamlined, transparent, and built for your convenience.</p>
+            <button class="btn btn-secondary" onclick="goTo('s2')">⊕ Declare a New Birth</button>
+        </div>
+
+        <div class="flex-header">
+            <h3>Active Birth Declarations</h3>
+            <span class="badge">2 Active Tasks</span>
+        </div>
+
+        <div class="info-card">
+            <span class="tag tag-review">IN REVIEW</span>
+            <div class="data-content">
+                <p class="ref-no">Declaration #BD-2024-8891</p>
+                <p class="main-label">Child Name: <strong>Leo Gabriel Sterling</strong></p>
+                <p class="sub-label">Filed on: Oct 12, 2023</p>
+            </div>
+            <div class="action-row">
+                <button class="link-btn">Details</button>
+                <button class="btn-sm">Upload Document</button>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <span class="tag tag-approved">APPROVED</span>
+            <div class="data-content">
+                <p class="ref-no">Declaration #BD-2024-8890</p>
+                <p class="main-label">Child Name: <strong>Elena Rose Sterling</strong></p>
+                <p class="sub-label">Completed on: Sep 05, 2023</p>
+            </div>
+            <button class="btn-outline">Download Certificate</button>
+        </div>
+
+        <div class="toolbox">
+            <h3>Administrative Toolbox</h3>
+            <div class="tool-list">
+                <div class="tool-item">🛡️ Verify Identity</div>
+                <div class="tool-item">📂 Service Fees</div>
+                <div class="tool-item">❓ Help Center</div>
+            </div>
+        </div>
+
+        <div class="map-section">
+            <div class="map-box">
+                <div class="marker">📍 <span>Nearest Registry: 1.2km away</span></div>
+            </div>
+            <div class="registry-status">
+                <h4>Central Civil Registry</h4>
+                <p>Open until 5:00 PM • 3 appointments available</p>
+            </div>
+        </div>
+
+        <nav class="footer-nav">
+            <div class="nav-item active">🏠<small>Home</small></div>
+            <div class="nav-item">📄<small>Services</small></div>
+            <div class="nav-item">📂<small>Docs</small></div>
+            <div class="nav-item">🕒<small>Recent</small></div>
+        </nav>
+    </section>
+
+    <section id="s2" class="screen">
+        <header class="sub-nav">
+            <button class="back" onclick="goTo('s1')">← Emergence-Connect</button>
+            <span class="id-tag">ID: EC-8829-01</span>
+        </header>
+
+        <div class="stepper">
+            <div class="step-txt"><span>Step 1: Parent Information</span> <span>25%</span></div>
+            <div class="bar"><div class="fill" style="width: 25%;"></div></div>
+        </div>
+
+        <h2>New Birth Declaration</h2>
+        <p class="guide-text">Please upload the legal identification for both parents to begin the administrative record.</p>
+
+        <div class="entry-box">
+            <div class="entry-head">
+                <div class="avatar">👤</div>
+                <div>
+                    <h4>Parent 1 (Declarant)</h4>
+                    <small>Primary legal contact</small>
+                </div>
+            </div>
+            <div class="input-set">
+                <label>Full Legal Name</label>
+                <input type="text" placeholder="As shown on ID document">
+            </div>
+            <div class="input-set">
+                <label>National Identification Number</label>
+                <input type="text" placeholder="XX-XXXXXXXX-X">
+            </div>
+            <div class="input-row">
+                <div class="input-set">
+                    <label>Date of Birth</label>
+                    <input type="text" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="input-set">
+                    <label>Nationality</label>
+                    <input type="text" placeholder="Enter country">
+                </div>
+            </div>
+        </div>
+
+        <div class="add-parent-btn">
+            <div class="dashed-plus">+</div>
+            <div>
+                <p><strong>Add Parent 2 Information</strong></p>
+                <small>Required for complete registration</small>
+            </div>
+        </div>
+
+        <div class="marital-box">
+            <label>MARITAL STATUS</label>
+            <div class="options">
+                <div class="opt">💍 Married</div>
+                <div class="opt">🤝 Partners</div>
+                <div class="opt">👤 Single</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="goTo('s3')">Continue to Birth Details ></button>
+    </section>
+
+    <section id="s3" class="screen">
+        <div class="step-header">STEP 2 OF 3 | Document Verification</div>
+        <h2>Hospital Certificate</h2>
+        <p class="guide-text">Please upload a clear scan or photograph of the official Birth Notification.</p>
+
+        <div class="upload-zone">
+            <div class="up-icon">📄</div>
+            <p><strong>Select Document</strong></p>
+            <small>Tap to choose a file or take a photo</small>
+        </div>
+
+        <div class="file-card">
+            <p>📄 HOSPITAL_CERT_0021.pdf <small>2.4 MB</small></p>
+            <span>✕</span>
+        </div>
+
+        <button class="btn btn-primary" onclick="goTo('s4')">Verify & Continue</button>
+    </section>
+
+    <section id="s4" class="screen">
+        <div class="step-header">Step 3 of 3 | Review & Submit</div>
+        <h2>Review Declaration</h2>
+
+        <div class="review-div">
+            <div class="div-head"><h3>Child Details</h3> <span>✎ Edit</span></div>
+            <div class="data-point"><label>FULL LEGAL NAME</label><p>Elena Sofia Rodriguez</p></div>
+            <div class="input-row">
+                <div class="data-point"><label>DATE OF BIRTH</label><p>Oct 14, 2023</p></div>
+                <div class="data-point"><label>TIME</label><p>08:42 AM</p></div>
+            </div>
+        </div>
+
+        <div class="review-div">
+            <div class="div-head"><h3>Parent 1</h3> <span>✎ Edit</span></div>
+            <div class="data-point"><label>FULL NAME</label><p>Isabella Maria Rodriguez</p></div>
+            <div class="data-point"><label>ID NUMBER</label><p>XX-4412-201</p></div>
+        </div>
+
+        <div class="review-div">
+            <div class="div-head"><h3>Parent 2</h3> <span>✎ Edit</span></div>
+            <div class="data-point"><label>FULL NAME</label><p>Mateo Daniel Rodriguez</p></div>
+            <div class="data-point"><label>ID NUMBER</label><p>XX-4412-210</p></div>
+        </div>
+
+        <button class="btn btn-primary" onclick="goTo('s5')">Submit Declaration |></button>
+    </section>
+
+    <section id="s5" class="screen success-bg">
+        <div class="success-top">
+            <div class="check">✓</div>
+            <h1>Declaration Submitted</h1>
+            <p>Your declaration is now being verified by our administration team.</p>
+        </div>
+
+        <div class="track-div">
+            <label>TRACKING IDENTIFIER</label>
+            <h3>EC-2024-8829</h3>
+        </div>
+
+        <div class="status-box">
+            <h3>Process Status</h3>
+            <div class="timeline">
+                <div class="time-node done"><strong>Submitted</strong><p>Oct 24, 2023</p></div>
+                <div class="time-node active"><strong>Reviewing</strong><p>Validating medical evidence</p></div>
+            </div>
+        </div>
+
+        <button class="btn btn-white" onclick="goTo('s1')">Return to Dashboard</button>
+    </section>
+</div>
+
+<script>
+    function goTo(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>

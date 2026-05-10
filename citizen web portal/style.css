@@ -1,0 +1,98 @@
+/* DESIGN: Luxury Editorial
+   COMPLIANCE: skill.md (Grain, Bone Palette, Sectioned Divs)
+*/
+
+:root {
+    --bg: #f7f6f2;
+    --ink: #111111;
+    --accent: #ff4d00;
+    --muted: #6b6b6b;
+    --white: #ffffff;
+    --border: #e8e8e8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bg);
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    color: var(--ink);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+.container {
+    max-width: 440px;
+    margin: 0 auto;
+    background: var(--white);
+    min-height: 100vh;
+    position: relative;
+}
+
+.screen {
+    display: none;
+    padding: 30px 24px 100px;
+}
+
+.screen.active { display: block; animation: reveal 0.5s cubic-bezier(0.2, 1, 0.3, 1); }
+
+@keyframes reveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Section Divs */
+.info-card, .entry-box, .upload-zone, .review-div, .track-div, .file-card {
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 20px;
+    background: var(--white);
+}
+
+/* Typography */
+h1 { font-family: 'Playfair Display'; font-size: 34px; line-height: 1; margin: 0 0 15px; }
+h2 { font-family: 'Playfair Display'; font-size: 26px; margin-bottom: 15px; }
+h3 { font-weight: 800; font-size: 14px; text-transform: uppercase; margin: 0; }
+
+/* Dashboard UI */
+.hero-block { background: var(--ink); color: var(--white); padding: 40px 24px; margin: 20px -24px 30px; }
+.tag { font-size: 9px; font-weight: 800; padding: 4px 8px; display: inline-block; margin-bottom: 10px; }
+.tag-review { background: #fffbeb; color: #92400e; }
+.tag-approved { background: #ecfdf5; color: #065f46; }
+
+/* Form UI */
+.input-set { margin-bottom: 20px; }
+.input-row { display: flex; gap: 20px; }
+label { display: block; font-size: 9px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+input { width: 100%; border: none; border-bottom: 2px solid var(--ink); padding: 10px 0; font-family: 'Syne'; font-size: 16px; }
+
+/* Add Parent Trigger */
+.add-parent-btn { border: 1px dashed var(--ink); padding: 25px; display: flex; align-items: center; gap: 15px; margin: 25px 0; }
+.dashed-plus { width: 34px; height: 34px; border: 1px dashed var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+/* Success Page */
+.success-bg { background: var(--accent); color: var(--white); text-align: center; }
+.track-div { background: rgba(255,255,255,0.1); border-color: var(--white); }
+
+/* Navigation */
+.footer-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0 30px;
+}
+.nav-item { text-align: center; opacity: 0.3; }
+.nav-item.active { opacity: 1; }
+
+/* Map Visual */
+.map-box { height: 140px; background: #eee; position: relative; margin-top: 20px; }
+.marker { position: absolute; top: 40%; left: 50%; font-size: 20px; }
+.marker span { background: var(--ink); color: white; font-size: 8px; padding: 2px 5px; }
+
+/* Buttons */
+.btn { width: 100%; padding: 20px; font-weight: 800; text-transform: uppercase; font-size: 11px; border: none; cursor: pointer; }
+.btn-primary { background: var(--accent); color: var(--white); }
+.btn-secondary { background: var(--white); color: var(--ink); }
+.btn-white { background: var(--white); color: var(--accent); margin-top: 20px; }
