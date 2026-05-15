@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.egovernance.ReportLostDocController" styleClass="root">
+   <children>
+      <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-padding: 20; -fx-background-color: rgba(5, 13, 31, 0.9); -fx-border-color: rgba(201, 168, 76, 0.18); -fx-border-width: 0 0 1 0;">
+         <children>
+            <Label styleClass="title-label" text="Emergence Connect" />
+            <Label styleClass="subtitle-label" text="// Report Lost Document" style="-fx-padding: 0;" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#goBack" styleClass="btn-secondary" text="Back to Dashboard" />
+         </children>
+      </HBox>
+      <VBox spacing="20.0" styleClass="glass-panel" VBox.vgrow="ALWAYS" style="-fx-padding: 30; -fx-margin: 20;">
+         <children>
+            <Label styleClass="title-label" text="Select Document Type" style="-fx-font-size: 18px;" />
+            <ComboBox fx:id="docTypeComboBox" prefWidth="300.0" promptText="Choose a document..." />
+            
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+               <content>
+                  <VBox fx:id="dynamicFormArea" spacing="15.0" style="-fx-padding: 10 0 0 0; -fx-background-color: transparent;">
+                      <!-- Dynamic fields will be injected here -->
+                  </VBox>
+               </content>
+            </ScrollPane>
+            
+            <HBox alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0; -fx-border-color: rgba(201, 168, 76, 0.18); -fx-border-width: 1 0 0 0;">
+                <Button fx:id="submitBtn" mnemonicParsing="false" onAction="#submitReport" styleClass="btn-primary" text="Submit Report" disable="true" />
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</VBox>

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.egovernance.DashboardController" styleClass="root">
@@ -14,6 +15,8 @@
          <children>
             <Label styleClass="title-label" text="Emergence Connect" />
             <Label styleClass="subtitle-label" text="// Admin Dashboard" style="-fx-padding: 0;" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#openReportLostDoc" styleClass="btn-secondary" text="Report Lost Doc" />
          </children>
       </HBox>
       <SplitPane dividerPositions="0.4" styleClass="split-pane" VBox.vgrow="ALWAYS">

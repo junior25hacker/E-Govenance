@@ -159,4 +159,13 @@ public class DashboardController {
             });
         }).start();
     }
+
+    @FXML
+    private void openReportLostDoc() {
+        try {
+            MainApp.setRoot("ReportLostDoc");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
