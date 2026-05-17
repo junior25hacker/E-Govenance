@@ -14,14 +14,7 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     rel="stylesheet" />
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --navy: #050d1f;
       --navy-2: #0a1833;
@@ -42,7 +35,6 @@
       --danger: #ef4444;
       --warning: #f59e0b;
       --info: #3b82f6;
-      /* ── Gradients (same as dashboard) ── */
       --grad-gold: linear-gradient(135deg, var(--gold-dim), var(--gold));
       --grad-gold-h: linear-gradient(135deg, var(--gold), var(--gold-lt));
       --grad-blue: linear-gradient(135deg, var(--blue-mid), var(--navy-3));
@@ -50,1216 +42,214 @@
       --grad-card: linear-gradient(180deg, var(--navy-2) 0%, rgba(10, 24, 51, 0.97) 100%);
     }
 
-    html {
-      scroll-behavior: smooth;
-      height: 100%;
-    }
-
+    html { scroll-behavior: smooth; height: 100%; }
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--navy);
-      color: var(--cream);
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      overflow: hidden;
+      font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--cream);
+      min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden;
     }
 
-    /* ════════════════════════════════════════
-       LEFT PANEL — gradient hero
-    ════════════════════════════════════════ */
     .hero-panel {
-      position: relative;
-      background: var(--grad-panel);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 44px 48px;
-      overflow: hidden;
-      min-height: 100vh;
+      position: relative; background: var(--grad-panel); display: flex; flex-direction: column;
+      justify-content: space-between; padding: 44px 48px; overflow: hidden; min-height: 100vh;
     }
-
-    /* grid overlay — same as dashboard */
     .hero-panel::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(201, 168, 76, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(201, 168, 76, 0.06) 1px, transparent 1px);
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(201, 168, 76, 0.06) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(201, 168, 76, 0.06) 1px, transparent 1px);
       background-size: 56px 56px;
-      pointer-events: none;
     }
-
-    /* radial glow orbs */
     .hero-panel::after {
-      content: '';
-      position: absolute;
-      width: 520px;
-      height: 520px;
-      border-radius: 50%;
+      content: ''; position: absolute; width: 520px; height: 520px; border-radius: 50%;
       background: radial-gradient(circle, rgba(37, 99, 176, 0.35) 0%, transparent 65%);
-      bottom: -160px;
-      right: -140px;
-      pointer-events: none;
+      bottom: -160px; right: -140px; pointer-events: none;
     }
-
     .hero-orb-top {
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
+      position: absolute; width: 300px; height: 300px; border-radius: 50%;
       background: radial-gradient(circle, rgba(201, 168, 76, 0.14) 0%, transparent 65%);
-      top: -80px;
-      left: -60px;
-      pointer-events: none;
+      top: -80px; left: -60px; pointer-events: none;
     }
-
-    /* noise texture */
     .hero-noise {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.4;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: 0.4;
     }
 
-    /* ── Hero brand ── */
-    .hero-brand {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
+    .hero-brand { position: relative; z-index: 1; display: flex; align-items: center; gap: 14px; }
     .hero-logo-box {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 48px; height: 48px; border-radius: 12px;
       background: linear-gradient(135deg, rgba(201, 168, 76, 0.25), rgba(201, 168, 76, 0.1));
-      border: 1px solid var(--border-b);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold);
-      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.2);
-    }
-
-    .hero-logo-box .material-symbols-outlined {
-      font-size: 26px;
-    }
-
-    .hero-brand-text {}
-
-    .hero-brand-name {
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: 0.05em;
-    }
-
-    .hero-brand-sub {
-      font-size: 11px;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    /* ── Hero main copy ── */
-    .hero-body {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-tagline {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(22px, 3vw, 32px);
-      font-weight: 900;
-      color: var(--white);
-      line-height: 1.25;
-      margin-bottom: 16px;
-    }
-
-    .hero-tagline span {
-      background: var(--grad-gold);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-size: 15px;
-      color: rgba(242, 238, 223, 0.75);
-      line-height: 1.7;
-      max-width: 340px;
-      margin-bottom: 36px;
-      font-weight: 300;
-    }
-
-    .hero-features {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .hero-feature {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .feature-dot {
-      width: 34px;
-      height: 34px;
-      border-radius: 9px;
-      background: var(--grad-blue);
-      border: 1px solid var(--border-b);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold);
-      flex-shrink: 0;
-    }
-
-    .feature-dot .material-symbols-outlined {
-      font-size: 17px;
-    }
-
-    .feature-text {}
-
-    .feature-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--white);
-    }
-
-    .feature-desc {
-      font-size: 12px;
-      color: rgba(205, 200, 180, 0.65);
-      margin-top: 1px;
-    }
-
-    /* ── Hero footer stats ── */
-    .hero-stats {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      gap: 28px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(201, 168, 76, 0.15);
-    }
-
-    .hero-stat {}
-
-    .hero-stat-val {
-      font-family: 'Cinzel', serif;
-      font-size: 22px;
-      font-weight: 700;
-      background: var(--grad-gold);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-stat-lbl {
-      font-size: 11px;
-      color: rgba(205, 200, 180, 0.55);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 2px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* version badge */
-    .hero-version {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--gold);
-      background: rgba(201, 168, 76, 0.1);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 12px;
-      margin-bottom: 20px;
-    }
-
-    .version-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-      animation: blink 2s ease infinite;
-    }
-
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: 0.3
-      }
-    }
-
-    /* ════════════════════════════════════════
-       RIGHT PANEL — form area
-    ════════════════════════════════════════ */
-    .form-panel {
-      background: var(--grad-card);
-      border-left: 1px solid var(--border);
-      overflow-y: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 28px;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* subtle radial behind the card */
-    .form-panel::before {
-      content: '';
-      position: absolute;
-      width: 400px;
-      height: 400px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(37, 99, 176, 0.08) 0%, transparent 65%);
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 440px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* top gradient accent bar */
-    .auth-card-inner {
-      background: rgba(10, 24, 51, 0.6);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 36px 36px 30px;
-      backdrop-filter: blur(14px);
-      box-shadow:
-        0 0 0 1px rgba(201, 168, 76, 0.06),
-        0 24px 60px rgba(0, 0, 0, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      position: relative;
-      overflow: hidden;
-      animation: fadeUp 0.45s ease both;
-    }
-
-    /* Top gradient stripe — same style as dashboard widget-card top accents */
-    .auth-card-inner::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--grad-gold);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    /* ── Step indicator ── */
-    .step-track {
-      display: flex;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .step-node {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 700;
-      border: 2px solid var(--border);
-      color: var(--cream-dim);
-      background: var(--navy-3);
-      flex-shrink: 0;
-      transition: all 0.4s;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .step-node.active {
-      background: var(--grad-gold);
-      border-color: transparent;
-      color: var(--navy);
-      box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15);
-    }
-
-    .step-node.done {
-      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
-      border-color: rgba(34, 197, 94, 0.4);
-      color: var(--success);
-    }
-
-    .step-line {
-      flex: 1;
-      height: 2px;
-      background: var(--border);
-      max-width: 100%;
-      margin: 0 6px;
-      transition: background 0.4s;
-    }
-
-    .step-line.done {
-      background: var(--grad-gold);
-    }
-
-    .step-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 26px;
-    }
-
-    .step-label {
-      font-size: 10px;
-      color: var(--cream-dim);
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: 0.05em;
-      flex: 1;
-      text-align: center;
-    }
-
-    .step-label:first-child {
-      text-align: left;
-    }
-
-    .step-label:last-child {
-      text-align: right;
-    }
-
-    .step-label.active {
-      color: var(--gold);
-    }
-
-    /* ── Section heading ── */
-    .form-heading {
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--white);
-      margin-bottom: 4px;
-    }
-
-    .form-sub {
-      font-size: 13px;
-      color: var(--cream-dim);
-      margin-bottom: 24px;
-      font-weight: 300;
-      line-height: 1.5;
-    }
-
-    /* ── Form fields ── */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 7px;
-    }
-
-    .input-wrap {
-      position: relative;
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 13px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(201, 168, 76, 0.4);
-      font-size: 17px;
-      pointer-events: none;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      background: rgba(5, 13, 31, 0.7);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 11px 14px 11px 42px;
-      color: var(--white);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-    }
-
-    .form-group input::placeholder {
-      color: rgba(205, 200, 180, 0.3);
-      font-weight: 300;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      border-color: var(--border-b);
-      background: rgba(10, 24, 51, 0.9);
-      /* gold glow on focus — same accent as dashboard cards on hover */
-      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
-    }
-
-    .form-group input.error {
-      border-color: var(--danger);
-    }
-
-    .field-error {
-      font-size: 11px;
-      color: var(--danger);
-      margin-top: 5px;
-      display: none;
-    }
-
-    .field-error.show {
-      display: block;
-    }
-
-    /* Password strength */
-    .pw-strength {
-      margin-top: 8px;
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .pw-bar {
-      flex: 1;
-      height: 3px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.08);
-      transition: background 0.3s;
-    }
-
-    .pw-label {
-      font-size: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--cream-dim);
-      margin-left: 6px;
-      min-width: 40px;
-    }
-
-    /* toggle visibility */
-    .pw-toggle {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: rgba(201, 168, 76, 0.4);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      padding: 0;
-      transition: color 0.2s;
-    }
-
-    .pw-toggle:hover {
-      color: var(--gold);
-    }
-
-    /* Terms */
-    .terms-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 18px 0;
-      font-size: 13px;
-      color: var(--cream-dim);
-      line-height: 1.5;
-    }
-
-    .terms-row input[type="checkbox"] {
-      width: 15px;
-      height: 15px;
-      accent-color: var(--gold);
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-
-    .terms-row a {
-      color: var(--gold);
-      text-decoration: none;
-    }
-
-    .terms-row a:hover {
-      text-decoration: underline;
-    }
-
-    /* ── Buttons — gradient same as dashboard ── */
-    .btn-primary {
-      width: 100%;
-      padding: 13px;
-      border-radius: 10px;
-      background: var(--grad-gold);
-      color: var(--navy);
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.25s;
-      position: relative;
-      letter-spacing: 0.02em;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: var(--grad-gold-h);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(201, 168, 76, 0.32);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .btn-ghost {
-      width: 100%;
-      padding: 11px;
-      border-radius: 10px;
-      background: transparent;
-      border: 1px solid var(--border-b);
-      color: var(--gold);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-
-    .btn-ghost:hover {
-      background: rgba(201, 168, 76, 0.08);
-      box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.2);
-    }
-
-    /* Spinner */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(5, 13, 31, 0.25);
-      border-top-color: var(--navy);
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-      flex-shrink: 0;
-    }
-
-    .modal-spinner {
-      border-color: rgba(201, 168, 76, 0.2);
-      border-top-color: var(--gold);
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Divider */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: rgba(201, 168, 76, 0.3);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    .footer-links {
-      margin-top: 20px;
-      font-size: 13px;
-      text-align: center;
-      color: var(--cream-dim);
-    }
-
-    .footer-links a {
-      color: var(--gold);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .footer-links a:hover {
-      text-decoration: underline;
-    }
-
-    /* ════════════════════════════════════════
-       PHASE 2 — BLURRED DASHBOARD SHELL
-    ════════════════════════════════════════ */
-    #phase-dashboard {
-      display: none;
-      position: relative;
-      z-index: 1;
-      width: 100%;
-    }
-
-    .dash-shell {
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      filter: blur(4px) brightness(0.65);
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .dash-sidebar {
-      background: rgba(10, 24, 51, 0.95);
-      border-right: 1px solid var(--border);
-      padding: 24px 16px;
-    }
-
-    .dash-brand {
-      font-family: 'Cinzel', serif;
-      font-size: 14px;
-      color: var(--gold);
-      margin-bottom: 28px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .dash-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      color: var(--cream-dim);
-      margin-bottom: 4px;
-    }
-
-    .dash-nav-item.active {
-      background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.06));
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      color: var(--gold);
-    }
-
-    .dash-nav-item .material-symbols-outlined {
-      font-size: 17px;
-    }
-
-    .dash-main {
-      padding: 28px;
-      background: var(--navy);
-    }
-
-    .dash-main-title {
-      font-family: 'Cinzel', serif;
-      font-size: 22px;
-      color: var(--white);
-      margin-bottom: 24px;
-    }
-
-    .dash-kpi-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .dash-kpi {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .dash-kpi-val {
-      font-family: 'Cinzel', serif;
-      font-size: 26px;
-      color: var(--white);
-      font-weight: 700;
-    }
-
-    .dash-kpi-lbl {
-      font-size: 11px;
-      color: var(--cream-dim);
-      margin-top: 4px;
-    }
-
-    .dash-section {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      height: 160px;
-    }
-
-    /* ════════════════════════════════════════
-       VERIFICATION MODAL
-    ════════════════════════════════════════ */
-    #verification-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 900;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-
-    .modal-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(5, 13, 31, 0.88);
-      backdrop-filter: blur(8px);
-    }
-
-    .modal-card {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 480px;
-      background: var(--grad-card);
-      border: 1px solid var(--border-b);
-      border-radius: 24px;
-      padding: 36px 36px 30px;
-      box-shadow: 0 32px 100px rgba(0, 0, 0, 0.65);
-      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-      overflow: hidden;
-    }
-
-    /* gradient top bar — same pattern as dashboard widget separator */
-    .modal-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: var(--grad-gold);
-    }
-
-    @keyframes modalPop {
-      from {
-        opacity: 0;
-        transform: scale(0.88) translateY(18px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .modal-alert-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 18px;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .modal-alert-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .modal-alert-icon .material-symbols-outlined {
-      font-size: 22px;
-      color: var(--warning);
-    }
-
-    .modal-alert-sub {
-      font-size: 11px;
-      color: var(--warning);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 3px;
-    }
-
-    .modal-alert-heading {
-      font-family: 'Cinzel', serif;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--white);
-      line-height: 1.25;
-    }
-
-    .modal-desc {
-      font-size: 13px;
-      color: var(--cream-dim);
-      line-height: 1.65;
-      margin-bottom: 22px;
-    }
-
-    .modal-desc strong {
-      color: var(--cream);
-    }
-
-    /* Upload zone */
-    .upload-zone {
-      border: 2px dashed var(--border-b);
-      border-radius: 14px;
-      padding: 22px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.25s;
-      margin-top: 6px;
-      position: relative;
-      background: rgba(5, 13, 31, 0.4);
-    }
-
-    .upload-zone:hover,
-    .upload-zone.drag-over {
-      border-color: var(--gold);
-      background: rgba(201, 168, 76, 0.05);
-    }
-
-    .upload-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-
-    .upload-zone-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--grad-blue);
-      border: 1px solid var(--border-b);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--gold);
-      font-size: 22px;
-      margin: 0 auto 10px;
-    }
-
-    .upload-zone-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--cream);
-    }
-
-    .upload-zone-hint {
-      font-size: 12px;
-      color: var(--cream-dim);
-      margin-top: 4px;
-    }
-
-    .upload-zone-hint span {
-      color: var(--gold);
-    }
-
-    .file-chosen {
-      display: none;
-      align-items: center;
-      gap: 10px;
-      background: rgba(34, 197, 94, 0.08);
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--success);
-    }
-
-    .file-chosen.show {
-      display: flex;
-    }
-
-    /* Modal select */
-    .modal-card .form-group select {
-      background: rgba(5, 13, 31, 0.7);
-      border: 1px solid var(--border-b);
-      border-radius: 10px;
-      padding: 11px 14px 11px 42px;
-      color: var(--cream);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      outline: none;
-      width: 100%;
-      appearance: none;
-      transition: all 0.25s;
-      cursor: pointer;
-    }
-
-    .modal-card .form-group select:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
-    }
-
-    .modal-card .form-group select option {
-      background: var(--navy-2);
-    }
-
-    /* Trust badges */
-    .trust-row {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      margin-top: 18px;
-      flex-wrap: wrap;
-    }
-
-    .trust-badge {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--cream-dim);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .trust-badge .material-symbols-outlined {
-      font-size: 13px;
-      color: var(--gold);
-    }
-
-    /* Success state */
-    #modal-success {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 16px 0;
-    }
-
-    .success-ring {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      background: rgba(34, 197, 94, 0.1);
-      border: 2px solid var(--success);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    }
-
-    @keyframes popIn {
-      from {
-        opacity: 0;
-        transform: scale(0.5);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .success-ring .material-symbols-outlined {
-      font-size: 34px;
-      color: var(--success);
-    }
-
-    #modal-success h3 {
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
-
-    #modal-success p {
-      font-size: 14px;
-      color: var(--cream-dim);
-      line-height: 1.65;
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      body {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-panel {
-        display: none;
-      }
-
-      #phase-dashboard .dash-shell {
-        grid-template-columns: 1fr;
-      }
-
-      .dash-sidebar {
-        display: none;
-      }
-    }
-
-    @media (max-width: 540px) {
-      .form-panel {
-        padding: 24px 16px;
-      }
-
-      .auth-card-inner {
-        padding: 28px 22px;
-      }
-    }
-
-    /* scrollbar */
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(201, 168, 76, 0.2);
-      border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(201, 168, 76, 0.4);
-    }
+      border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center;
+      color: var(--gold); box-shadow: 0 4px 16px rgba(201, 168, 76, 0.2);
+    }
+    .hero-logo-box .material-symbols-outlined { font-size: 26px; }
+    .hero-brand-name { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--white); letter-spacing: 0.05em; }
+    .hero-brand-sub { font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; }
+
+    .hero-body { position: relative; z-index: 1; }
+    .hero-tagline { font-family: 'Cinzel', serif; font-size: clamp(22px, 3vw, 32px); font-weight: 900; color: var(--white); line-height: 1.25; margin-bottom: 16px; }
+    .hero-tagline span { background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 15px; color: rgba(242, 238, 223, 0.75); line-height: 1.7; max-width: 340px; margin-bottom: 36px; font-weight: 300; }
+    .hero-features { display: flex; flex-direction: column; gap: 14px; }
+    .hero-feature { display: flex; align-items: center; gap: 12px; }
+    .feature-dot { width: 34px; height: 34px; border-radius: 9px; background: var(--grad-blue); border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; }
+    .feature-dot .material-symbols-outlined { font-size: 17px; }
+    .feature-title { font-size: 13px; font-weight: 600; color: var(--white); }
+    .feature-desc { font-size: 12px; color: rgba(205, 200, 180, 0.65); margin-top: 1px; }
+
+    .hero-stats { position: relative; z-index: 1; display: flex; gap: 28px; padding-top: 28px; border-top: 1px solid rgba(201, 168, 76, 0.15); }
+    .hero-stat-val { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 700; background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-stat-lbl { font-size: 11px; color: rgba(205, 200, 180, 0.55); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+    .hero-version { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--gold); background: rgba(201, 168, 76, 0.1); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; margin-bottom: 20px; }
+    .version-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: blink 2s ease infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: 0.3 } }
+
+    .form-panel { background: var(--grad-card); border-left: 1px solid var(--border); overflow-y: auto; display: flex; align-items: center; justify-content: center; padding: 40px 28px; min-height: 100vh; position: relative; }
+    .form-panel::before { content: ''; position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 176, 0.08) 0%, transparent 65%); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+    .auth-card { width: 100%; max-width: 440px; position: relative; z-index: 1; }
+    .auth-card-inner { background: rgba(10, 24, 51, 0.6); border: 1px solid var(--border); border-radius: 20px; padding: 36px 36px 30px; backdrop-filter: blur(14px); box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.06), 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04); position: relative; overflow: hidden; animation: fadeUp 0.45s ease both; }
+    .auth-card-inner::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--grad-gold); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+    .step-track { display: flex; align-items: center; margin-bottom: 6px; }
+    .step-node { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid var(--border); color: var(--cream-dim); background: var(--navy-3); flex-shrink: 0; transition: all 0.4s; font-family: 'JetBrains Mono', monospace; }
+    .step-node.active { background: var(--grad-gold); border-color: transparent; color: var(--navy); box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.15); }
+    .step-node.done { background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)); border-color: rgba(34, 197, 94, 0.4); color: var(--success); }
+    .step-line { flex: 1; height: 2px; background: var(--border); max-width: 100%; margin: 0 6px; transition: background 0.4s; }
+    .step-line.done { background: var(--grad-gold); }
+    .step-labels { display: flex; justify-content: space-between; margin-bottom: 26px; }
+    .step-label { font-size: 10px; color: var(--cream-dim); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.05em; flex: 1; text-align: center; }
+    .step-label:first-child { text-align: left; }
+    .step-label:last-child { text-align: right; }
+    .step-label.active { color: var(--gold); }
+
+    .form-heading { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .form-sub { font-size: 13px; color: var(--cream-dim); margin-bottom: 24px; font-weight: 300; line-height: 1.5; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 7px; }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: rgba(201, 168, 76, 0.4); font-size: 17px; pointer-events: none; }
+    .form-group input, .form-group select { width: 100%; background: rgba(5, 13, 31, 0.7); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px 11px 42px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.25s, background 0.25s, box-shadow 0.25s; }
+    .form-group input::placeholder { color: rgba(205, 200, 180, 0.3); font-weight: 300; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--border-b); background: rgba(10, 24, 51, 0.9); box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1); }
+    .form-group input.error { border-color: var(--danger); }
+    .field-error { font-size: 11px; color: var(--danger); margin-top: 5px; display: none; }
+    .field-error.show { display: block; }
+    .pw-strength { margin-top: 8px; display: flex; gap: 4px; align-items: center; }
+    .pw-bar { flex: 1; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.08); transition: background 0.3s; }
+    .pw-label { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--cream-dim); margin-left: 6px; min-width: 40px; }
+    .pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(201, 168, 76, 0.4); cursor: pointer; display: flex; align-items: center; padding: 0; transition: color 0.2s; }
+    .pw-toggle:hover { color: var(--gold); }
+    .terms-row { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0; font-size: 13px; color: var(--cream-dim); line-height: 1.5; }
+    .terms-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--gold); margin-top: 2px; flex-shrink: 0; }
+    .terms-row a { color: var(--gold); text-decoration: none; }
+    .terms-row a:hover { text-decoration: underline; }
+
+    .btn-primary { width: 100%; padding: 13px; border-radius: 10px; background: var(--grad-gold); color: var(--navy); border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.25s; position: relative; letter-spacing: 0.02em; }
+    .btn-primary:hover:not(:disabled) { background: var(--grad-gold-h); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201, 168, 76, 0.32); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-ghost { width: 100%; padding: 11px; border-radius: 10px; background: transparent; border: 1px solid var(--border-b); color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+    .btn-ghost:hover { background: rgba(201, 168, 76, 0.08); box-shadow: 0 0 0 1px rgba(201, 168, 76, 0.2); }
+    .spinner { width: 18px; height: 18px; border: 2px solid rgba(5, 13, 31, 0.25); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; display: none; flex-shrink: 0; }
+    .modal-spinner { border-color: rgba(201, 168, 76, 0.2); border-top-color: var(--gold); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: rgba(201, 168, 76, 0.3); font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .footer-links { margin-top: 20px; font-size: 13px; text-align: center; color: var(--cream-dim); }
+    .footer-links a { color: var(--gold); text-decoration: none; font-weight: 600; }
+    .footer-links a:hover { text-decoration: underline; }
+
+    #phase-dashboard { display: none; position: relative; z-index: 1; width: 100%; }
+    .dash-shell { min-height: 100vh; display: grid; grid-template-columns: 220px 1fr; filter: blur(4px) brightness(0.65); pointer-events: none; user-select: none; }
+    .dash-sidebar { background: rgba(10, 24, 51, 0.95); border-right: 1px solid var(--border); padding: 24px 16px; }
+    .dash-brand { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .dash-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; color: var(--cream-dim); margin-bottom: 4px; }
+    .dash-nav-item.active { background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.06)); border: 1px solid rgba(201, 168, 76, 0.2); color: var(--gold); }
+    .dash-nav-item .material-symbols-outlined { font-size: 17px; }
+    .dash-main { padding: 28px; background: var(--navy); }
+    .dash-main-title { font-family: 'Cinzel', serif; font-size: 22px; color: var(--white); margin-bottom: 24px; }
+    .dash-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .dash-kpi { background: var(--glass); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .dash-kpi-val { font-family: 'Cinzel', serif; font-size: 26px; color: var(--white); font-weight: 700; }
+    .dash-kpi-lbl { font-size: 11px; color: var(--cream-dim); margin-top: 4px; }
+    .dash-section { background: var(--glass); border: 1px solid var(--border); border-radius: 14px; padding: 20px; height: 160px; }
+
+    #verification-modal { position: fixed; inset: 0; z-index: 900; display: none; align-items: center; justify-content: center; padding: 24px; }
+    .modal-overlay { position: absolute; inset: 0; background: rgba(5, 13, 31, 0.88); backdrop-filter: blur(8px); }
+    .modal-card { position: relative; z-index: 1; width: 100%; max-width: 480px; background: var(--grad-card); border: 1px solid var(--border-b); border-radius: 24px; padding: 36px 36px 30px; box-shadow: 0 32px 100px rgba(0, 0, 0, 0.65); animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; overflow: hidden; }
+    .modal-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--grad-gold); }
+    @keyframes modalPop { from { opacity: 0; transform: scale(0.88) translateY(18px); } to { opacity: 1; transform: none; } }
+    .modal-alert-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .modal-alert-icon { width: 44px; height: 44px; border-radius: 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .modal-alert-icon .material-symbols-outlined { font-size: 22px; color: var(--warning); }
+    .modal-alert-sub { font-size: 11px; color: var(--warning); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .modal-alert-heading { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; color: var(--white); line-height: 1.25; }
+    .modal-desc { font-size: 13px; color: var(--cream-dim); line-height: 1.65; margin-bottom: 22px; }
+    .modal-desc strong { color: var(--cream); }
+    .upload-zone { border: 2px dashed var(--border-b); border-radius: 14px; padding: 22px; text-align: center; cursor: pointer; transition: all 0.25s; margin-top: 6px; position: relative; background: rgba(5, 13, 31, 0.4); }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--gold); background: rgba(201, 168, 76, 0.05); }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-zone-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--grad-blue); border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 22px; margin: 0 auto 10px; }
+    .upload-zone-label { font-size: 14px; font-weight: 600; color: var(--cream); }
+    .upload-zone-hint { font-size: 12px; color: var(--cream-dim); margin-top: 4px; }
+    .upload-zone-hint span { color: var(--gold); }
+    .file-chosen { display: none; align-items: center; gap: 10px; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); border-radius: 10px; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--success); }
+    .file-chosen.show { display: flex; }
+    .modal-card .form-group select { background: rgba(5, 13, 31, 0.7); border: 1px solid var(--border-b); border-radius: 10px; padding: 11px 14px 11px 42px; color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; width: 100%; appearance: none; transition: all 0.25s; cursor: pointer; }
+    .modal-card .form-group select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1); }
+    .modal-card .form-group select option { background: var(--navy-2); }
+    .trust-row { display: flex; justify-content: center; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
+    .trust-badge { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--cream-dim); font-family: 'JetBrains Mono', monospace; }
+    .trust-badge .material-symbols-outlined { font-size: 13px; color: var(--gold); }
+    #modal-success { display: none; flex-direction: column; align-items: center; text-align: center; padding: 16px 0; }
+    .success-ring { width: 68px; height: 68px; border-radius: 50%; background: rgba(34, 197, 94, 0.1); border: 2px solid var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: none; } }
+    .success-ring .material-symbols-outlined { font-size: 34px; color: var(--success); }
+    #modal-success h3 { font-family: 'Cinzel', serif; font-size: 18px; color: var(--white); margin-bottom: 8px; }
+    #modal-success p { font-size: 14px; color: var(--cream-dim); line-height: 1.65; }
+
+    @media (max-width: 900px) { body { grid-template-columns: 1fr; } .hero-panel { display: none; } #phase-dashboard .dash-shell { grid-template-columns: 1fr; } .dash-sidebar { display: none; } }
+    @media (max-width: 540px) { .form-panel { padding: 24px 16px; } .auth-card-inner { padding: 28px 22px; } }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(201, 168, 76, 0.2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.4); }
   </style>
 </head>
 
 <body>
 
-  <!-- ╔══════════════════════════════════════╗
-       ║   LEFT: HERO PANEL (gradient art)    ║
-       ╚══════════════════════════════════════╝ -->
   <div class="hero-panel" id="hero-panel">
     <div class="hero-orb-top"></div>
     <div class="hero-noise"></div>
-
-    <!-- brand -->
     <div class="hero-brand">
-      <div class="hero-logo-box">
-        <span class="material-symbols-outlined">account_balance</span>
-      </div>
+      <div class="hero-logo-box"><span class="material-symbols-outlined">account_balance</span></div>
       <div class="hero-brand-text">
         <div class="hero-brand-name">CitizenNode</div>
         <div class="hero-brand-sub">E-Governance Portal</div>
       </div>
     </div>
-
-    <!-- main copy -->
     <div class="hero-body">
-      <div class="hero-version">
-        <div class="version-dot"></div>
-        v2.1 · System Online
-      </div>
-      <h1 class="hero-tagline">
-        Your Documents.<br>
-        <span>Secured. Digital.</span><br>
-        Always Accessible.
-      </h1>
-      <p class="hero-sub">
-        A unified platform for citizens to manage, verify, and share government-issued documents — all from one secure
-        dashboard.
-      </p>
+      <div class="hero-version"><div class="version-dot"></div>v2.1 · System Online</div>
+      <h1 class="hero-tagline">Your Documents.<br><span>Secured. Digital.</span><br>Always Accessible.</h1>
+      <p class="hero-sub">A unified platform for citizens to manage, verify, and share government-issued documents — all from one secure dashboard.</p>
       <div class="hero-features">
-        <div class="hero-feature">
-          <div class="feature-dot"><span class="material-symbols-outlined">verified_user</span></div>
-          <div class="feature-text">
-            <div class="feature-title">Biometric Verification</div>
-            <div class="feature-desc">Military-grade identity confirmation</div>
-          </div>
-        </div>
-        <div class="hero-feature">
-          <div class="feature-dot"><span class="material-symbols-outlined">wallet</span></div>
-          <div class="feature-text">
-            <div class="feature-title">Digital Document Wallet</div>
-            <div class="feature-desc">All your certificates in one place</div>
-          </div>
-        </div>
-        <div class="hero-feature">
-          <div class="feature-dot"><span class="material-symbols-outlined">lock</span></div>
-          <div class="feature-text">
-            <div class="feature-title">256-bit Encrypted</div>
-            <div class="feature-desc">GDPR & national data protection compliant</div>
-          </div>
-        </div>
+        <div class="hero-feature"><div class="feature-dot"><span class="material-symbols-outlined">verified_user</span></div><div class="feature-text"><div class="feature-title">Biometric Verification</div><div class="feature-desc">Military-grade identity confirmation</div></div></div>
+        <div class="hero-feature"><div class="feature-dot"><span class="material-symbols-outlined">wallet</span></div><div class="feature-text"><div class="feature-title">Digital Document Wallet</div><div class="feature-desc">All your certificates in one place</div></div></div>
+        <div class="hero-feature"><div class="feature-dot"><span class="material-symbols-outlined">lock</span></div><div class="feature-text"><div class="feature-title">256-bit Encrypted</div><div class="feature-desc">GDPR & national data protection compliant</div></div></div>
       </div>
     </div>
-
-    <!-- stat footer -->
     <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-val">2.4M+</div>
-        <div class="hero-stat-lbl">Citizens</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">99.9%</div>
-        <div class="hero-stat-lbl">Uptime</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">ISO</div>
-        <div class="hero-stat-lbl">Certified</div>
-      </div>
+      <div class="hero-stat"><div class="hero-stat-val">2.4M+</div><div class="hero-stat-lbl">Citizens</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">99.9%</div><div class="hero-stat-lbl">Uptime</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">ISO</div><div class="hero-stat-lbl">Certified</div></div>
     </div>
   </div>
 
-
-  <!-- ╔══════════════════════════════════════╗
-       ║   RIGHT: FORM PANEL                  ║
-       ╚══════════════════════════════════════╝ -->
   <div class="form-panel" id="phase-signup">
     <div class="auth-card">
       <div class="auth-card-inner">
 
-        <!-- Step indicator -->
         <div class="step-track">
           <div class="step-node active" id="step1-node">1</div>
           <div class="step-line" id="step-line"></div>
@@ -1274,8 +264,6 @@
         <p class="form-sub">Secure access to your government digital documents.</p>
 
         <form id="signup-form" novalidate>
-
-          <!-- Email -->
           <div class="form-group">
             <label for="email">Email Address</label>
             <div class="input-wrap">
@@ -1284,148 +272,107 @@
             </div>
             <div class="field-error" id="err-email">Please enter a valid email address.</div>
           </div>
-
-          <!-- Password -->
           <div class="form-group">
             <label for="password">Password</label>
             <div class="input-wrap">
               <span class="material-symbols-outlined input-icon">lock_outline</span>
-              <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password"
-                required />
-              <button type="button" class="pw-toggle" onclick="toggleVis('password',this)">
-                <span class="material-symbols-outlined" style="font-size:17px">visibility_off</span>
-              </button>
+              <input type="password" id="password" placeholder="Min. 8 characters" autocomplete="new-password" required />
+              <button type="button" class="pw-toggle" onclick="toggleVis('password',this)"><span class="material-symbols-outlined" style="font-size:17px">visibility_off</span></button>
             </div>
             <div class="pw-strength">
-              <div class="pw-bar" id="pw-b1"></div>
-              <div class="pw-bar" id="pw-b2"></div>
-              <div class="pw-bar" id="pw-b3"></div>
-              <div class="pw-bar" id="pw-b4"></div>
-              <span class="pw-label" id="pw-label"></span>
+              <div class="pw-bar" id="pw-b1"></div><div class="pw-bar" id="pw-b2"></div><div class="pw-bar" id="pw-b3"></div><div class="pw-bar" id="pw-b4"></div><span class="pw-label" id="pw-label"></span>
             </div>
             <div class="field-error" id="err-pw">Password must be at least 8 characters.</div>
           </div>
-
-          <!-- Confirm -->
           <div class="form-group">
             <label for="confirm">Confirm Password</label>
             <div class="input-wrap">
               <span class="material-symbols-outlined input-icon">lock_outline</span>
               <input type="password" id="confirm" placeholder="Repeat password" autocomplete="new-password" required />
-              <button type="button" class="pw-toggle" onclick="toggleVis('confirm',this)">
-                <span class="material-symbols-outlined" style="font-size:17px">visibility_off</span>
-              </button>
+              <button type="button" class="pw-toggle" onclick="toggleVis('confirm',this)"><span class="material-symbols-outlined" style="font-size:17px">visibility_off</span></button>
             </div>
             <div class="field-error" id="err-confirm">Passwords do not match.</div>
           </div>
-
-          <!-- Terms -->
           <div class="terms-row">
             <input type="checkbox" id="terms" />
-            <label for="terms">
-              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-            </label>
+            <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</label>
           </div>
-          <div class="field-error" id="err-terms" style="margin-top:-8px;margin-bottom:10px">
-            You must accept the terms to continue.
-          </div>
-
+          <div class="field-error" id="err-terms" style="margin-top:-8px;margin-bottom:10px">You must accept the terms to continue.</div>
           <button type="submit" class="btn-primary" id="signup-btn">
             <span class="spinner" id="signup-spinner"></span>
             <span class="material-symbols-outlined" id="signup-icon" style="font-size:17px">arrow_forward</span>
-            <span id="signup-text">Create Account &amp; Continue</span>
+            <span id="signup-text">Create Account & Continue</span>
           </button>
-
         </form>
 
-        <div class="divider">Already a member?</div>
+        <form id="signin-form" novalidate style="display: none;">
+          <div class="form-group">
+            <label for="login-id">Citizen Identification Number</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon">badge</span>
+              <input type="text" id="login-id" placeholder="e.g. CITIZEN-9921" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="login-email">Registered Email Address</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon">mail_outline</span>
+              <input type="email" id="login-email" placeholder="citizen@example.com" required />
+            </div>
+          </div>
+          <div class="field-error" id="err-login" style="margin-bottom:10px">Invalid credentials. Please try again.</div>
+          <button type="submit" class="btn-primary" id="signin-btn">
+            <span class="spinner" id="signin-spinner"></span>
+            <span class="material-symbols-outlined" id="signin-icon" style="font-size:17px">login</span>
+            <span id="signin-text">Authenticate & Enter Portal</span>
+          </button>
+        </form>
 
-        <button class="btn-ghost" onclick="window.location.href='/dashboard'">
+        <div class="divider">Authentication</div>
+
+        <button class="btn-ghost" onclick="toggleAuthMode(event)" id="toggle-auth-btn">
           <span class="material-symbols-outlined" style="font-size:17px">login</span>
-          Sign In to Dashboard
+          <span id="toggle-auth-text">Already a member? Sign In</span>
         </button>
 
-        <div class="footer-links">
-          <a href="/">← Home</a> &nbsp;·&nbsp; <a href="help.html">Help</a>
-        </div>
+        <div class="footer-links"><a href="/">← Home</a> &nbsp;·&nbsp; <a href="help.html">Help</a></div>
 
-      </div><!-- /auth-card-inner -->
-    </div><!-- /auth-card -->
-  </div><!-- /form-panel -->
+      </div>
+    </div>
+  </div>
 
-
-  <!-- ╔══════════════════════════════════════╗
-       ║   PHASE 2 — BLURRED DASHBOARD        ║
-       ╚══════════════════════════════════════╝ -->
   <div id="phase-dashboard">
     <div class="dash-shell">
       <nav class="dash-sidebar">
         <div class="dash-brand">CitizenNode</div>
-        <div class="dash-nav-item active">
-          <span class="material-symbols-outlined">dashboard</span> Dashboard
-        </div>
-        <div class="dash-nav-item">
-          <span class="material-symbols-outlined">description</span> My Documents
-        </div>
-        <div class="dash-nav-item">
-          <span class="material-symbols-outlined">add_task</span> Request Certificate
-        </div>
-        <div class="dash-nav-item">
-          <span class="material-symbols-outlined">settings</span> Settings
-        </div>
+        <div class="dash-nav-item active"><span class="material-symbols-outlined">dashboard</span> Dashboard</div>
+        <div class="dash-nav-item"><span class="material-symbols-outlined">description</span> My Documents</div>
+        <div class="dash-nav-item"><span class="material-symbols-outlined">add_task</span> Request Certificate</div>
+        <div class="dash-nav-item"><span class="material-symbols-outlined">settings</span> Settings</div>
       </nav>
       <main class="dash-main">
         <div class="dash-main-title">Welcome to your Dashboard</div>
         <div class="dash-kpi-row">
-          <div class="dash-kpi">
-            <div class="dash-kpi-val">0</div>
-            <div class="dash-kpi-lbl">Active Documents</div>
-          </div>
-          <div class="dash-kpi">
-            <div class="dash-kpi-val">0</div>
-            <div class="dash-kpi-lbl">Pending Requests</div>
-          </div>
-          <div class="dash-kpi">
-            <div class="dash-kpi-val">0%</div>
-            <div class="dash-kpi-lbl">Profile Complete</div>
-          </div>
-          <div class="dash-kpi">
-            <div class="dash-kpi-val">—</div>
-            <div class="dash-kpi-lbl">Security Score</div>
-          </div>
+          <div class="dash-kpi"><div class="dash-kpi-val">0</div><div class="dash-kpi-lbl">Active Documents</div></div>
+          <div class="dash-kpi"><div class="dash-kpi-val">0</div><div class="dash-kpi-lbl">Pending Requests</div></div>
+          <div class="dash-kpi"><div class="dash-kpi-val">0%</div><div class="dash-kpi-lbl">Profile Complete</div></div>
+          <div class="dash-kpi"><div class="dash-kpi-val">—</div><div class="dash-kpi-lbl">Security Score</div></div>
         </div>
         <div class="dash-section"></div>
       </main>
     </div>
   </div>
 
-
-  <!-- ╔══════════════════════════════════════╗
-       ║   VERIFICATION MODAL                 ║
-       ╚══════════════════════════════════════╝ -->
   <div id="verification-modal" role="dialog" aria-modal="true">
     <div class="modal-overlay"></div>
     <div class="modal-card">
-
-      <!-- FORM STATE -->
       <div id="modal-form-state">
         <div class="modal-alert-header">
-          <div class="modal-alert-icon">
-            <span class="material-symbols-outlined">warning_amber</span>
-          </div>
-          <div>
-            <div class="modal-alert-sub">Action Required</div>
-            <div class="modal-alert-heading">Complete your profile to unlock full services</div>
-          </div>
+          <div class="modal-alert-icon"><span class="material-symbols-outlined">warning_amber</span></div>
+          <div><div class="modal-alert-sub">Action Required</div><div class="modal-alert-heading">Complete your profile to unlock full services</div></div>
         </div>
-
-        <p class="modal-desc">
-          Your account has been created. To access your <strong>digital document wallet</strong>, verify your identity
-          by uploading a government-issued document. <strong>One-time process.</strong>
-        </p>
-
+        <p class="modal-desc">Your account has been created. To access your <strong>digital document wallet</strong>, verify your identity by uploading a government-issued document. <strong>One-time process.</strong></p>
         <form id="verify-form" novalidate>
-
           <div class="form-group">
             <label for="doc-type">Document Type</label>
             <div class="input-wrap">
@@ -1440,207 +387,160 @@
             </div>
             <div class="field-error" id="err-doc-type">Please select a document type.</div>
           </div>
-
           <div class="form-group">
             <label>Upload Document</label>
             <div class="upload-zone" id="upload-zone">
               <input type="file" id="doc-file" accept=".jpg,.jpeg,.png,.pdf" />
-              <div class="upload-zone-icon">
-                <span class="material-symbols-outlined">upload_file</span>
-              </div>
-              <div class="upload-zone-label">Drag &amp; drop or click to upload</div>
+              <div class="upload-zone-icon"><span class="material-symbols-outlined">upload_file</span></div>
+              <div class="upload-zone-label">Drag & drop or click to upload</div>
               <div class="upload-zone-hint">JPG, PNG, PDF &nbsp;·&nbsp; <span>Max 10 MB</span></div>
             </div>
-            <div class="file-chosen" id="file-chosen">
-              <span class="material-symbols-outlined">check_circle</span>
-              <span id="file-name-display"></span>
-            </div>
+            <div class="file-chosen" id="file-chosen"><span class="material-symbols-outlined">check_circle</span><span id="file-name-display"></span></div>
             <div class="field-error" id="err-file">Please upload your document.</div>
           </div>
-
           <button type="submit" class="btn-primary" id="verify-btn" style="margin-top:6px">
             <span class="spinner modal-spinner" id="verify-spinner"></span>
             <span class="material-symbols-outlined" id="verify-icon" style="font-size:17px">verified_user</span>
             <span id="verify-text">Submit for Verification</span>
           </button>
-
         </form>
-
         <div class="trust-row">
           <div class="trust-badge"><span class="material-symbols-outlined">lock</span>256-bit Encrypted</div>
           <div class="trust-badge"><span class="material-symbols-outlined">shield</span>GDPR Compliant</div>
           <div class="trust-badge"><span class="material-symbols-outlined">verified</span>Govt. Certified</div>
         </div>
       </div>
-
-      <!-- SUCCESS STATE -->
       <div id="modal-success">
-        <div class="success-ring">
-          <span class="material-symbols-outlined">check</span>
-        </div>
+        <div class="success-ring"><span class="material-symbols-outlined">check</span></div>
         <h3>Verification Submitted!</h3>
-        <p>Your documents are under review. You'll hear back within <strong style="color:var(--gold)">24–48
-            hours</strong>.</p>
+        <p>Your documents are under review. You'll hear back within <strong style="color:var(--gold)">24–48 hours</strong>.</p>
         <button class="btn-primary" onclick="enterDashboard()" style="margin-top:24px">
-          <span class="material-symbols-outlined" style="font-size:17px">dashboard</span>
-          Go to Dashboard
+          <span class="material-symbols-outlined" style="font-size:17px">dashboard</span> Go to Dashboard
         </button>
       </div>
-
     </div>
   </div>
 
-
   <script>
     const $ = id => document.getElementById(id);
-
-    /* ── Helpers ── */
     function showErr(id, show) { $(`err-${id}`).classList.toggle('show', show); }
     function setErr(id, v) { const e = $(id); if (e) e.classList.toggle('error', v); }
-
     function toggleVis(id, btn) {
-      const inp = $(id);
-      const icon = btn.querySelector('.material-symbols-outlined');
+      const inp = $(id); const icon = btn.querySelector('.material-symbols-outlined');
       inp.type = inp.type === 'password' ? 'text' : 'password';
       icon.textContent = inp.type === 'password' ? 'visibility_off' : 'visibility';
     }
 
-    /* ── Password strength ── */
     $('password').addEventListener('input', function () {
       const v = this.value, PAL = ['', '#ef4444', '#f59e0b', '#3b82f6', '#22c55e'], LBL = ['', 'Weak', 'Fair', 'Good', 'Strong'];
       let s = 0;
-      if (v.length >= 8) s++;
-      if (/[A-Z]/.test(v)) s++;
-      if (/[0-9]/.test(v)) s++;
-      if (/[^\w]/.test(v)) s++;
-      for (let i = 1; i <= 4; i++) {
-        $(`pw-b${i}`).style.background = i <= s ? PAL[s] : 'rgba(255,255,255,0.08)';
-      }
-      const lbl = $('pw-label');
-      lbl.textContent = LBL[s];
-      lbl.style.color = PAL[s] || 'var(--cream-dim)';
+      if (v.length >= 8) s++; if (/[A-Z]/.test(v)) s++; if (/[0-9]/.test(v)) s++; if (/[^\w]/.test(v)) s++;
+      for (let i = 1; i <= 4; i++) { $(`pw-b${i}`).style.background = i <= s ? PAL[s] : 'rgba(255,255,255,0.08)'; }
+      const lbl = $('pw-label'); lbl.textContent = LBL[s]; lbl.style.color = PAL[s] || 'var(--cream-dim)';
     });
 
-    /* ── Phase 1 submit ── */
     $('signup-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      const email = $('email').value.trim();
-      const pw = $('password').value;
-      const conf = $('confirm').value;
-      const terms = $('terms').checked;
+      const email = $('email').value.trim(); const pw = $('password').value; const conf = $('confirm').value; const terms = $('terms').checked;
       let ok = true;
-
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      showErr('email', !emailOk); setErr('email', !emailOk); if (!emailOk) ok = false;
-
-      const pwOk = pw.length >= 8;
-      showErr('pw', !pwOk); setErr('password', !pwOk); if (!pwOk) ok = false;
-
-      const confOk = pw === conf && conf !== '';
-      showErr('confirm', !confOk); setErr('confirm', !confOk); if (!confOk) ok = false;
-
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); showErr('email', !emailOk); setErr('email', !emailOk); if (!emailOk) ok = false;
+      const pwOk = pw.length >= 8; showErr('pw', !pwOk); setErr('password', !pwOk); if (!pwOk) ok = false;
+      const confOk = pw === conf && conf !== ''; showErr('confirm', !confOk); setErr('confirm', !confOk); if (!confOk) ok = false;
       showErr('terms', !terms); if (!terms) ok = false;
-
       if (!ok) return;
 
-      const btn = $('signup-btn');
-      btn.disabled = true;
-      $('signup-spinner').style.display = 'inline-block';
-      $('signup-icon').style.display = 'none';
-      $('signup-text').textContent = 'Creating account…';
-
+      const btn = $('signup-btn'); btn.disabled = true; $('signup-spinner').style.display = 'inline-block';
+      $('signup-icon').style.display = 'none'; $('signup-text').textContent = 'Creating account…';
       setTimeout(transitionToPhase2, 1800);
     });
 
-    /* ── Phase transition ── */
     function transitionToPhase2() {
-      // update step indicator
-      const n1 = $('step1-node');
-      n1.classList.remove('active'); n1.classList.add('done');
+      const n1 = $('step1-node'); n1.classList.remove('active'); n1.classList.add('done');
       n1.innerHTML = '<span class="material-symbols-outlined" style="font-size:13px">check</span>';
-      $('step-line').classList.add('done');
-      $('step2-node').classList.add('active');
-      $('step2-lbl').classList.add('active');
-
-      const p1 = $('phase-signup');
-      p1.style.transition = 'opacity 0.35s ease';
-      p1.style.opacity = '0';
-
+      $('step-line').classList.add('done'); $('step2-node').classList.add('active'); $('step2-lbl').classList.add('active');
+      const p1 = $('phase-signup'); p1.style.transition = 'opacity 0.35s ease'; p1.style.opacity = '0';
       setTimeout(() => {
-        // hide signup panel + hero
-        p1.style.display = 'none';
-        $('hero-panel').style.display = 'none';
-
-        // swap to full-width dashboard
-        document.body.style.gridTemplateColumns = '1fr';
-        $('phase-dashboard').style.display = 'block';
-
-        // show modal
-        const m = $('verification-modal');
-        m.style.display = 'flex';
+        p1.style.display = 'none'; $('hero-panel').style.display = 'none';
+        document.body.style.gridTemplateColumns = '1fr'; $('phase-dashboard').style.display = 'block';
+        const m = $('verification-modal'); m.style.display = 'flex';
       }, 380);
     }
 
-    /* ── File input ── */
     $('doc-file').addEventListener('change', function () {
-      if (this.files && this.files[0]) {
-        $('file-name-display').textContent = this.files[0].name;
-        $('file-chosen').classList.add('show');
-        showErr('file', false);
-      }
+      if (this.files && this.files[0]) { $('file-name-display').textContent = this.files[0].name; $('file-chosen').classList.add('show'); showErr('file', false); }
     });
-
-    // Drag-over
     const zone = $('upload-zone');
     ['dragenter', 'dragover'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add('drag-over'); }));
     ['dragleave', 'drop'].forEach(ev => zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove('drag-over'); }));
     zone.addEventListener('drop', e => {
       const f = e.dataTransfer.files[0];
-      if (f) {
-        $('file-name-display').textContent = f.name;
-        $('file-chosen').classList.add('show');
-        showErr('file', false);
-      }
+      if (f) { $('file-name-display').textContent = f.name; $('file-chosen').classList.add('show'); showErr('file', false); }
     });
 
-    /* ── Verify form ── */
     $('verify-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      const dt = $('doc-type').value, df = $('doc-file').files[0];
-      let ok = true;
+      const dt = $('doc-type').value, df = $('doc-file').files[0]; let ok = true;
       if (!dt) { showErr('doc-type', true); ok = false; } else showErr('doc-type', false);
       if (!df) { showErr('file', true); ok = false; } else showErr('file', false);
       if (!ok) return;
 
-      const btn = $('verify-btn');
-      btn.disabled = true;
-      $('verify-spinner').style.display = 'inline-block';
-      $('verify-icon').style.display = 'none';
-      $('verify-text').textContent = 'Uploading securely…';
-
-      setTimeout(() => {
-        $('verify-text').textContent = 'Analysing document…';
-        setTimeout(showSuccess, 1000);
-      }, 2000);
+      const btn = $('verify-btn'); btn.disabled = true; $('verify-spinner').style.display = 'inline-block';
+      $('verify-icon').style.display = 'none'; $('verify-text').textContent = 'Uploading securely…';
+      setTimeout(() => { $('verify-text').textContent = 'Analysing document…'; setTimeout(showSuccess, 1000); }, 2000);
     });
 
-    function showSuccess() {
-      $('modal-form-state').style.display = 'none';
-      $('modal-success').style.display = 'flex';
-    }
-
-    /* ── Enter dashboard ── */
+    function showSuccess() { $('modal-form-state').style.display = 'none'; $('modal-success').style.display = 'flex'; }
     function enterDashboard() {
-      const m = $('verification-modal');
-      m.style.transition = 'opacity 0.3s ease'; m.style.opacity = '0';
+      const m = $('verification-modal'); m.style.transition = 'opacity 0.3s ease'; m.style.opacity = '0';
       document.querySelector('.dash-shell').style.filter = 'none';
       setTimeout(() => { m.style.display = 'none'; window.location.href = '/dashboard'; }, 400);
     }
-
-    // Block ESC
     document.addEventListener('keydown', e => { if (e.key === 'Escape') e.preventDefault(); });
+
+    /* ── Real Auth Toggle & JWT Login Logic ── */
+    let isLoginMode = false;
+    function toggleAuthMode(e) {
+      e.preventDefault();
+      isLoginMode = !isLoginMode;
+      $('signup-form').style.display = isLoginMode ? 'none' : 'block';
+      $('signin-form').style.display = isLoginMode ? 'block' : 'none';
+      
+      document.querySelector('.form-heading').textContent = isLoginMode ? 'Welcome Back' : 'Create your account';
+      document.querySelector('.form-sub').textContent = isLoginMode ? 'Authenticate to access your secure wallet.' : 'Secure access to your government digital documents.';
+      $('toggle-auth-text').textContent = isLoginMode ? 'Need an account? Register here' : 'Already a member? Sign In';
+    }
+
+    $('signin-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const citizenId = $('login-id').value;
+      const email = $('login-email').value;
+
+      $('signin-btn').disabled = true;
+      $('signin-spinner').style.display = 'inline-block';
+      $('signin-icon').style.display = 'none';
+      $('signin-text').textContent = 'Verifying identity...';
+      $('err-login').classList.remove('show');
+
+      try {
+        const res = await fetch('http://localhost:3000/api/v1/auth/citizen/login', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ citizenId, email })
+        });
+        const data = await res.json();
+        
+        if (data.status === 'success') {
+            localStorage.setItem('token', data.token);
+            window.location.href = '/dashboard';
+        } else {
+            throw new Error(data.message);
+        }
+      } catch (err) {
+        $('err-login').classList.add('show');
+        $('signin-btn').disabled = false;
+        $('signin-spinner').style.display = 'none';
+        $('signin-icon').style.display = 'inline-block';
+        $('signin-text').textContent = 'Authenticate & Enter Portal';
+      }
+    });
   </script>
-
 </body>
-
 </html>

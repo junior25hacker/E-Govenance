@@ -10,11 +10,12 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
 
-  const port = process.env.PORT ?? 3000;
+  // Move the frontend to Port 4000 to prevent collisions
+  const port = process.env.FRONTEND_PORT ?? 4000;
   await app.listen(port);
 
   const url = `http://localhost:${port}`;
-  console.log(`Application is successfully running on: ${url}`);
+  console.log(`[FRONTEND] 🚀 Citizen Web Portal is running on: ${url}`);
 
   // Automatically open the landing page
   const { exec } = require('child_process');

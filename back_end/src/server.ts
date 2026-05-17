@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 
 import authRoutes from './routes/authRoutes';
 import documentRoutes from './routes/documentRoutes';
-import { AppDataSource } from './config/database'; // 👈 DB CONFIG IMPORTED
+import { AppDataSource } from './config/database'; 
 
 dotenv.config();
 
@@ -23,9 +23,8 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/documents', documentRoutes);
 
-// 👈 DATABASE INITIALIZATION ADDED BACK
+// Initialize Database connection
 AppDataSource.initialize()
-// If the connection is successful, we start the server. If it fails, we log the error and do NOT start the server (because we can't function without the database).
   .then(() => {
     console.log('[DATABASE] 🐘 PostgreSQL Connected Successfully!');
     
