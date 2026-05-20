@@ -8,10 +8,10 @@ async function bootstrap() {
     app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public'));
     app.setBaseViewsDir((0, path_1.join)(__dirname, '..', 'views'));
     app.setViewEngine('hbs');
-    const port = process.env.PORT ?? 3000;
+    const port = process.env.FRONTEND_PORT ?? 4000;
     await app.listen(port);
     const url = `http://localhost:${port}`;
-    console.log(`Application is successfully running on: ${url}`);
+    console.log(`[FRONTEND] 🚀 Citizen Web Portal is running on: ${url}`);
     const { exec } = require('child_process');
     const startCommand = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
     exec(`${startCommand} ${url}`);

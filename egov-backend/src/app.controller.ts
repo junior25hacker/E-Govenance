@@ -1,7 +1,10 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Query, Res, HttpStatus } from '@nestjs/common';
+import { AppService } from './app.service';
+import * as express from 'express'; // FIXED: Swapped to a namespace import to satisfy isolatedModules rules
 
 @Controller()
 export class AppController {
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   @Render('index')
@@ -25,5 +28,12 @@ export class AppController {
   @Render('civil-status')
   civilStatus() {
     return { title: 'CitizenNode | Civil Status' };
+  }
+
+  // FIXED: Using express.Response explicitly so the decorator metadata can safely generate
+  @Get('api/lost-doc-schema')
+  getLostDocumentSchema(@Query('type') type: string, @Res() res: express.Response) {
+    const dataSchema = this.appService.getDocumentSchema(type);
+    return res.status(HttpStatus.OK).json(dataSchema);
   }
 }
