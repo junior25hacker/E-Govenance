@@ -14,179 +14,1243 @@
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
     rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy: #050d1f; --navy-2: #0a1833; --navy-3: #0f2347;
-      --blue-mid: #1a3a6b; --blue-acc: #2563b0; --gold: #c9a84c;
-      --gold-lt: #e8c96a; --gold-dim: #7a5f20; --cream: #f2eedf;
-      --cream-dim: #cdc8b4; --white: #ffffff;
-      --glass: rgba(255, 255, 255, 0.05); --glass-b: rgba(255, 255, 255, 0.10);
-      --border: rgba(201, 168, 76, 0.18); --border-b: rgba(201, 168, 76, 0.35);
-      --r: 8px; --r-lg: 16px; --r-xl: 24px;
-      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6;
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--cream); overflow-x: hidden; line-height: 1.6; display: flex; height: 100vh; }
-    body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); opacity: 0.35; }
-    .grid-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; background-image: linear-gradient(rgba(201, 168, 76, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201, 168, 76, 0.04) 1px, transparent 1px); background-size: 60px 60px; }
+    :root {
+      --navy: #050d1f;
+      --navy-2: #0a1833;
+      --navy-3: #0f2347;
+      --blue-mid: #1a3a6b;
+      --blue-acc: #2563b0;
+      --gold: #c9a84c;
+      --gold-lt: #e8c96a;
+      --gold-dim: #7a5f20;
+      --cream: #f2eedf;
+      --cream-dim: #cdc8b4;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-b: rgba(255, 255, 255, 0.10);
+      --border: rgba(201, 168, 76, 0.18);
+      --border-b: rgba(201, 168, 76, 0.35);
+      --r: 8px;
+      --r-lg: 16px;
+      --r-xl: 24px;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+    }
 
-    .sidebar { width: 260px; background: rgba(5, 13, 31, 0.92); backdrop-filter: blur(20px); border-right: 1px solid var(--border); padding: 0; height: 100vh; position: fixed; top: 0; left: 0; z-index: 100; overflow-y: auto; display: flex; flex-direction: column; }
-    .sidebar-header { display: flex; align-items: center; padding: 28px 20px 22px; border-bottom: 1px solid var(--border); }
-    .sidebar-logo { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--blue-mid), var(--navy-3)); border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center; color: var(--gold); margin-right: 12px; flex-shrink: 0; }
-    .sidebar-brand { display: flex; flex-direction: column; }
-    .sidebar-logo-text { font-family: 'Cinzel', serif; font-weight: 700; color: var(--white); font-size: 15px; line-height: 1.2; }
-    .sidebar-logo-sub { font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
-    .sidebar-section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dim); padding: 20px 20px 8px; }
-    .sidebar-nav { list-style: none; padding: 4px 12px; }
-    .sidebar-nav li { margin-bottom: 4px; }
-    .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r); color: var(--cream-dim); text-decoration: none; font-size: 14px; font-weight: 500; transition: background 0.2s, color 0.2s; position: relative; }
-    .sidebar-nav a:hover { background: var(--glass-b); color: var(--white); cursor: pointer; }
-    .sidebar-nav a.active { background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.08)); color: var(--gold) !important; border: 1px solid rgba(201, 168, 76, 0.25); cursor: pointer; }
-    .sidebar-nav a.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px; background: var(--gold); border-radius: 0 3px 3px 0; }
-    .nav-badge { margin-left: auto; background: var(--gold); color: var(--navy); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; line-height: 1.6; }
-    .sidebar-footer { margin-top: auto; padding: 20px; border-top: 1px solid var(--border); }
-    .sidebar-user-pill { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--glass); border: 1px solid var(--border); border-radius: var(--r-lg); }
-    .sidebar-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-dim), var(--gold)); display: flex; align-items: center; justify-content: center; color: var(--navy); font-size: 13px; font-weight: 700; flex-shrink: 0; }
-    .sidebar-user-info { flex: 1; min-width: 0; }
-    .sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .sidebar-user-role { font-size: 11px; color: var(--gold); }
+    html {
+      scroll-behavior: smooth;
+    }
 
-    .top-nav { position: fixed; top: 0; left: 260px; right: 0; height: 64px; background: rgba(5, 13, 31, 0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 16px; z-index: 99; }
-    .top-nav-search { flex: 1; max-width: 360px; position: relative; }
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--cream-dim); font-size: 18px; pointer-events: none; }
-    .top-nav-search-input { width: 100%; padding: 9px 14px 9px 40px; background: rgba(10, 24, 51, 0.7); border: 1px solid var(--border); border-radius: var(--r); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s, background 0.2s; }
-    .top-nav-search-input::placeholder { color: rgba(205, 200, 180, 0.4); }
-    .top-nav-search-input:focus { border-color: var(--border-b); background: rgba(10, 24, 51, 0.9); }
-    .top-nav-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-    .nav-icon-btn { width: 38px; height: 38px; border-radius: var(--r); background: var(--glass); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--cream-dim); cursor: pointer; transition: all 0.2s; position: relative; }
-    .nav-icon-btn:hover { background: var(--glass-b); color: var(--white); border-color: var(--border-b); }
-    .notif-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; border: 2px solid var(--navy); animation: pulse 2s ease infinite; }
-    .nav-divider { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
-    .top-nav-user { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 10px; border-radius: var(--r-lg); border: 1px solid transparent; transition: all 0.2s; }
-    .top-nav-user:hover { background: var(--glass); border-color: var(--border); }
-    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-dim), var(--gold)); border: 2px solid rgba(201, 168, 76, 0.4); display: flex; align-items: center; justify-content: center; color: var(--navy); font-weight: 700; font-size: 12px; }
-    .user-info { display: flex; flex-direction: column; }
-    .user-name { font-weight: 600; color: var(--white); font-size: 13px; line-height: 1.2; }
-    .user-role { font-size: 11px; color: var(--gold); }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--cream);
+      overflow-x: hidden;
+      line-height: 1.6;
+      display: flex;
+      height: 100vh;
+    }
 
-    .main-content { flex: 1; margin-left: 260px; margin-top: 64px; padding: 28px 28px 40px; overflow-y: auto; height: calc(100vh - 64px); }
-    .page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; }
-    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--cream-dim); margin-bottom: 8px; }
-    .breadcrumb span { color: var(--gold); }
-    .dashboard-title { font-family: 'Cinzel', serif; font-size: 26px; font-weight: 700; color: var(--white); line-height: 1.2; }
-    .dashboard-subtitle { font-size: 14px; color: var(--cream-dim); font-weight: 400; margin-top: 4px; }
-    .page-header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--r); font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; text-decoration: none; transition: all 0.2s; }
-    .btn-primary { background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--navy); }
-    .btn-primary:hover { background: linear-gradient(135deg, var(--gold), var(--gold-lt)); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3); }
-    .btn-ghost { background: var(--glass); border: 1px solid var(--border-b); color: var(--cream); }
-    .btn-ghost:hover { background: var(--glass-b); color: var(--white); }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
 
-    .alert-banner { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--r-lg); margin-bottom: 24px; }
-    .alert-icon { color: var(--warning); flex-shrink: 0; }
-    .alert-text { font-size: 14px; color: var(--cream); flex: 1; }
-    .alert-text strong { color: var(--warning); }
-    .alert-close { background: none; border: none; color: var(--cream-dim); cursor: pointer; display: flex; align-items: center; padding: 2px; border-radius: 4px; transition: color 0.2s; }
-    .alert-close:hover { color: var(--white); }
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background-image: linear-gradient(rgba(201, 168, 76, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201, 168, 76, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
 
-    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .kpi-card { background: var(--glass); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; position: relative; overflow: hidden; }
-    .kpi-card::after { content: ''; position: absolute; top: 0; right: 0; width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle, rgba(201, 168, 76, 0.07) 0%, transparent 70%); }
-    .kpi-card:hover { transform: translateY(-3px); border-color: var(--border-b); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); }
-    .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .kpi-label { font-size: 12px; font-weight: 600; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 0.08em; }
-    .kpi-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--navy-3), var(--blue-mid)); border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px; }
-    .kpi-value { font-family: 'Cinzel', serif; font-size: 30px; font-weight: 700; color: var(--white); line-height: 1; margin-bottom: 6px; }
-    .kpi-trend { display: flex; align-items: center; gap: 4px; font-size: 12px; }
-    .kpi-trend.up { color: var(--success); }
-    .kpi-trend.down { color: var(--danger); }
-    .kpi-trend.neutral { color: var(--cream-dim); }
-    .kpi-progress { margin-top: 14px; height: 4px; background: rgba(255, 255, 255, 0.08); border-radius: 2px; overflow: hidden; }
-    .kpi-progress-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+    .sidebar {
+      width: 260px;
+      background: rgba(5, 13, 31, 0.92);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
 
-    .widgets-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 24px; }
-    .col-8 { grid-column: span 8; }
-    .col-4 { grid-column: span 4; }
-    .col-6 { grid-column: span 6; }
-    .col-12 { grid-column: span 12; }
-    .widget-card { background: var(--glass); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px; transition: border-color 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
-    .widget-card:hover { border-color: var(--border-b); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
-    .widget-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-    .widget-header-left { display: flex; align-items: center; gap: 12px; }
-    .widget-icon { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--navy-3), var(--blue-mid)); border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px; flex-shrink: 0; }
-    .widget-title { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600; color: var(--white); }
-    .widget-subtitle { font-size: 12px; color: var(--cream-dim); margin-top: 2px; }
-    .widget-action-link { font-size: 12px; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 4px; transition: color 0.2s; }
-    .widget-action-link:hover { color: var(--gold-lt); }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      padding: 28px 20px 22px;
+      border-bottom: 1px solid var(--border);
+    }
 
-    .digital-wallet { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .wallet-item { background: rgba(10, 24, 51, 0.5); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 12px; text-align: center; transition: all 0.25s; cursor: pointer; }
-    .wallet-item:hover { background: var(--glass-b); border-color: var(--border-b); transform: translateY(-2px); }
-    .wallet-icon { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--blue-mid), var(--navy-3)); border: 1px solid var(--border-b); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: var(--gold); font-size: 22px; }
-    .wallet-label { font-size: 12px; color: var(--cream-dim); font-weight: 500; margin-bottom: 6px; }
-    .status-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .status-pill.verified { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.25); }
-    .status-pill.available { background: rgba(201, 168, 76, 0.12); color: var(--gold); border: 1px solid rgba(201, 168, 76, 0.25); }
-    .status-pill.processing { background: rgba(59, 130, 246, 0.12); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.25); }
-    .status-pill.expired { background: rgba(239, 68, 68, 0.12); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
-    .status-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .sidebar-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy-3));
+      border: 1px solid var(--border-b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
 
-    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .action-btn { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: rgba(10, 24, 51, 0.4); border: 1px solid var(--border); border-radius: var(--r); text-decoration: none; color: var(--cream); transition: all 0.25s; cursor: pointer; }
-    .action-btn:hover { background: var(--glass-b); border-color: var(--border-b); transform: translateY(-2px); }
-    .action-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--gold-dim), var(--gold)); display: flex; align-items: center; justify-content: center; color: var(--navy); font-size: 20px; flex-shrink: 0; }
-    .action-label { font-size: 13px; font-weight: 600; color: var(--white); line-height: 1.2; }
-    .action-desc { font-size: 11px; color: var(--cream-dim); }
+    .sidebar-brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo-text {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      color: var(--white);
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .sidebar-logo-sub {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      padding: 20px 20px 8px;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding: 4px 12px;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--r);
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+    }
+
+    .sidebar-nav a:hover {
+      background: var(--glass-b);
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    .sidebar-nav a.active {
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.08));
+      color: var(--gold) !important;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      cursor: pointer;
+    }
+
+    .sidebar-nav a.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      background: var(--gold);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+    }
+
+    .sidebar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .sidebar-user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-user-role {
+      font-size: 11px;
+      color: var(--gold);
+    }
+
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 260px;
+      right: 0;
+      height: 64px;
+      background: rgba(5, 13, 31, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      z-index: 99;
+    }
+
+    .top-nav-search {
+      flex: 1;
+      max-width: 360px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cream-dim);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .top-nav-search-input {
+      width: 100%;
+      padding: 9px 14px 9px 40px;
+      background: rgba(10, 24, 51, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .top-nav-search-input::placeholder {
+      color: rgba(205, 200, 180, 0.4);
+    }
+
+    .top-nav-search-input:focus {
+      border-color: var(--border-b);
+      background: rgba(10, 24, 51, 0.9);
+    }
+
+    .top-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .nav-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--r);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .nav-icon-btn:hover {
+      background: var(--glass-b);
+      color: var(--white);
+      border-color: var(--border-b);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      border: 2px solid var(--navy);
+      animation: pulse 2s ease infinite;
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 28px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .top-nav-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: var(--r-lg);
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .top-nav-user:hover {
+      background: var(--glass);
+      border-color: var(--border);
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      border: 2px solid rgba(201, 168, 76, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--white);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .user-role {
+      font-size: 11px;
+      color: var(--gold);
+    }
+
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      margin-top: 64px;
+      padding: 28px 28px 40px;
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--cream-dim);
+      margin-bottom: 8px;
+    }
+
+    .breadcrumb span {
+      color: var(--gold);
+    }
+
+    .dashboard-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .dashboard-subtitle {
+      font-size: 14px;
+      color: var(--cream-dim);
+      font-weight: 400;
+      margin-top: 4px;
+    }
+
+    .page-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: var(--r);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: var(--navy);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.3);
+    }
+
+    .btn-ghost {
+      background: var(--glass);
+      border: 1px solid var(--border-b);
+      color: var(--cream);
+    }
+
+    .btn-ghost:hover {
+      background: var(--glass-b);
+      color: var(--white);
+    }
+
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: var(--r-lg);
+      margin-bottom: 24px;
+    }
+
+    .alert-icon {
+      color: var(--warning);
+      flex-shrink: 0;
+    }
+
+    .alert-text {
+      font-size: 14px;
+      color: var(--cream);
+      flex: 1;
+    }
+
+    .alert-text strong {
+      color: var(--warning);
+    }
+
+    .alert-close {
+      background: none;
+      border: none;
+      color: var(--cream-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+
+    .alert-close:hover {
+      color: var(--white);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.07) 0%, transparent 70%);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-b);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cream-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .kpi-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--navy-3), var(--blue-mid));
+      border: 1px solid var(--border-b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .kpi-value {
+      font-family: 'Cinzel', serif;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-trend {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .kpi-trend.up {
+      color: var(--success);
+    }
+
+    .kpi-trend.down {
+      color: var(--danger);
+    }
+
+    .kpi-trend.neutral {
+      color: var(--cream-dim);
+    }
+
+    .kpi-progress {
+      margin-top: 14px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .kpi-progress-bar {
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    }
+
+    .widgets-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .col-8 {
+      grid-column: span 8;
+    }
+
+    .col-4 {
+      grid-column: span 4;
+    }
+
+    .col-6 {
+      grid-column: span 6;
+    }
+
+    .col-12 {
+      grid-column: span 12;
+    }
+
+    .widget-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 22px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .widget-card:hover {
+      border-color: var(--border-b);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .widget-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .widget-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--navy-3), var(--blue-mid));
+      border: 1px solid var(--border-b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .widget-title {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .widget-subtitle {
+      font-size: 12px;
+      color: var(--cream-dim);
+      margin-top: 2px;
+    }
+
+    .widget-action-link {
+      font-size: 12px;
+      color: var(--gold);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .widget-action-link:hover {
+      color: var(--gold-lt);
+    }
+
+    .digital-wallet {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .wallet-item {
+      background: rgba(10, 24, 51, 0.5);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px 12px;
+      text-align: center;
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+
+    .wallet-item:hover {
+      background: var(--glass-b);
+      border-color: var(--border-b);
+      transform: translateY(-2px);
+    }
+
+    .wallet-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy-3));
+      border: 1px solid var(--border-b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      color: var(--gold);
+      font-size: 22px;
+    }
+
+    .wallet-label {
+      font-size: 12px;
+      color: var(--cream-dim);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-pill.verified {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+    }
+
+    .status-pill.available {
+      background: rgba(201, 168, 76, 0.12);
+      color: var(--gold);
+      border: 1px solid rgba(201, 168, 76, 0.25);
+    }
+
+    .status-pill.processing {
+      background: rgba(59, 130, 246, 0.12);
+      color: var(--info);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .status-pill.expired {
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .status-pill::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: rgba(10, 24, 51, 0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      text-decoration: none;
+      color: var(--cream);
+      transition: all 0.25s;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: var(--glass-b);
+      border-color: var(--border-b);
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .action-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .action-desc {
+      font-size: 11px;
+      color: var(--cream-dim);
+    }
 
     .activity-list {}
-    .activity-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(201, 168, 76, 0.08); }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-item:first-child { padding-top: 0; }
-    .activity-icon { width: 34px; height: 34px; border-radius: 8px; background: rgba(201, 168, 76, 0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--gold); flex-shrink: 0; font-size: 17px; }
-    .activity-content { flex: 1; min-width: 0; }
-    .activity-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    .activity-title { font-weight: 600; color: var(--white); font-size: 13px; }
-    .activity-time { font-size: 11px; color: var(--cream-dim); white-space: nowrap; flex-shrink: 0; }
-    .activity-description { font-size: 12px; color: var(--cream-dim); line-height: 1.5; margin-top: 3px; }
 
-    .profile-completion { display: flex; flex-direction: column; gap: 14px; }
-    .completion-header { display: flex; align-items: center; justify-content: space-between; }
-    .completion-pct { font-family: 'Cinzel', serif; font-size: 28px; font-weight: 700; color: var(--gold); }
-    .completion-label { font-size: 12px; color: var(--cream-dim); margin-top: 2px; }
-    .progress-track { height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); transition: width 1s ease; }
-    .completion-items { display: flex; flex-direction: column; gap: 10px; }
-    .completion-item { display: flex; align-items: center; gap: 10px; font-size: 13px; }
-    .completion-check { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
-    .completion-check.done { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.3); }
-    .completion-check.todo { background: rgba(201, 168, 76, 0.1); color: var(--gold); border: 1px solid var(--border); }
-    .completion-item-label { color: var(--cream); }
-    .completion-item-label.done-label { color: var(--cream-dim); text-decoration: line-through; }
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+    }
 
-    .requests-table { width: 100%; border-collapse: collapse; }
-    .requests-table th { text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cream-dim); padding: 0 12px 12px 0; border-bottom: 1px solid var(--border); }
-    .requests-table td { padding: 12px 12px 12px 0; font-size: 13px; border-bottom: 1px solid rgba(201, 168, 76, 0.06); vertical-align: middle; }
-    .requests-table tr:last-child td { border-bottom: none; }
-    .requests-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
-    .doc-name { font-weight: 600; color: var(--white); font-size: 13px; }
-    .doc-ref { font-size: 11px; color: var(--cream-dim); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
-    .table-action { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--gold); cursor: pointer; border: none; background: none; padding: 0; transition: color 0.2s; }
-    .table-action:hover { color: var(--gold-lt); }
+    .activity-item:last-child {
+      border-bottom: none;
+    }
 
-    @media (max-width: 1280px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } .col-8, .col-4 { grid-column: span 12; } }
-    @media (max-width: 1024px) { .sidebar { width: 68px; } .sidebar-logo-text, .sidebar-logo-sub, .sidebar-nav span:not(.material-symbols-outlined), .nav-badge, .sidebar-user-info { display: none; } .top-nav { left: 68px; } .main-content { margin-left: 68px; } .sidebar-nav a { justify-content: center; padding: 12px; } .sidebar-header { justify-content: center; padding: 20px 12px; } .sidebar-logo { margin-right: 0; } .sidebar-section-label { display: none; } .sidebar-user-pill { justify-content: center; } .sidebar-avatar { flex-shrink: 0; } .digital-wallet { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 768px) { .kpi-grid { grid-template-columns: 1fr; } .col-6 { grid-column: span 12; } .main-content { padding: 16px; } .quick-actions { grid-template-columns: 1fr; } .page-header { flex-direction: column; gap: 12px; } }
-    @media (max-width: 600px) { .sidebar { width: 0; padding: 0; overflow: hidden; } .top-nav { left: 0; } .main-content { margin-left: 0; } .digital-wallet { grid-template-columns: repeat(2, 1fr); } }
+    .activity-item:first-child {
+      padding-top: 0;
+    }
 
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-    .s0 { animation: slideIn 0.4s ease forwards; } .s1 { animation: slideIn 0.4s 0.08s ease both; } .s2 { animation: slideIn 0.4s 0.16s ease both; } .s3 { animation: slideIn 0.4s 0.24s ease both; } .s4 { animation: slideIn 0.4s 0.32s ease both; } .s5 { animation: slideIn 0.4s 0.40s ease both; } .s6 { animation: slideIn 0.4s 0.48s ease both; }
+    .activity-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      flex-shrink: 0;
+      font-size: 17px;
+    }
 
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(201, 168, 76, 0.2); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.4); }
+    .activity-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      color: var(--white);
+      font-size: 13px;
+    }
+
+    .activity-time {
+      font-size: 11px;
+      color: var(--cream-dim);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .activity-description {
+      font-size: 12px;
+      color: var(--cream-dim);
+      line-height: 1.5;
+      margin-top: 3px;
+    }
+
+    .profile-completion {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .completion-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .completion-pct {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .completion-label {
+      font-size: 12px;
+      color: var(--cream-dim);
+      margin-top: 2px;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+      transition: width 1s ease;
+    }
+
+    .completion-items {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .completion-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .completion-check {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+
+    .completion-check.done {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .completion-check.todo {
+      background: rgba(201, 168, 76, 0.1);
+      color: var(--gold);
+      border: 1px solid var(--border);
+    }
+
+    .completion-item-label {
+      color: var(--cream);
+    }
+
+    .completion-item-label.done-label {
+      color: var(--cream-dim);
+      text-decoration: line-through;
+    }
+
+    .requests-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .requests-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--cream-dim);
+      padding: 0 12px 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .requests-table td {
+      padding: 12px 12px 12px 0;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(201, 168, 76, 0.06);
+      vertical-align: middle;
+    }
+
+    .requests-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .requests-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .doc-name {
+      font-weight: 600;
+      color: var(--white);
+      font-size: 13px;
+    }
+
+    .doc-ref {
+      font-size: 11px;
+      color: var(--cream-dim);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    .table-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--gold);
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .table-action:hover {
+      color: var(--gold-lt);
+    }
+
+    @media (max-width: 1280px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .col-8,
+      .col-4 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 68px;
+      }
+
+      .sidebar-logo-text,
+      .sidebar-logo-sub,
+      .sidebar-nav span:not(.material-symbols-outlined),
+      .nav-badge,
+      .sidebar-user-info {
+        display: none;
+      }
+
+      .top-nav {
+        left: 68px;
+      }
+
+      .main-content {
+        margin-left: 68px;
+      }
+
+      .sidebar-nav a {
+        justify-content: center;
+        padding: 12px;
+      }
+
+      .sidebar-header {
+        justify-content: center;
+        padding: 20px 12px;
+      }
+
+      .sidebar-logo {
+        margin-right: 0;
+      }
+
+      .sidebar-section-label {
+        display: none;
+      }
+
+      .sidebar-user-pill {
+        justify-content: center;
+      }
+
+      .sidebar-avatar {
+        flex-shrink: 0;
+      }
+
+      .digital-wallet {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .col-6 {
+        grid-column: span 12;
+      }
+
+      .main-content {
+        padding: 16px;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .page-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .top-nav {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .digital-wallet {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .s0 {
+      animation: slideIn 0.4s ease forwards;
+    }
+
+    .s1 {
+      animation: slideIn 0.4s 0.08s ease both;
+    }
+
+    .s2 {
+      animation: slideIn 0.4s 0.16s ease both;
+    }
+
+    .s3 {
+      animation: slideIn 0.4s 0.24s ease both;
+    }
+
+    .s4 {
+      animation: slideIn 0.4s 0.32s ease both;
+    }
+
+    .s5 {
+      animation: slideIn 0.4s 0.40s ease both;
+    }
+
+    .s6 {
+      animation: slideIn 0.4s 0.48s ease both;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(201, 168, 76, 0.2);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(201, 168, 76, 0.4);
+    }
   </style>
 </head>
 
@@ -196,7 +1260,10 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo"><span class="material-symbols-outlined">account_balance</span></div>
-      <div class="sidebar-brand"><div class="sidebar-logo-text">CitizenNode</div><div class="sidebar-logo-sub">E-Governance</div></div>
+      <div class="sidebar-brand">
+        <div class="sidebar-logo-text">CitizenNode</div>
+        <div class="sidebar-logo-sub">E-Governance</div>
+      </div>
     </div>
 
     <div class="sidebar-section-label">Main Menu</div>
@@ -222,14 +1289,18 @@
     <div class="sidebar-section-label">Account</div>
     <ul class="sidebar-nav">
       <li><a href="settings.html"><span class="material-symbols-outlined">settings</span><span>Settings</span></a></li>
-      <li><a href="help.html"><span class="material-symbols-outlined">help_outline</span><span>Help & Support</span></a></li>
+      <li><a href="help.html"><span class="material-symbols-outlined">help_outline</span><span>Help & Support</span></a>
+      </li>
       <li><a onclick="logout()"><span class="material-symbols-outlined">logout</span><span>Secure Logout</span></a></li>
     </ul>
 
     <div class="sidebar-footer">
       <div class="sidebar-user-pill">
-        <div class="sidebar-avatar">JD</div>
-        <div class="sidebar-user-info"><div class="sidebar-user-name">John Doe</div><div class="sidebar-user-role">Citizen · Verified</div></div>
+        <div class="sidebar-avatar">{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">{{#if user.fullName}}{{user.fullName}}{{else}}Citizen{{/if}}</div>
+          <div class="sidebar-user-role">{{user.citizenId}}</div>
+        </div>
       </div>
     </div>
   </aside>
@@ -240,12 +1311,19 @@
       <input type="text" class="top-nav-search-input" placeholder="Search documents, certificates…" id="searchInput">
     </div>
     <div class="top-nav-actions">
-      <div class="nav-icon-btn" title="Notifications" id="notifBtn"><span class="material-symbols-outlined" style="font-size:20px">notifications</span><div class="notif-dot"></div></div>
-      <div class="nav-icon-btn" title="Messages"><span class="material-symbols-outlined" style="font-size:20px">mail_outline</span></div>
+      <div class="nav-icon-btn" title="Notifications" id="notifBtn"><span class="material-symbols-outlined"
+          style="font-size:20px">notifications</span>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="nav-icon-btn" title="Messages"><span class="material-symbols-outlined"
+          style="font-size:20px">mail_outline</span></div>
       <div class="nav-divider"></div>
       <div class="top-nav-user" id="userMenuBtn">
-        <div class="user-avatar">JD</div>
-        <div class="user-info"><div class="user-name">John Doe</div><div class="user-role">Authenticated Citizen</div></div>
+        <div class="user-avatar">{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}</div>
+        <div class="user-info">
+          <div class="user-name">{{user.email}}</div>
+          <div class="user-role">Authenticated Citizen</div>
+        </div>
         <span class="material-symbols-outlined" style="font-size:18px;color:var(--cream-dim)">expand_more</span>
       </div>
     </div>
@@ -254,113 +1332,299 @@
   <main class="main-content">
 
     <div id="view-dashboard">
-      <div class="page-header s0">
-        <div class="page-header-text">
-          <div class="breadcrumb"><span>CitizenNode</span><span class="material-symbols-outlined" style="font-size:14px">chevron_right</span>Dashboard</div>
-          <h1 class="dashboard-title">Welcome back, John Doe</h1>
-          <p class="dashboard-subtitle">Tuesday, 13 May 2026 &nbsp;·&nbsp; Your documents are secure and up to date</p>
-        </div>
-        <div class="page-header-actions">
-          <a href="request.html" class="btn btn-ghost"><span class="material-symbols-outlined" style="font-size:16px">add</span>New Request</a>
-          <a href="documents.html" class="btn btn-primary"><span class="material-symbols-outlined" style="font-size:16px">folder_open</span>My Documents</a>
-        </div>
-      </div>
-
+      {{#unless user.profileComplete}}
       <div class="alert-banner s1" id="alertBanner">
         <span class="material-symbols-outlined alert-icon">warning_amber</span>
-        <div class="alert-text"><strong>Action required:</strong> Your Professional License expired. Renew it to avoid service disruptions.</div>
-        <a href="request.html" class="btn btn-ghost" style="padding:6px 12px;font-size:12px;">Renew Now</a>
-        <button class="alert-close" onclick="dismissAlert()"><span class="material-symbols-outlined" style="font-size:18px">close</span></button>
+        <div class="alert-text"><strong>Action required:</strong> Your profile is incomplete. Please finish registration
+          to unlock all features.</div>
+        <a href="settings.html" class="btn btn-ghost" style="padding:6px 12px;font-size:12px;">Complete Profile</a>
+        <button class="alert-close" onclick="dismissAlert()"><span class="material-symbols-outlined"
+            style="font-size:18px">close</span></button>
+      </div>
+      {{/unless}}
+
+      <div class="page-header s0">
+        <div class="page-header-text">
+          <div class="breadcrumb"><span>CitizenNode</span><span class="material-symbols-outlined"
+              style="font-size:14px">chevron_right</span>Dashboard</div>
+          <h1 class="dashboard-title">Welcome back, {{#if user.fullName}}{{user.fullName}}{{else}}Citizen{{/if}}</h1>
+          <p class="dashboard-subtitle">Your documents are secure and up to date</p>
+        </div>
+        <div class="page-header-actions">
+          <a href="request.html" class="btn btn-ghost"><span class="material-symbols-outlined"
+              style="font-size:16px">add</span>New Request</a>
+          <a href="documents.html" class="btn btn-primary"><span class="material-symbols-outlined"
+              style="font-size:16px">folder_open</span>My Documents</a>
+        </div>
       </div>
 
       <div class="kpi-grid s2">
         <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-label">Active Documents</div><div class="kpi-icon"><span class="material-symbols-outlined">description</span></div></div>
-          <div class="kpi-value">3</div><div class="kpi-trend up"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>+1 this month</div>
-          <div class="kpi-progress"><div class="kpi-progress-bar" style="width:75%"></div></div>
+          <div class="kpi-header">
+            <div class="kpi-label">Active Documents</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">description</span></div>
+          </div>
+          <div class="kpi-value">{{documentCount}}</div>
+          <div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">remove</span>No change</div>
+          <div class="kpi-progress">
+            <div class="kpi-progress-bar" style="width:{{#if documentCount}}75{{else}}0{{/if}}%"></div>
+          </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-label">Pending Requests</div><div class="kpi-icon"><span class="material-symbols-outlined">hourglass_top</span></div></div>
-          <div class="kpi-value">1</div><div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">remove</span>No change</div>
-          <div class="kpi-progress"><div class="kpi-progress-bar" style="width:25%;background:linear-gradient(90deg,#1a3a6b,#3b82f6)"></div></div>
+          <div class="kpi-header">
+            <div class="kpi-label">Pending Requests</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">hourglass_top</span></div>
+          </div>
+          <div class="kpi-value">0</div>
+          <div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">remove</span>No change</div>
+          <div class="kpi-progress">
+            <div class="kpi-progress-bar" style="width:0%;background:linear-gradient(90deg,#1a3a6b,#3b82f6)"></div>
+          </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-label">Profile Completion</div><div class="kpi-icon"><span class="material-symbols-outlined">person_check</span></div></div>
-          <div class="kpi-value">98%</div><div class="kpi-trend up"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>Almost complete</div>
-          <div class="kpi-progress"><div class="kpi-progress-bar" style="width:98%"></div></div>
+          <div class="kpi-header">
+            <div class="kpi-label">Profile Completion</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">person_check</span></div>
+          </div>
+          <div class="kpi-value">{{#if user.profileComplete}}100%{{else}}40%{{/if}}</div>
+          <div class="kpi-trend {{#if user.profileComplete}}up{{else}}neutral{{/if}}"><span class="material-symbols-outlined"
+              style="font-size:14px">{{#if user.profileComplete}}trending_up{{else}}remove{{/if}}</span>{{#if user.profileComplete}}Fully Verified{{else}}Incomplete{{/if}}</div>
+          <div class="kpi-progress">
+            <div class="kpi-progress-bar" style="width:{{#if user.profileComplete}}100{{else}}40{{/if}}%"></div>
+          </div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-label">Security Score</div><div class="kpi-icon"><span class="material-symbols-outlined">verified_user</span></div></div>
-          <div class="kpi-value">A+</div><div class="kpi-trend up"><span class="material-symbols-outlined" style="font-size:14px">shield</span>2FA Enabled</div>
-          <div class="kpi-progress"><div class="kpi-progress-bar" style="width:95%;background:linear-gradient(90deg,#15803d,#22c55e)"></div></div>
+          <div class="kpi-header">
+            <div class="kpi-label">Security Score</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">verified_user</span></div>
+          </div>
+          <div class="kpi-value">A</div>
+          <div class="kpi-trend up"><span class="material-symbols-outlined" style="font-size:14px">shield</span>2FA Available</div>
+          <div class="kpi-progress">
+            <div class="kpi-progress-bar" style="width:85%;background:linear-gradient(90deg,#15803d,#22c55e)"></div>
+          </div>
         </div>
       </div>
 
       <div class="widgets-grid">
         <section class="widget-card col-8 s3">
           <div class="widget-header">
-            <div class="widget-header-left"><div class="widget-icon"><span class="material-symbols-outlined">wallet</span></div><div><div class="widget-title">Digital Document Wallet</div><div class="widget-subtitle">Your verified government documents</div></div></div>
-            <a href="documents.html" class="widget-action-link">View all <span class="material-symbols-outlined" style="font-size:15px">arrow_forward</span></a>
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">wallet</span></div>
+              <div>
+                <div class="widget-title">Digital Document Wallet</div>
+                <div class="widget-subtitle">Your verified government documents</div>
+              </div>
+            </div>
+            <a href="documents.html" class="widget-action-link">View all <span class="material-symbols-outlined"
+                style="font-size:15px">arrow_forward</span></a>
           </div>
           <div class="digital-wallet">
-            <div class="wallet-item"><div class="wallet-icon"><span class="material-symbols-outlined">badge</span></div><div class="wallet-label">National ID</div><div class="status-pill verified">Verified</div></div>
-            <div class="wallet-item"><div class="wallet-icon"><span class="material-symbols-outlined">child_care</span></div><div class="wallet-label">Birth Certificate</div><div class="status-pill available">Available</div></div>
-            <div class="wallet-item"><div class="wallet-icon"><span class="material-symbols-outlined">school</span></div><div class="wallet-label">Education Cert</div><div class="status-pill processing">Processing</div></div>
-            <div class="wallet-item"><div class="wallet-icon"><span class="material-symbols-outlined">work</span></div><div class="wallet-label">Professional Lic</div><div class="status-pill expired">Expired</div></div>
+            <div class="wallet-item">
+              <div class="wallet-icon"><span class="material-symbols-outlined">badge</span></div>
+              <div class="wallet-label">National ID</div>
+              <div class="status-pill verified">Verified</div>
+            </div>
+            <div class="wallet-item">
+              <div class="wallet-icon"><span class="material-symbols-outlined">child_care</span></div>
+              <div class="wallet-label">Birth Certificate</div>
+              <div class="status-pill available">Available</div>
+            </div>
+            <div class="wallet-item">
+              <div class="wallet-icon"><span class="material-symbols-outlined">school</span></div>
+              <div class="wallet-label">Education Cert</div>
+              <div class="status-pill processing">Processing</div>
+            </div>
+            <div class="wallet-item">
+              <div class="wallet-icon"><span class="material-symbols-outlined">work</span></div>
+              <div class="wallet-label">Professional Lic</div>
+              <div class="status-pill expired">Expired</div>
+            </div>
           </div>
         </section>
 
         <section class="widget-card col-4 s3">
           <div class="widget-header">
-            <div class="widget-header-left"><div class="widget-icon"><span class="material-symbols-outlined">manage_accounts</span></div><div><div class="widget-title">Profile Status</div><div class="widget-subtitle">Account completion</div></div></div>
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">manage_accounts</span></div>
+              <div>
+                <div class="widget-title">Profile Status</div>
+                <div class="widget-subtitle">Account completion</div>
+              </div>
+            </div>
           </div>
           <div class="profile-completion">
-            <div class="completion-header"><div><div class="completion-pct">98%</div><div class="completion-label">Profile complete</div></div></div>
-            <div class="progress-track"><div class="progress-fill" style="width:98%"></div></div>
+            <div class="completion-header">
+              <div>
+                <div class="completion-pct">98%</div>
+                <div class="completion-label">Profile complete</div>
+              </div>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width:98%"></div>
+            </div>
             <div class="completion-items">
-              <div class="completion-item"><div class="completion-check done"><span class="material-symbols-outlined" style="font-size:12px">check</span></div><span class="completion-item-label done-label">Identity verified</span></div>
-              <div class="completion-item"><div class="completion-check done"><span class="material-symbols-outlined" style="font-size:12px">check</span></div><span class="completion-item-label done-label">Contact info set</span></div>
-              <div class="completion-item"><div class="completion-check done"><span class="material-symbols-outlined" style="font-size:12px">check</span></div><span class="completion-item-label done-label">2FA enabled</span></div>
-              <div class="completion-item"><div class="completion-check todo"><span class="material-symbols-outlined" style="font-size:12px">add</span></div><span class="completion-item-label">Add biometric data</span></div>
+              <div class="completion-item">
+                <div class="completion-check done"><span class="material-symbols-outlined"
+                    style="font-size:12px">check</span></div><span class="completion-item-label done-label">Identity
+                  verified</span>
+              </div>
+              <div class="completion-item">
+                <div class="completion-check done"><span class="material-symbols-outlined"
+                    style="font-size:12px">check</span></div><span class="completion-item-label done-label">Contact info
+                  set</span>
+              </div>
+              <div class="completion-item">
+                <div class="completion-check done"><span class="material-symbols-outlined"
+                    style="font-size:12px">check</span></div><span class="completion-item-label done-label">2FA
+                  enabled</span>
+              </div>
+              <div class="completion-item">
+                <div class="completion-check todo"><span class="material-symbols-outlined"
+                    style="font-size:12px">add</span></div><span class="completion-item-label">Add biometric data</span>
+              </div>
             </div>
           </div>
         </section>
 
         <section class="widget-card col-4 s4">
           <div class="widget-header">
-            <div class="widget-header-left"><div class="widget-icon"><span class="material-symbols-outlined">bolt</span></div><div><div class="widget-title">Quick Actions</div><div class="widget-subtitle">Common tasks</div></div></div>
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">bolt</span></div>
+              <div>
+                <div class="widget-title">Quick Actions</div>
+                <div class="widget-subtitle">Common tasks</div>
+              </div>
+            </div>
           </div>
           <div class="quick-actions">
-            <a href="#" class="action-btn" onclick="digitizeDocument(event)"><div class="action-icon"><span class="material-symbols-outlined">document_scanner</span></div><div class="action-text"><div class="action-label">Digitize Document</div><div class="action-desc">Scan & upload</div></div></a>
-            <a href="#" class="action-btn" onclick="generatePassport(event)"><div class="action-icon"><span class="material-symbols-outlined">passport</span></div><div class="action-text"><div class="action-label">Generate Passport</div><div class="action-desc">From national ID</div></div></a>
-            <a href="#" class="action-btn" onclick="switchView('report-lost', event)"><div class="action-icon"><span class="material-symbols-outlined">report_problem</span></div><div class="action-text"><div class="action-label">Report Lost Doc</div><div class="action-desc">Instant notification</div></div></a>
-            <a href="#" class="action-btn" onclick="downloadAll(event)"><div class="action-icon"><span class="material-symbols-outlined">download</span></div><div class="action-text"><div class="action-label">Download All</div><div class="action-desc">Export as PDF</div></div></a>
+            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="digitizeDocument(event)">
+              <div class="action-icon"><span class="material-symbols-outlined">document_scanner</span></div>
+              <div class="action-text">
+                <div class="action-label">Digitize Document</div>
+                <div class="action-desc">Scan & upload</div>
+              </div>
+            </a>
+            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="generatePassport(event)">
+              <div class="action-icon"><span class="material-symbols-outlined">passport</span></div>
+              <div class="action-text">
+                <div class="action-label">Generate Passport</div>
+                <div class="action-desc">From national ID</div>
+              </div>
+            </a>
+            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="switchView('report-lost', event)">
+              <div class="action-icon"><span class="material-symbols-outlined">report_problem</span></div>
+              <div class="action-text">
+                <div class="action-label">Report Lost Doc</div>
+                <div class="action-desc">Instant notification</div>
+              </div>
+            </a>
+            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="downloadAll(event)">
+              <div class="action-icon"><span class="material-symbols-outlined">download</span></div>
+              <div class="action-text">
+                <div class="action-label">Download All</div>
+                <div class="action-desc">Export as PDF</div>
+              </div>
+            </a>
           </div>
         </section>
 
         <section class="widget-card col-8 s4">
           <div class="widget-header">
-            <div class="widget-header-left"><div class="widget-icon"><span class="material-symbols-outlined">history</span></div><div><div class="widget-title">Recent Activity</div><div class="widget-subtitle">Last 7 days</div></div></div>
-            <a href="#" class="widget-action-link">View log <span class="material-symbols-outlined" style="font-size:15px">arrow_forward</span></a>
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">history</span></div>
+              <div>
+                <div class="widget-title">Recent Activity</div>
+                <div class="widget-subtitle">Last 7 days</div>
+              </div>
+            </div>
+            <a href="#" class="widget-action-link">View log <span class="material-symbols-outlined"
+                style="font-size:15px">arrow_forward</span></a>
           </div>
           <div class="activity-list">
-            <div class="activity-item"><div class="activity-icon"><span class="material-symbols-outlined">check_circle</span></div><div class="activity-content"><div class="activity-row"><div class="activity-title">National ID Verified</div><div class="activity-time">2 days ago</div></div><div class="activity-description">Your identity has been successfully verified and is now active.</div></div></div>
-            <div class="activity-item"><div class="activity-icon"><span class="material-symbols-outlined">upload_file</span></div><div class="activity-content"><div class="activity-row"><div class="activity-title">Birth Certificate Uploaded</div><div class="activity-time">5 days ago</div></div><div class="activity-description">Scanned and stored your birth certificate in the secure vault.</div></div></div>
-            <div class="activity-item"><div class="activity-icon"><span class="material-symbols-outlined">search</span></div><div class="activity-content"><div class="activity-row"><div class="activity-title">Document Search</div><div class="activity-time">Today, 09:14</div></div><div class="activity-description">Searched for marriage certificate templates.</div></div></div>
-            <div class="activity-item"><div class="activity-icon"><span class="material-symbols-outlined">manage_accounts</span></div><div class="activity-content"><div class="activity-row"><div class="activity-title">Profile Updated</div><div class="activity-time">Yesterday</div></div><div class="activity-description">Updated contact information and security preferences.</div></div></div>
+            <div class="activity-item">
+              <div class="activity-icon"><span class="material-symbols-outlined">check_circle</span></div>
+              <div class="activity-content">
+                <div class="activity-row">
+                  <div class="activity-title">National ID Verified</div>
+                  <div class="activity-time">2 days ago</div>
+                </div>
+                <div class="activity-description">Your identity has been successfully verified and is now active.</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon"><span class="material-symbols-outlined">upload_file</span></div>
+              <div class="activity-content">
+                <div class="activity-row">
+                  <div class="activity-title">Birth Certificate Uploaded</div>
+                  <div class="activity-time">5 days ago</div>
+                </div>
+                <div class="activity-description">Scanned and stored your birth certificate in the secure vault.</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon"><span class="material-symbols-outlined">search</span></div>
+              <div class="activity-content">
+                <div class="activity-row">
+                  <div class="activity-title">Document Search</div>
+                  <div class="activity-time">Today, 09:14</div>
+                </div>
+                <div class="activity-description">Searched for marriage certificate templates.</div>
+              </div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon"><span class="material-symbols-outlined">manage_accounts</span></div>
+              <div class="activity-content">
+                <div class="activity-row">
+                  <div class="activity-title">Profile Updated</div>
+                  <div class="activity-time">Yesterday</div>
+                </div>
+                <div class="activity-description">Updated contact information and security preferences.</div>
+              </div>
+            </div>
           </div>
         </section>
 
         <section class="widget-card col-12 s5">
           <div class="widget-header">
-            <div class="widget-header-left"><div class="widget-icon"><span class="material-symbols-outlined">pending_actions</span></div><div><div class="widget-title">Pending Certificate Requests</div><div class="widget-subtitle">Track your active submissions</div></div></div>
-            <a href="request.html" class="btn btn-ghost" style="padding:8px 14px;font-size:12px;"><span class="material-symbols-outlined" style="font-size:16px">add</span>New Request</a>
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">pending_actions</span></div>
+              <div>
+                <div class="widget-title">Pending Certificate Requests</div>
+                <div class="widget-subtitle">Track your active submissions</div>
+              </div>
+            </div>
+            <a href="request.html" class="btn btn-ghost" style="padding:8px 14px;font-size:12px;"><span
+                class="material-symbols-outlined" style="font-size:16px">add</span>New Request</a>
           </div>
           <table class="requests-table">
-            <thead><tr><th>Document</th><th>Submitted</th><th>Est. Completion</th><th>Status</th><th>Action</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Document</th>
+                <th>Submitted</th>
+                <th>Est. Completion</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td><div class="doc-name">Education Certificate</div><div class="doc-ref">REF-20260508-001</div></td><td style="color:var(--cream-dim);font-size:13px">8 May 2026</td><td style="color:var(--cream-dim);font-size:13px">15 May 2026</td><td><span class="status-pill processing">Processing</span></td><td><button class="table-action">Track <span class="material-symbols-outlined" style="font-size:14px">open_in_new</span></button></td></tr>
-              <tr><td><div class="doc-name">Professional License Renewal</div><div class="doc-ref">REF-20260511-002</div></td><td style="color:var(--cream-dim);font-size:13px">11 May 2026</td><td style="color:var(--cream-dim);font-size:13px">20 May 2026</td><td><span class="status-pill available">Submitted</span></td><td><button class="table-action">Track <span class="material-symbols-outlined" style="font-size:14px">open_in_new</span></button></td></tr>
+              {{#each documents}}
+              <tr>
+                <td>
+                  <div class="doc-name">{{this.documentType}}</div>
+                  <div class="doc-ref">{{this.id}}</div>
+                </td>
+                <td style="color:var(--cream-dim);font-size:13px">{{this.createdAt}}</td>
+                <td style="color:var(--cream-dim);font-size:13px">TBD</td>
+                <td><span class="status-pill {{#if (eq this.status 'VERIFIED')}}verified{{else}}processing{{/if}}">{{this.status}}</span></td>
+                <td><button class="table-action">Track <span class="material-symbols-outlined"
+                      style="font-size:14px">open_in_new</span></button></td>
+              </tr>
+              {{else}}
+              <tr>
+                <td colspan="5" style="text-align:center; color:var(--cream-dim); padding: 40px;">No active requests found.</td>
+              </tr>
+              {{/each}}
             </tbody>
           </table>
         </section>
@@ -371,14 +1635,16 @@
     <div id="view-report-lost" style="display: none;">
       <div class="page-header s0">
         <div class="page-header-text">
-          <div class="breadcrumb"><span>CitizenNode</span><span class="material-symbols-outlined" style="font-size:14px">chevron_right</span>Lost Document Submissions</div>
+          <div class="breadcrumb"><span>CitizenNode</span><span class="material-symbols-outlined"
+              style="font-size:14px">chevron_right</span>Lost Document Submissions</div>
           <h1 class="dashboard-title">Report a Lost Document</h1>
           <p class="dashboard-subtitle">Our secure wizard guides you through the replacement process</p>
         </div>
       </div>
 
       <div id="lost-step-1" class="widgets-grid s1">
-        <div class="widget-card col-4 lost-doc-card" data-type="national-id" style="cursor: pointer; text-align: center;">
+        <div class="widget-card col-4 lost-doc-card" data-type="national-id"
+          style="cursor: pointer; text-align: center;">
           <div class="widget-icon" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 24px;">🆔</div>
           <div class="widget-title">National ID</div>
           <div class="widget-subtitle">Identity replacement</div>
@@ -388,39 +1654,55 @@
           <div class="widget-title">International Passport</div>
           <div class="widget-subtitle">Secure border crossing</div>
         </div>
-        <div class="widget-card col-4 lost-doc-card" data-type="birth-certificate" style="cursor: pointer; text-align: center;">
+        <div class="widget-card col-4 lost-doc-card" data-type="birth-certificate"
+          style="cursor: pointer; text-align: center;">
           <div class="widget-icon" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 24px;">👶</div>
           <div class="widget-title">Birth Certificate</div>
           <div class="widget-subtitle">Primary record file</div>
         </div>
         <div class="col-12" style="text-align: right; margin-top: 20px;">
-          <button class="btn btn-primary" id="lost-next-btn" disabled style="opacity: 0.5; pointer-events: none; width: auto; padding: 12px 24px;">Continue to Questions</button>
+          <button class="btn btn-primary" id="lost-next-btn" disabled
+            style="opacity: 0.5; pointer-events: none; width: auto; padding: 12px 24px;">Continue to Questions</button>
         </div>
       </div>
 
       <div id="lost-step-2" style="display: none;" class="s2">
         <div class="widget-card col-8" style="margin: 0 auto;">
           <div class="widget-header">
-            <div class="widget-header-left"><div class="widget-icon"><span class="material-symbols-outlined">quiz</span></div><div><div class="widget-title" id="lost-form-title">Verification Questions</div><div class="widget-subtitle">Provide circumstance variables for validation</div></div></div>
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">quiz</span></div>
+              <div>
+                <div class="widget-title" id="lost-form-title">Verification Questions</div>
+                <div class="widget-subtitle">Provide circumstance variables for validation</div>
+              </div>
+            </div>
           </div>
-          <form id="lost-dynamic-form" style="display: flex; flex-direction: column; gap: 16px; margin-top: 20px;"></form>
-          <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">
+          <form id="lost-dynamic-form" style="display: flex; flex-direction: column; gap: 16px; margin-top: 20px;">
+          </form>
+          <div
+            style="display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">
             <button class="btn btn-ghost" id="lost-back-btn" style="width: auto; padding: 10px 20px;">Back</button>
-            <button class="btn btn-primary" id="lost-submit-btn" style="width: auto; padding: 10px 20px;">Submit Record securely</button>
+            <button class="btn btn-primary" id="lost-submit-btn" style="width: auto; padding: 10px 20px;">Submit Record
+              securely</button>
           </div>
         </div>
       </div>
 
       <div id="lost-step-3" style="display: none; text-align: center;" class="s3">
         <div class="widget-card col-6" style="margin: 0 auto; padding: 40px 20px;">
-          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(34, 197, 94, 0.1); border: 2px solid var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+          <div
+            style="width: 64px; height: 64px; border-radius: 50%; background: rgba(34, 197, 94, 0.1); border: 2px solid var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
             <span class="material-symbols-outlined" style="font-size: 32px; color: var(--success);">check</span>
           </div>
           <h2 class="dashboard-title" style="margin-bottom: 8px;">Report Filed Securely</h2>
-          <p class="dashboard-subtitle" style="margin-bottom: 24px;">Your tracking reference identifier has been issued.</p>
-          <div style="background: rgba(10, 24, 51, 0.7); border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-family: 'JetBrains Mono'; font-size: 20px; color: var(--gold); letter-spacing: 2px; display: inline-block; margin-bottom: 30px;" id="lost-ref-code">LD-PENDING</div>
+          <p class="dashboard-subtitle" style="margin-bottom: 24px;">Your tracking reference identifier has been issued.
+          </p>
+          <div
+            style="background: rgba(10, 24, 51, 0.7); border: 1px solid var(--border); border-radius: 10px; padding: 12px; font-family: 'JetBrains Mono'; font-size: 20px; color: var(--gold); letter-spacing: 2px; display: inline-block; margin-bottom: 30px;"
+            id="lost-ref-code">LD-PENDING</div>
           <br>
-          <button class="btn btn-ghost" onclick="switchView('dashboard')" style="width: auto; padding: 10px 20px; margin: 0 auto;">Return to Dashboard</button>
+          <button class="btn btn-ghost" onclick="switchView('dashboard')"
+            style="width: auto; padding: 10px 20px; margin: 0 auto;">Return to Dashboard</button>
         </div>
       </div>
 
@@ -429,11 +1711,8 @@
   </main>
 
   <script>
-    // Verify Security Token
-    const token = localStorage.getItem('token');
-    if (!token) window.location.href = '/login';
-
-    function logout() {
+    async function logout() {
+      await fetch('/api/v1/auth/logout', { method: 'POST' });
       localStorage.clear();
       window.location.href = '/login';
     }
@@ -463,14 +1742,14 @@
 
     // ── NATIVE WIZARD LOGIC ──
     function switchView(viewName, e) {
-      if(e) e.preventDefault();
+      if (e) e.preventDefault();
       document.getElementById('view-dashboard').style.display = viewName === 'dashboard' ? 'block' : 'none';
       document.getElementById('view-report-lost').style.display = viewName === 'report-lost' ? 'block' : 'none';
-      
+
       document.getElementById('nav-dashboard').className = viewName === 'dashboard' ? 'active' : '';
       document.getElementById('nav-report-lost').className = viewName === 'report-lost' ? 'active' : '';
 
-      if(viewName === 'report-lost') {
+      if (viewName === 'report-lost') {
         document.getElementById('lost-step-1').style.display = 'grid';
         document.getElementById('lost-step-2').style.display = 'none';
         document.getElementById('lost-step-3').style.display = 'none';
@@ -495,23 +1774,23 @@
 
     btnNext.addEventListener('click', async () => {
       if (!chosenDocType) return;
-      
+
       try {
         const res = await fetch(`/api/lost-doc-schema?type=${chosenDocType}`);
         const schema = await res.json();
-        
+
         document.getElementById('lost-form-title').textContent = schema.title;
         dynamicForm.innerHTML = '';
 
         schema.questions.forEach(q => {
           const wrap = document.createElement('div');
           wrap.innerHTML = `<label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 7px;">${q.label}</label>`;
-          
+
           let input = document.createElement(q.type === 'textarea' ? 'textarea' : 'input');
           if (q.type !== 'textarea') input.type = q.type;
           input.id = q.id; input.required = true;
           if (q.placeholder) input.placeholder = q.placeholder;
-          
+
           input.style.cssText = "width: 100%; background: rgba(5, 13, 31, 0.7); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: all 0.25s;";
           input.addEventListener('focus', () => { input.style.borderColor = 'var(--border-b)'; input.style.boxShadow = '0 0 0 3px rgba(201, 168, 76, 0.1)'; });
           input.addEventListener('blur', () => { input.style.borderColor = 'var(--border)'; input.style.boxShadow = 'none'; });
@@ -537,39 +1816,40 @@
 
       const answers = {};
       dynamicForm.querySelectorAll('input, textarea').forEach(i => answers[i.id] = i.value);
-      
+
       const btn = document.getElementById('lost-submit-btn');
       btn.textContent = "Processing...";
       btn.disabled = true;
 
       try {
         const res = await fetch('http://localhost:3000/api/v1/documents/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({
-                citizenId: "CITIZEN-9921",
-                citizenFullName: "Verified Citizen",
-                documentType: `LOST_${chosenDocType.toUpperCase()}`,
-                councilJurisdiction: answers.jurisdiction || "Central Node",
-                filePath: JSON.stringify(answers)
-            })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({
+            citizenId: "CITIZEN-9921",
+            citizenFullName: "Verified Citizen",
+            documentType: `LOST_${chosenDocType.toUpperCase()}`,
+            councilJurisdiction: answers.jurisdiction || "Central Node",
+            filePath: JSON.stringify(answers)
+          })
         });
 
         const result = await res.json();
         if (result.status === 'success') {
-            document.getElementById('lost-ref-code').textContent = result.data.id.substring(0,8).toUpperCase();
-            document.getElementById('lost-step-2').style.display = 'none';
-            document.getElementById('lost-step-3').style.display = 'block';
+          document.getElementById('lost-ref-code').textContent = result.data.id.substring(0, 8).toUpperCase();
+          document.getElementById('lost-step-2').style.display = 'none';
+          document.getElementById('lost-step-3').style.display = 'block';
         } else {
-            showToast("Error: " + result.message);
+          showToast("Error: " + result.message);
         }
-      } catch(e) {
-          showToast("Network failure. Please try again.");
+      } catch (e) {
+        showToast("Network failure. Please try again.");
       } finally {
-          btn.textContent = "Submit Record securely";
-          btn.disabled = false;
+        btn.textContent = "Submit Record securely";
+        btn.disabled = false;
       }
     });
   </script>
 </body>
+
 </html>

@@ -49,10 +49,17 @@ exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
 const express = __importStar(require("express"));
+const jwt_auth_guard_1 = require("./auth/jwt-auth.guard");
+const auth_service_1 = require("./auth/auth.service");
+const documents_service_1 = require("./documents/documents.service");
 let AppController = class AppController {
     appService;
-    constructor(appService) {
+    authService;
+    documentsService;
+    constructor(appService, authService, documentsService) {
         this.appService = appService;
+        this.authService = authService;
+        this.documentsService = documentsService;
     }
     root() {
         return { title: 'CitizenNode | Home' };
@@ -60,8 +67,15 @@ let AppController = class AppController {
     login() {
         return { title: 'CitizenNode | Login' };
     }
-    dashboard() {
-        return { title: 'CitizenNode | Dashboard' };
+    async dashboard(req) {
+        const userProfile = await this.authService.getUserProfile(req.user.id);
+        const documents = await this.documentsService.findByCitizen(userProfile.citizenId);
+        return {
+            title: 'CitizenNode | Dashboard',
+            user: userProfile,
+            documents: documents,
+            documentCount: documents.length,
+        };
     }
     civilStatus() {
         return { title: 'CitizenNode | Civil Status' };
@@ -87,11 +101,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "login", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('dashboard'),
     (0, common_1.Render)('dashboard'),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
 ], AppController.prototype, "dashboard", null);
 __decorate([
     (0, common_1.Get)('civil-status'),
@@ -110,6 +126,8 @@ __decorate([
 ], AppController.prototype, "getLostDocumentSchema", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [app_service_1.AppService])
+    __metadata("design:paramtypes", [app_service_1.AppService,
+        auth_service_1.AuthService,
+        documents_service_1.DocumentsService])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

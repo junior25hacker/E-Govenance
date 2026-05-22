@@ -1,10 +1,17 @@
-import { Controller, Get, Render, Query, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Render, Query, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import { AppService } from './app.service';
-import * as express from 'express'; // FIXED: Swapped to a namespace import to satisfy isolatedModules rules
+import * as express from 'express';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { AuthService } from './auth/auth.service';
+import { DocumentsService } from './documents/documents.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly authService: AuthService,
+    private readonly documentsService: DocumentsService,
+  ) { }
 
   @Get()
   @Render('index')
@@ -18,10 +25,19 @@ export class AppController {
     return { title: 'CitizenNode | Login' };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('dashboard')
   @Render('dashboard')
-  dashboard() {
-    return { title: 'CitizenNode | Dashboard' };
+  async dashboard(@Req() req) {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    const documents = await this.documentsService.findByCitizen(userProfile.citizenId);
+    
+    return {
+      title: 'CitizenNode | Dashboard',
+      user: userProfile,
+      documents: documents,
+      documentCount: documents.length,
+    };
   }
 
   @Get('civil-status')
