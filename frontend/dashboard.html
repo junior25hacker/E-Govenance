@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - E-Gov</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .welcome {
+            font-size: 18px;
+        }
+        .btn-new {
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn-new:hover {
+            background: #218838;
+        }
+        .logout {
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .logout:hover {
+            background: #c82333;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h3 {
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-pending {
+            background: #ffc107;
+            color: #333;
+        }
+        .status-processing {
+            background: #17a2b8;
+            color: white;
+        }
+        .status-completed {
+            background: #28a745;
+            color: white;
+        }
+        .status-rejected {
+            background: #dc3545;
+            color: white;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            padding: 20px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="welcome">Welcome, <span id="userEmail">Loading...</span></div>
+            <div class="button-group">
+                <button class="btn-new" onclick="window.location.href='request-form.html'">+ New Request</button>
+                <button class="logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>My Requests</h3>
+            <div id="requestsContent">
+                <div class="loading">Loading your requests...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const token = localStorage.getItem('token');
+
+        // Check authentication
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        // Check role (users only, redirect admins)
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.role === 'admin' || payload.role === 'super_admin') {
+                window.location.href = 'admin-dashboard.html';
+            }
+        } catch(e) {
+            window.location.href = '/';
+        }
+
+        // Load user info and requests
+        loadUserInfo();
+        loadRequests();
+
+        async function loadUserInfo() {
+            try {
+                const response = await fetch(`${API_URL}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await response.json();
+                document.getElementById('userEmail').textContent = user.email;
+            } catch (error) {
+                document.getElementById('userEmail').textContent = 'User';
+            }
+        }
+
+        async function loadRequests() {
+            const container = document.getElementById('requestsContent');
+            
+            try {
+                const response = await fetch(`${API_URL}/requests`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const requests = await response.json();
+
+                // Check if response is an error object
+                if (requests.success === false) {
+                    container.innerHTML = `<div class="error">${requests.message}</div>`;
+                    return;
+                }
+
+                if (requests.length === 0) {
+                    container.innerHTML = '<div class="empty">No requests yet. Click "New Request" to get started.</div>';
+                    return;
+                }
+
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>Details</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                for (const req of requests) {
+                    html += `
+                        <tr>
+                            <td>${req.id}</td>
+                            <td>${formatType(req.type)}</td>
+                            <td>${formatDetails(req.details, req.type)}</td>
+                            <td><span class="status status-${req.status}">${req.status}</span></td>
+                            <td>${new Date(req.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                    `;
+                }
+
+                html += `
+                        </tbody>
+                    </table>
+                `;
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = '<div class="error">Error loading requests. Please try again.</div>';
+            }
+        }
+
+        function formatType(type) {
+            const types = {
+                'birth_certificate': 'Birth Certificate',
+                'education_certificate': 'Education Certificate',
+                'problem': 'Problem Report',
+                'feature': 'Feature Request'
+            };
+            return types[type] || type;
+        }
+
+        function formatDetails(details, type) {
+            if (typeof details === 'string') {
+                try { details = JSON.parse(details); } catch(e) {}
+            }
+            if (type === 'birth_certificate') return details.fullName || '';
+            if (type === 'education_certificate') return details.fullName || '';
+            if (type === 'problem') return details.title || '';
+            if (type === 'feature') return details.title || '';
+            return JSON.stringify(details).substring(0, 50);
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Request - E-Gov</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 { margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        button {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover { background: #218838; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .error {
+            color: red;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 4px;
+        }
+        .success {
+            color: green;
+            margin-top: 10px;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 4px;
+        }
+        .back-btn {
+            background: #6c757d;
+            margin-right: 10px;
+        }
+        .back-btn:hover { background: #5a6268; }
+        .required { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>New Request</h1>
+            <button class="back-btn" onclick="goBack()">Back to Dashboard</button>
+        </div>
+
+        <div class="card">
+            <form id="requestForm">
+                <!-- Request Type Selection -->
+                <div class="form-group">
+                    <label for="requestType">Request Type <span class="required">*</span></label>
+                    <select id="requestType" required>
+                        <option value="">Select request type...</option>
+                        <option value="birth_certificate">Printed Birth Certificate</option>
+                        <option value="education_certificate">Education Certificate</option>
+                        <option value="problem">Report a Problem</option>
+                        <option value="feature">Ask for a Feature</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Form Fields Container -->
+                <div id="dynamicFields"></div>
+
+                <button type="submit" id="submitBtn">Submit Request</button>
+                <div id="message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        // Form field definitions for each request type
+        const formFields = {
+            birth_certificate: [
+                { name: 'fullName', label: 'Full Name', type: 'text', required: true },
+                { name: 'dateOfBirth', label: 'Date of Birth', type: 'date', required: true },
+                { name: 'placeOfBirth', label: 'Place of Birth', type: 'text', required: true },
+                { name: 'motherName', label: "Mother's Full Name", type: 'text', required: true },
+                { name: 'fatherName', label: "Father's Full Name", type: 'text', required: true }
+            ],
+            education_certificate: [
+                { name: 'fullName', label: 'Full Name', type: 'text', required: true },
+                { name: 'institution', label: 'Institution Name', type: 'text', required: true },
+                { name: 'yearGraduation', label: 'Year of Graduation', type: 'number', required: true, min: 1900, max: 2030 },
+                { name: 'certificateNumber', label: 'Certificate Number (if known)', type: 'text', required: false }
+            ],
+            problem: [
+                { name: 'title', label: 'Problem Title', type: 'text', required: true },
+                { name: 'description', label: 'Problem Description', type: 'textarea', required: true },
+                { name: 'urgency', label: 'Urgency Level', type: 'select', required: true, options: ['Low', 'Medium', 'High'] }
+            ],
+            feature: [
+                { name: 'title', label: 'Feature Title', type: 'text', required: true },
+                { name: 'description', label: 'Feature Description', type: 'textarea', required: true },
+                { name: 'whyNeeded', label: 'Why is this feature needed?', type: 'textarea', required: true }
+            ]
+        };
+
+        const requestTypeSelect = document.getElementById('requestType');
+        const dynamicFieldsDiv = document.getElementById('dynamicFields');
+        const form = document.getElementById('requestForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageDiv = document.getElementById('message');
+
+        requestTypeSelect.addEventListener('change', renderDynamicFields);
+
+        function renderDynamicFields() {
+            const selectedType = requestTypeSelect.value;
+            dynamicFieldsDiv.innerHTML = '';
+
+            if (!selectedType || !formFields[selectedType]) return;
+
+            const fields = formFields[selectedType];
+            
+            for (const field of fields) {
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.innerHTML = field.label + (field.required ? '<span class="required"> *</span>' : '');
+                fieldDiv.appendChild(label);
+                
+                if (field.type === 'textarea') {
+                    const textarea = document.createElement('textarea');
+                    textarea.name = field.name;
+                    textarea.required = field.required;
+                    if (field.rows) textarea.rows = field.rows;
+                    fieldDiv.appendChild(textarea);
+                } else if (field.type === 'select') {
+                    const select = document.createElement('select');
+                    select.name = field.name;
+                    select.required = field.required;
+                    select.innerHTML = '<option value="">Select...</option>';
+                    for (const option of field.options) {
+                        const opt = document.createElement('option');
+                        opt.value = option;
+                        opt.textContent = option;
+                        select.appendChild(opt);
+                    }
+                    fieldDiv.appendChild(select);
+                } else {
+                    const input = document.createElement('input');
+                    input.type = field.type;
+                    input.name = field.name;
+                    input.required = field.required;
+                    if (field.min) input.min = field.min;
+                    if (field.max) input.max = field.max;
+                    if (field.placeholder) input.placeholder = field.placeholder;
+                    fieldDiv.appendChild(input);
+                }
+                
+                dynamicFieldsDiv.appendChild(fieldDiv);
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedType = requestTypeSelect.value;
+            if (!selectedType) {
+                showMessage('Please select a request type', 'error');
+                return;
+            }
+
+            // Collect form data
+            const details = {};
+            const fields = formFields[selectedType];
+            let isValid = true;
+
+            for (const field of fields) {
+                const input = document.querySelector(`[name="${field.name}"]`);
+                if (input) {
+                    const value = input.value.trim();
+                    if (field.required && !value) {
+                        showMessage(`${field.label} is required`, 'error');
+                        isValid = false;
+                        return;
+                    }
+                    details[field.name] = value;
+                }
+            }
+
+            if (!isValid) return;
+
+            // Disable button during submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(`${API_URL}/requests`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        type: selectedType,
+                        details: details
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Request submitted successfully! Redirecting to dashboard...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    showMessage(data.message || 'Failed to submit request', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Request';
+                }
+            } catch (error) {
+                showMessage('Error submitting request. Please try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Request';
+            }
+        });
+
+        function showMessage(msg, type) {
+            messageDiv.innerHTML = `<div class="${type}">${msg}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

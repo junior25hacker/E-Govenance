@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - E-Gov</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .welcome { font-size: 18px; }
+        .header-buttons { display: flex; gap: 10px; }
+        .btn-super { background: #6c757d; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+        .logout { background: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+        
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card h3 { font-size: 24px; margin-bottom: 5px; }
+        .card.pending { border-left: 4px solid #ffc107; }
+        .card.processing { border-left: 4px solid #17a2b8; }
+        .card.completed { border-left: 4px solid #28a745; }
+        .card.rejected { border-left: 4px solid #dc3545; }
+        
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .filter-bar select, .filter-bar button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .filter-bar button { background: #0066cc; color: white; border: none; cursor: pointer; }
+        
+        /* Requests Table */
+        .requests-table {
+            background: white;
+            border-radius: 8px;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .status-pending { background: #ffc107; color: #333; }
+        .status-processing { background: #17a2b8; color: white; }
+        .status-completed { background: #28a745; color: white; }
+        .status-rejected { background: #dc3545; color: white; }
+        select.status-select { padding: 4px; border-radius: 4px; }
+        .note-btn { background: none; border: none; color: #0066cc; cursor: pointer; }
+        .note-text { font-size: 12px; color: #666; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .loading, .empty, .error { text-align: center; padding: 40px; }
+        .empty { color: #666; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="welcome">Welcome, <span id="adminEmail">Loading...</span></div>
+            <div class="header-buttons">
+                <button id="superAdminLink" class="btn-super" style="display: none;" onclick="goToSuperAdmin()">Super Admin Panel</button>
+                <button class="logout" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="card pending"><h3 id="pendingCount">0</h3><p>Pending</p></div>
+            <div class="card processing"><h3 id="processingCount">0</h3><p>Processing</p></div>
+            <div class="card completed"><h3 id="completedCount">0</h3><p>Completed</p></div>
+            <div class="card rejected"><h3 id="rejectedCount">0</h3><p>Rejected</p></div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <label>Filter by Status:</label>
+            <select id="statusFilter">
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <button onclick="loadRequests()">Apply Filter</button>
+        </div>
+
+        <!-- Requests Table -->
+        <div class="requests-table">
+            <table id="requestsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User Email</th>
+                        <th>Type</th>
+                        <th>Details</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Admin Note</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="requestsList">
+                    <tr><td colspan="8" class="loading">Loading...<\/td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const token = localStorage.getItem('token');
+        let allRequests = [];
+
+        // Check authentication
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        // Check role
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.role !== 'admin' && payload.role !== 'super_admin') {
+                alert('Admin access required');
+                window.location.href = '/';
+            }
+            if (payload.role === 'super_admin') {
+                document.getElementById('superAdminLink').style.display = 'inline-block';
+            }
+        } catch(e) {
+            window.location.href = '/';
+        }
+
+        loadUserInfo();
+        loadRequests();
+
+        async function loadUserInfo() {
+            try {
+                const response = await fetch(`${API_URL}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await response.json();
+                document.getElementById('adminEmail').textContent = user.email;
+            } catch (error) {
+                document.getElementById('adminEmail').textContent = 'Admin';
+            }
+        }
+
+        async function loadRequests() {
+            const filter = document.getElementById('statusFilter').value;
+            const tbody = document.getElementById('requestsList');
+            tbody.innerHTML = '<tr><td colspan="8" class="loading">Loading...<\/td></tr>';
+
+            try {
+                const response = await fetch(`${API_URL}/admin/requests`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                allRequests = await response.json();
+
+                // Update summary counts
+                updateSummaryCounts();
+
+                // Filter requests
+                let filteredRequests = allRequests;
+                if (filter !== 'all') {
+                    filteredRequests = allRequests.filter(r => r.status === filter);
+                }
+
+                if (filteredRequests.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty">No requests found<\/td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                for (const req of filteredRequests) {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).textContent = req.id;
+                    row.insertCell(1).textContent = req.user?.email || 'Unknown';
+                    row.insertCell(2).textContent = formatType(req.type);
+                    row.insertCell(3).textContent = formatDetails(req.details, req.type);
+                    row.insertCell(4).innerHTML = `<span class="status status-${req.status}">${req.status}</span>`;
+                    row.insertCell(5).textContent = new Date(req.createdAt).toLocaleDateString();
+                    row.insertCell(6).innerHTML = `<div class="note-text" title="${req.adminNote || ''}">${req.adminNote || '-'}</div>`;
+                    const actionCell = row.insertCell(7);
+                    
+                    const select = document.createElement('select');
+                    select.className = 'status-select';
+                    select.innerHTML = `
+                        <option value="pending" ${req.status === 'pending' ? 'selected' : ''}>Pending</option>
+                        <option value="processing" ${req.status === 'processing' ? 'selected' : ''}>Processing</option>
+                        <option value="completed" ${req.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="rejected" ${req.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                    `;
+                    select.onchange = () => updateStatus(req.id, select.value);
+                    actionCell.appendChild(select);
+                }
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="8" class="error">Error loading requests<\/td></tr>';
+            }
+        }
+
+        function updateSummaryCounts() {
+            const counts = {
+                pending: allRequests.filter(r => r.status === 'pending').length,
+                processing: allRequests.filter(r => r.status === 'processing').length,
+                completed: allRequests.filter(r => r.status === 'completed').length,
+                rejected: allRequests.filter(r => r.status === 'rejected').length
+            };
+            document.getElementById('pendingCount').textContent = counts.pending;
+            document.getElementById('processingCount').textContent = counts.processing;
+            document.getElementById('completedCount').textContent = counts.completed;
+            document.getElementById('rejectedCount').textContent = counts.rejected;
+        }
+
+        async function updateStatus(requestId, newStatus) {
+            try {
+                const response = await fetch(`${API_URL}/admin/requests/${requestId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    loadRequests(); // Refresh the list
+                } else {
+                    alert(data.message || 'Failed to update status');
+                }
+            } catch (error) {
+                alert('Error updating status');
+            }
+        }
+
+        function formatType(type) {
+            const types = {
+                'birth_certificate': 'Birth Certificate',
+                'education_certificate': 'Education Certificate',
+                'problem': 'Problem Report',
+                'feature': 'Feature Request'
+            };
+            return types[type] || type;
+        }
+
+        function formatDetails(details, type) {
+            if (typeof details === 'string') {
+                try { details = JSON.parse(details); } catch(e) {}
+            }
+            if (type === 'birth_certificate') return details.fullName || '';
+            if (type === 'education_certificate') return details.fullName || '';
+            if (type === 'problem') return details.title || '';
+            if (type === 'feature') return details.title || '';
+            return '';
+        }
+
+        function goToSuperAdmin() {
+            window.location.href = 'super-admin.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
