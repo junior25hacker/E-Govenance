@@ -204,9 +204,9 @@
     .service-card {
       background: var(--glass); border: 1px solid var(--border);
       border-radius: var(--r-lg); padding: 32px 28px;
-      cursor: pointer; transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
       position: relative; overflow: hidden;
-      text-decoration: none; display: block;
+      display: block;
     }
     .service-card::before {
       content: ''; position: absolute; inset: 0;
@@ -431,7 +431,7 @@
 <body>
 
 <nav id="main-nav">
-  <a href="index.html" class="nav-logo">
+  <a href="#" class="nav-logo">
     <div class="nav-logo-icon">
       <span class="material-symbols-outlined" style="font-size:20px;">account_balance</span>
     </div>
@@ -442,22 +442,22 @@
   </a>
 
   <div class="nav-links" id="nav-links">
-    <a href="services.html">Services</a>
-    <a href="how-it-works.html">How It Works</a>
-    <a href="benefits.html">Benefits</a>
-    <a href="security.html">Security</a>
-    <a href="login.html" class="nav-cta" id="nav-signin">Sign In</a>
+    <a href="#services">Services</a>
+    <a href="#process">How It Works</a>
+    <a href="#benefits">Benefits</a>
+    <a href="#security">Security</a>
+    <a href="#main-nav" class="nav-cta" id="nav-signin">Sign In</a>
   </div>
 
   <div class="nav-hamburger material-symbols-outlined" id="hamburger" onclick="toggleMenu()">menu</div>
 </nav>
 
 <div class="mobile-menu" id="mobile-menu">
-  <a href="services.html" onclick="toggleMenu()">Services</a>
-  <a href="how-it-works.html" onclick="toggleMenu()">How It Works</a>
-  <a href="benefits.html" onclick="toggleMenu()">Benefits</a>
-  <a href="security.html" onclick="toggleMenu()">Security</a>
-  <a href="login.html" onclick="toggleMenu()">Sign In</a>
+  <a href="#services" onclick="toggleMenu()">Services</a>
+  <a href="#process" onclick="toggleMenu()">How It Works</a>
+  <a href="#benefits" onclick="toggleMenu()">Benefits</a>
+  <a href="#security" onclick="toggleMenu()">Security</a>
+  <a href="#main-nav" onclick="toggleMenu()">Sign In</a>
 </div>
 
 <div class="hero">
@@ -515,41 +515,41 @@
     </div>
 
     <div class="services-grid">
-      <a href="civil-status.html" class="service-card reveal" style="transition-delay:0.1s">
+      <div class="service-card reveal" style="transition-delay:0.1s">
         <div class="card-icon civil">
           <span class="material-symbols-outlined">family_restroom</span>
         </div>
         <div class="card-title">Civil Status Gateway</div>
         <p class="card-desc">Request Certificates of Origin, residence permits, legal attestations, and demographic records — all digitally verified.</p>
-        <div class="card-arrow">Access Module <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></div>
-      </a>
+        <div class="card-arrow">Module Locked</div>
+      </div>
 
-      <a href="urban-planning.html" class="service-card reveal" style="transition-delay:0.2s">
+      <div class="service-card reveal" style="transition-delay:0.2s">
         <div class="card-icon urban">
           <span class="material-symbols-outlined">architecture</span>
         </div>
         <div class="card-title">Urban Planning Hub</div>
         <p class="card-desc">Submit building permits, land-use inquiries, and architectural compliance checks through a structured digital workflow.</p>
-        <div class="card-arrow">Access Module <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></div>
-      </a>
+        <div class="card-arrow">Module Locked</div>
+      </div>
 
-      <a href="revenue-portal.html" class="service-card reveal" style="transition-delay:0.3s">
+      <div class="service-card reveal" style="transition-delay:0.3s">
         <div class="card-icon revenue">
           <span class="material-symbols-outlined">receipt_long</span>
         </div>
         <div class="card-title">Local Revenue Portal</div>
         <p class="card-desc">Pay council taxes, marketplace fees, and service charges via integrated mobile money or card payments — instant receipts provided.</p>
-        <div class="card-arrow">Access Module <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></div>
-      </a>
+        <div class="card-arrow">Module Locked</div>
+      </div>
 
-      <a href="feedback.html" class="service-card reveal" style="transition-delay:0.4s">
+      <div class="service-card reveal" style="transition-delay:0.4s">
         <div class="card-icon feedback">
           <span class="material-symbols-outlined">forum</span>
         </div>
         <div class="card-title">Citizen Feedback Loop</div>
         <p class="card-desc">Report road defects, waste issues, and public infrastructure concerns — directly routed to the responsible council official.</p>
-        <div class="card-arrow">Access Module <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></div>
-      </a>
+        <div class="card-arrow">Module Locked</div>
+      </div>
     </div>
   </div>
 </section>
@@ -594,7 +594,7 @@
         <p class="section-label">// 03 — Federated Identity</p>
         <h2 class="cta-title">Verify Once.<br>Access Everything.</h2>
         <p class="cta-desc">Link your National Digital ID to unlock every municipal service across all councils — one secure login, no redundant paperwork, no repeat registrations.</p>
-        <a href="login.html" class="cta-btn">
+        <a href="#main-nav" class="cta-btn">
           <span class="material-symbols-outlined">fingerprint</span>
           Authenticate via Digital ID
         </a>
@@ -709,30 +709,30 @@
     <div>
       <div class="footer-col-title">Services</div>
       <ul class="footer-links">
-        <li><a href="civil-status.html">Civil Status Gateway</a></li>
-        <li><a href="urban-planning.html">Urban Planning Hub</a></li>
-        <li><a href="revenue-portal.html">Local Revenue Portal</a></li>
-        <li><a href="feedback.html">Citizen Feedback Loop</a></li>
+        <li><a href="#services">Civil Status Gateway</a></li>
+        <li><a href="#services">Urban Planning Hub</a></li>
+        <li><a href="#services">Local Revenue Portal</a></li>
+        <li><a href="#services">Citizen Feedback Loop</a></li>
       </ul>
     </div>
 
     <div>
       <div class="footer-col-title">Platform</div>
       <ul class="footer-links">
-        <li><a href="how-it-works.html">How It Works</a></li>
-        <li><a href="login.html">Digital ID</a></li>
-        <li><a href="security.html">Security</a></li>
-        <li><a href="api-access.html">API Access</a></li>
+        <li><a href="#process">How It Works</a></li>
+        <li><a href="#main-nav">Digital ID</a></li>
+        <li><a href="#security">Security</a></li>
+        <li><a href="#security">API Access</a></li>
       </ul>
     </div>
 
     <div>
       <div class="footer-col-title">Support</div>
       <ul class="footer-links">
-        <li><a href="help-center.html">Help Center</a></li>
-        <li><a href="accessibility.html">Accessibility</a></li>
-        <li><a href="contact-support.html">Contact Support</a></li>
-        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        <li><a href="#main-nav">Help Center</a></li>
+        <li><a href="#main-nav">Accessibility</a></li>
+        <li><a href="#main-nav">Contact Support</a></li>
+        <li><a href="#main-nav">Privacy Policy</a></li>
       </ul>
     </div>
   </div>
@@ -740,9 +740,9 @@
   <div class="footer-bottom">
     <span class="footer-copy">© 2026 Emergence-Connect · ICTU/OOADI E-Governance Initiative. All rights reserved.</span>
     <div class="footer-legal">
-      <a href="privacy-policy.html">Privacy Policy</a>
-      <a href="terms-of-service.html">Terms of Service</a>
-      <a href="accessibility.html">Accessibility</a>
+      <a href="#main-nav">Privacy Policy</a>
+      <a href="#main-nav">Terms of Service</a>
+      <a href="#main-nav">Accessibility</a>
     </div>
   </div>
 </footer>
@@ -783,12 +783,11 @@
   }, { threshold: 0.4 });
   heroObserver.observe(document.querySelector('.hero-stats'));
 
-  /* ─── CORRECTION: Functional Search Logic ─── */
+  /* ─── In-page Search Feedback ─── */
   function handleSearch() {
     const val = document.getElementById('search-input').value.trim();
     if (val) {
-      // Redirects to a search results page with the query attached
-      window.location.href = `search-results.html?q=${encodeURIComponent(val)}`;
+      alert(`Searching internal directory for: "${val}"...\nThis single-page setup does not have local indexes connected yet.`);
     }
   }
   document.getElementById('search-input').addEventListener('keydown', e => {
