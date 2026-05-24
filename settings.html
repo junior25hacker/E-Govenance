@@ -289,7 +289,7 @@
               <div class="profile-info">
                 <h4>John David Okonkwo</h4>
                 <p>Registered since May 2025</p>
-                <button class="btn-secondary" style="margin-top: 8px; font-size: 12px;">Change Avatar</button>
+                <button class="btn-secondary" style="margin-top: 8px; font-size: 12px;" onclick="changeAvatar()">Change Avatar</button>
               </div>
             </div>
           </div>
@@ -423,7 +423,7 @@
               <label>Confirm Password</label>
               <input type="password" placeholder="Confirm your new password" />
             </div>
-            <button class="btn-primary">Update Password</button>
+            <button class="btn-primary" onclick="updatePassword()">Update Password</button>
           </div>
 
           <div class="setting-section">
@@ -449,7 +449,7 @@
               <span style="color: #22c55e; font-size: 12px; font-weight: 600;">ACTIVE</span>
             </div>
             <div class="form-group" style="margin-top: 20px;">
-              <button class="btn-secondary">Sign Out All Other Sessions</button>
+              <button class="btn-secondary" onclick="signOutOtherSessions()">Sign Out All Other Sessions</button>
             </div>
           </div>
         </div>
@@ -463,8 +463,8 @@
                 <div class="setting-desc">Get a copy of all your documents and profile information</div>
               </div>
             </div>
-            <button class="btn-secondary">Export as PDF</button>
-            <button class="btn-secondary" style="margin-left: 8px;">Export as ZIP</button>
+            <button class="btn-secondary" onclick="exportData('pdf')">Export as PDF</button>
+            <button class="btn-secondary" style="margin-left: 8px;" onclick="exportData('zip')">Export as ZIP</button>
           </div>
 
           <div class="setting-section">
@@ -475,7 +475,7 @@
                 <div class="setting-desc">This action cannot be undone. All your data will be deleted.</div>
               </div>
             </div>
-            <button class="btn-danger">Delete Account</button>
+            <button class="btn-danger" onclick="deleteAccount()">Delete Account</button>
           </div>
         </div>
       </div>
@@ -501,6 +501,67 @@
 
     function toggleSwitch(element) {
       element.classList.toggle('active');
+    }
+
+    function changeAvatar() {
+      alert('Avatar upload feature coming soon!\\n\\nYou will be able to upload a profile picture.');
+    }
+
+    function savePersonalInfo() {
+      const fullName = document.querySelectorAll('input[type="text"]')[0].value;
+      const email = document.querySelectorAll('input[type="email"]')[0].value;
+      const phone = document.querySelectorAll('input[type="tel"]')[0].value;
+      const id = document.querySelectorAll('input[type="text"]')[1].value;
+
+      if (!fullName || !email || !phone || !id) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      alert('Your personal information has been updated successfully!');
+    }
+
+    function updatePassword() {
+      const currentPassword = document.querySelectorAll('input[type="password"]')[0].value;
+      const newPassword = document.querySelectorAll('input[type="password"]')[1].value;
+      const confirmPassword = document.querySelectorAll('input[type="password"]')[2].value;
+
+      if (!currentPassword || !newPassword || !confirmPassword) {
+        alert('Please fill in all password fields.');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        alert('New password and confirmation do not match.');
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        alert('New password must be at least 8 characters long.');
+        return;
+      }
+
+      alert('Password updated successfully!\\n\\nYou will be logged out and need to sign in again.');
+      setTimeout(() => location.href = 'login.html', 1500);
+    }
+
+    function signOutOtherSessions() {
+      if (confirm('Are you sure you want to sign out all other sessions?')) {
+        alert('All other sessions have been signed out.');
+      }
+    }
+
+    function exportData(format) {
+      alert(`Exporting your data as ${format.toUpperCase()}...\\n\\nThis may take a few moments. Download will start automatically.`);
+    }
+
+    function deleteAccount() {
+      if (confirm('Are you absolutely sure you want to delete your account?\\n\\nThis action cannot be undone and all your data will be permanently deleted.')) {
+        if (confirm('Type your email to confirm account deletion.\\n\\nThis is a confirmation - in a real app you would type your email.')) {
+          alert('Your account has been permanently deleted.\\n\\nRedirecting to home page...');
+          setTimeout(() => location.href = 'index.html', 1500);
+        }
+      }
     }
   </script>
 </body>
