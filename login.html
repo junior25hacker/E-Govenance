@@ -210,13 +210,13 @@
         try {
           const form = e.target;
           const inputs = form.querySelectorAll('input');
-          const emailOrId = inputs[0].value.trim();
-          const pin = inputs[1].value.trim();
+          const citizenId = inputs[0].value.trim();
+          const password = inputs[1].value.trim();
 
           const res = await fetch('/api/v1/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailOrId, password: pin }),
+            body: JSON.stringify({ citizenId, password }),
           });
 
           const data = await res.json();

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 
 import authRoutes from './routes/authRoutes';
 import documentRoutes from './routes/documentRoutes';
@@ -15,6 +16,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static frontend files from parent directory
+const frontendPath = path.join(__dirname, '../../');
+app.use(express.static(frontendPath));
 
 app.get('/api/v1/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'success', message: 'Emergence-Connect API is online.' });

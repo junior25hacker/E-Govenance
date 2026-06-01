@@ -13,27 +13,38 @@ const users: any[] = [
     firstName: 'John',
     lastName: 'Okonkwo',
   },
+  {
+    id: 2,
+    citizenId: '202401001',
+    email: 'test.citizen@example.com',
+    password: '1234',
+    firstName: 'Test',
+    lastName: 'User',
+  },
 ];
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    console.log('[AUTH] Login attempt with body:', req.body);
+    const { citizenId, password } = req.body;
 
     // Validation
-    if (!email || !password) {
+    if (!citizenId || !password) {
+      console.log('[AUTH] Missing citizenId or password');
       return res.status(400).json({
         status: 'fail',
-        message: 'Email and password are required',
+        message: 'Citizen ID and password are required',
       });
     }
 
-    // Find user
-    const user = users.find((u) => u.email === email);
+    // Find user by citizenId
+    const user = users.find((u) => u.citizenId === citizenId);
 
     if (!user || user.password !== password) {
+      console.log('[AUTH] User not found or password mismatch');
       return res.status(401).json({
         status: 'fail',
-        message: 'Invalid email or password',
+        message: 'Invalid Citizen ID or password',
       });
     }
 
@@ -47,6 +58,7 @@ export const login = async (req: Request, res: Response) => {
       process.env.JWT_EXPIRY || '7d'
     );
 
+    console.log('[AUTH] Login successful for', citizenId);
     res.status(200).json({
       status: 'success',
       message: 'Login successful',
@@ -62,7 +74,7 @@ export const login = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('[AUTH] Login error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Internal server error',

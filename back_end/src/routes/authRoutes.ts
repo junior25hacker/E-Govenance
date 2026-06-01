@@ -1,30 +1,15 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
+import { login, register, logout, getProfile } from '../controllers/authController';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 
-// FIXED: Inline handler resolves the missing authController path error
-const loginAdmin = (req: Request, res: Response) => {
-  const { citizenId, email } = req.body;
-  
-  if (citizenId && email) {
-    return res.status(200).json({
-      status: 'success',
-      token: 'mock-secured-jwt-token-xyz-12345',
-      citizen: {
-        id: citizenId,
-        email: email
-      }
-    });
-  }
-  
-  return res.status(400).json({ 
-    status: 'fail', 
-    message: 'Authentication failed. Please provide a valid Citizen ID and Email.' 
-  });
-};
+// Public routes
+router.post('/login', login);
+router.post('/register', register);
+router.post('/logout', logout);
 
-// Define URL: POST /api/v1/auth/login
-router.post('/citizen/login', loginAdmin);
-router.post('/login', loginAdmin);
+// Protected routes
+router.get('/profile', authMiddleware, getProfile);
 
 export default router;
