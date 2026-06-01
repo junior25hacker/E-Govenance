@@ -13,7 +13,7 @@ exports.LoginDto = void 0;
 const class_validator_1 = require("class-validator");
 class LoginDto {
     citizenId;
-    email;
+    password;
 }
 exports.LoginDto = LoginDto;
 __decorate([
@@ -22,8 +22,9 @@ __decorate([
     __metadata("design:type", String)
 ], LoginDto.prototype, "citizenId", void 0);
 __decorate([
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.MinLength)(4),
     __metadata("design:type", String)
-], LoginDto.prototype, "email", void 0);
+], LoginDto.prototype, "password", void 0);
 //# sourceMappingURL=login.dto.js.map

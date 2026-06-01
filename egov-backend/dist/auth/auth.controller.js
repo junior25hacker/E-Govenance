@@ -70,9 +70,9 @@ let AuthController = class AuthController {
         return res.json({ status: 'success', citizenId: result.citizenId });
     }
     async login(loginDto, res) {
-        const result = await this.authService.login(loginDto.citizenId, loginDto.email);
+        const result = await this.authService.login(loginDto.citizenId, loginDto.password);
         if (!result) {
-            throw new common_1.UnauthorizedException('Invalid citizen ID or email');
+            throw new common_1.UnauthorizedException('Invalid citizen ID or password');
         }
         res.cookie('token', result.token, {
             httpOnly: true,

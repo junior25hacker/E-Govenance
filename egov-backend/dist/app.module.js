@@ -15,6 +15,8 @@ const auth_module_1 = require("./auth/auth.module");
 const user_entity_1 = require("./auth/entities/user.entity");
 const documents_module_1 = require("./documents/documents.module");
 const document_entity_1 = require("./documents/entities/document.entity");
+const document_request_entity_1 = require("./documents/entities/document-request.entity");
+const report_entity_1 = require("./documents/entities/report.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,7 +26,7 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'better-sqlite3',
                 database: 'database.sqlite',
-                entities: [user_entity_1.User, document_entity_1.Document],
+                entities: [user_entity_1.User, document_entity_1.Document, document_request_entity_1.DocumentRequest, report_entity_1.Report],
                 synchronize: true,
             }),
             auth_module_1.AuthModule,

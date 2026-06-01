@@ -17,10 +17,24 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const document_entity_1 = require("./entities/document.entity");
+const document_request_entity_1 = require("./entities/document-request.entity");
+const report_entity_1 = require("./entities/report.entity");
 let DocumentsService = class DocumentsService {
     documentRepository;
-    constructor(documentRepository) {
+    requestRepository;
+    reportRepository;
+    constructor(documentRepository, requestRepository, reportRepository) {
         this.documentRepository = documentRepository;
+        this.requestRepository = requestRepository;
+        this.reportRepository = reportRepository;
+    }
+    generateRequestId() {
+        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+        return `REQ-2026-${random}`;
+    }
+    generateReportId() {
+        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+        return `RPT-2026-${random}`;
     }
     async create(citizenId, dto) {
         const document = this.documentRepository.create({
@@ -38,11 +52,60 @@ let DocumentsService = class DocumentsService {
             order: { createdAt: 'DESC' },
         });
     }
+    async submitRequest(citizenId, dto) {
+        const referenceId = this.generateRequestId();
+        const request = this.requestRepository.create({
+            citizenId,
+            referenceId,
+            documentType: dto.documentType,
+            fullName: dto.fullName,
+            nationalId: dto.nationalId,
+            email: dto.email,
+            phone: dto.phone,
+            purpose: dto.purpose,
+            status: 'PENDING',
+        });
+        const saved = await this.requestRepository.save(request);
+        console.log('[DOCUMENTS] Request submitted with ID:', referenceId);
+        return saved;
+    }
+    async submitReport(citizenId, dto) {
+        const referenceId = this.generateReportId();
+        const report = this.reportRepository.create({
+            citizenId,
+            referenceId,
+            category: dto.category,
+            priority: dto.priority,
+            location: dto.location,
+            description: dto.description,
+            phone: dto.phone,
+            status: 'OPEN',
+        });
+        const saved = await this.reportRepository.save(report);
+        console.log('[REPORTS] Report submitted with ID:', referenceId);
+        return saved;
+    }
+    async getRequests(citizenId) {
+        return this.requestRepository.find({
+            where: { citizenId },
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async getReports(citizenId) {
+        return this.reportRepository.find({
+            where: { citizenId },
+            order: { createdAt: 'DESC' },
+        });
+    }
 };
 exports.DocumentsService = DocumentsService;
 exports.DocumentsService = DocumentsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(document_entity_1.Document)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(document_request_entity_1.DocumentRequest)),
+    __param(2, (0, typeorm_1.InjectRepository)(report_entity_1.Report)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], DocumentsService);
 //# sourceMappingURL=documents.service.js.map

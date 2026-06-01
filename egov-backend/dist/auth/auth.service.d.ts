@@ -12,7 +12,7 @@ export declare class AuthService {
         citizenId: string;
         token: string;
     }>;
-    login(citizenId: string, email: string): Promise<{
+    login(citizenId: string, password: string): Promise<{
         status: string;
         token: string;
     } | null>;

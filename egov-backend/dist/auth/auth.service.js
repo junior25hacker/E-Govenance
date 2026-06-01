@@ -93,9 +93,13 @@ let AuthService = class AuthService {
             token: this.jwtService.sign(payload),
         };
     }
-    async login(citizenId, email) {
-        const user = await this.userRepository.findOne({ where: { citizenId, email } });
+    async login(citizenId, password) {
+        const user = await this.userRepository.findOne({ where: { citizenId } });
         if (!user) {
+            return null;
+        }
+        const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+        if (!passwordMatch) {
             return null;
         }
         const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
