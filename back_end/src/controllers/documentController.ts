@@ -131,6 +131,7 @@ export const getUserDocuments = async (req: Request, res: Response) => {
  */
 export const submitDocumentRequest = async (req: Request, res: Response) => {
   try {
+    console.log('[DOCUMENTS] Submit request received:', req.body);
     if (!req.user) {
       return res.status(401).json({
         status: 'fail',
@@ -166,6 +167,7 @@ export const submitDocumentRequest = async (req: Request, res: Response) => {
     };
 
     requests.push(newRequest);
+    console.log('[DOCUMENTS] Request submitted with ID:', requestId);
 
     res.status(201).json({
       status: 'success',
@@ -173,7 +175,7 @@ export const submitDocumentRequest = async (req: Request, res: Response) => {
       data: newRequest,
     });
   } catch (error) {
-    console.error('Submit document error:', error);
+    console.error('[DOCUMENTS] Submit request error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Internal server error',
@@ -218,6 +220,7 @@ export const getDocumentRequests = async (req: Request, res: Response) => {
  */
 export const submitReport = async (req: Request, res: Response) => {
   try {
+    console.log('[REPORTS] Submit report received:', req.body);
     if (!req.user) {
       return res.status(401).json({
         status: 'fail',
@@ -252,6 +255,7 @@ export const submitReport = async (req: Request, res: Response) => {
     };
 
     reports.push(newReport);
+    console.log('[REPORTS] Report submitted with ID:', reportId);
 
     res.status(201).json({
       status: 'success',
@@ -259,7 +263,7 @@ export const submitReport = async (req: Request, res: Response) => {
       data: newReport,
     });
   } catch (error) {
-    console.error('Submit report error:', error);
+    console.error('[REPORTS] Submit report error:', error);
     res.status(500).json({
       status: 'error',
       message: 'Internal server error',

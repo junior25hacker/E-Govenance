@@ -25,9 +25,9 @@ export class AuthController {
 
     @Post('login')
     async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: express.Response) {
-        const result = await this.authService.login(loginDto.citizenId, loginDto.email);
+        const result = await this.authService.login(loginDto.citizenId, loginDto.password);
         if (!result) {
-            throw new UnauthorizedException('Invalid citizen ID or email');
+            throw new UnauthorizedException('Invalid citizen ID or password');
         }
         res.cookie('token', result.token, {
             httpOnly: true,

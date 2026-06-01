@@ -53,9 +53,14 @@ export class AuthService {
     };
   }
 
-  async login(citizenId: string, email: string) {
-    const user = await this.userRepository.findOne({ where: { citizenId, email } });
+  async login(citizenId: string, password: string) {
+    const user = await this.userRepository.findOne({ where: { citizenId } });
     if (!user) {
+      return null;
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordMatch) {
       return null;
     }
 
