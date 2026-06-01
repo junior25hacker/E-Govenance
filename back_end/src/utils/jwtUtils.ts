@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 
-export const generateJWT = (payload: any, expiresIn: string = '7d'): string => {
-  const secret = process.env.JWT_SECRET || 'fallback-secret-key';
-  return jwt.sign(payload, secret, { expiresIn });
+export const generateJWT = (payload: any, expiresIn: string | number = '7d'): string => {
+  const secret: string = process.env.JWT_SECRET || 'fallback-secret-key';
+  return jwt.sign(payload, secret, { expiresIn } as any);
 };
 
 export const verifyJWT = (token: string): any => {
