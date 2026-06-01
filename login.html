@@ -206,9 +206,40 @@
     function handleManualLogin(e) {
       e.preventDefault();
       status.innerText = "System: Verifying Credentials...";
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 1000);
+      (async () => {
+        try {
+          const form = e.target;
+          const inputs = form.querySelectorAll('input');
+          const emailOrId = inputs[0].value.trim();
+          const pin = inputs[1].value.trim();
+
+          const res = await fetch('/api/v1/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailOrId, password: pin }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            status.innerText = data.message || 'Login failed';
+            alert(data.message || 'Login failed');
+            return;
+          }
+
+          // store token and basic profile
+          if (data.data && data.data.token) {
+            localStorage.setItem('egov_token', data.data.token);
+            localStorage.setItem('egov_citizenId', data.data.user?.citizenId || '');
+          }
+
+          status.innerText = 'System: Login successful — redirecting...';
+          setTimeout(() => (window.location.href = 'dashboard.html'), 800);
+        } catch (err) {
+          console.error(err);
+          status.innerText = 'Network error';
+          alert('Network error — could not reach API');
+        }
+      })();
     }
   </script>
 </body>

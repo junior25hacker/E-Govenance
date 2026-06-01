@@ -372,24 +372,58 @@
       document.getElementById(tabId).classList.add('active');
     }
 
-    function handleRequestSubmit(event) {
+    async function handleRequestSubmit(event) {
       event.preventDefault();
       if (!selectedType) {
         alert('Please select a document type.');
         return;
       }
 
+      const token = localStorage.getItem('egov_token');
+      if (!token) {
+        alert('Please sign in to submit a request.');
+        window.location.href = 'login.html';
+        return;
+      }
+
       const form = document.getElementById('request-form');
-      const originalHTML = form.innerHTML;
-      form.innerHTML = `
-        <div style="text-align: center; padding: 20px; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; color: #22c55e;">
-          <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 12px;">check_circle</span>
-          <h3 style="margin-bottom: 8px;">Request Submitted Successfully</h3>
-          <p style="font-size: 14px; color: var(--cream-dim); margin-bottom: 16px;">Your application has been received and is being processed. You will receive email updates on your request status.</p>
-          <p style="font-size: 13px; color: var(--gold); font-weight: 600;">Reference: REQ-2026-${Math.random().toString(36).substr(2, 9).toUpperCase()}</p>
-          <button type="button" style="background: var(--gold); color: var(--navy); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 16px;" onclick="location.reload();">Submit Another Request</button>
-        </div>
-      `;
+      const inputs = form.querySelectorAll('input, select, textarea');
+      const payload = {
+        documentType: selectedType,
+        councilJurisdiction: 'Local Council',
+        purpose: form.querySelector('select').value || 'personal',
+        applicantName: inputs[0].value,
+        applicantId: inputs[1].value,
+        applicantEmail: inputs[2].value,
+        applicantPhone: inputs[3].value,
+      };
+
+      try {
+        const res = await fetch('/api/v1/documents/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.message || 'Could not submit request');
+          return;
+        }
+
+        form.innerHTML = `
+          <div style="text-align: center; padding: 20px; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; color: #22c55e;">
+            <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 12px;">check_circle</span>
+            <h3 style="margin-bottom: 8px;">Request Submitted Successfully</h3>
+            <p style="font-size: 14px; color: var(--cream-dim); margin-bottom: 16px;">Your application has been received and is being processed. You will receive email updates on your request status.</p>
+            <p style="font-size: 13px; color: var(--gold); font-weight: 600;">Reference: ${data.data?.id || 'REQ-2026-XXXXX'}</p>
+            <button type="button" style="background: var(--gold); color: var(--navy); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 16px;" onclick="location.reload();">Submit Another Request</button>
+          </div>
+        `;
+      } catch (err) {
+        console.error('Request submit error', err);
+        alert('Network error — could not submit request');
+      }
     }
   </script>
 </body>

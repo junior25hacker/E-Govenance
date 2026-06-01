@@ -281,18 +281,93 @@
   </main>
 
   <script>
-    function downloadDocument(docName) {
-      alert(`Downloading ${docName}...\\n\\nFile will be saved to your downloads folder.`);
+    const token = localStorage.getItem('egov_token');
+
+    async function fetchDocuments() {
+      try {
+        if (!token) {
+          // Not authenticated
+          return;
+        }
+
+        const res = await fetch('/api/v1/documents', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.status === 401) {
+          alert('Please sign in to view your documents.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const data = await res.json();
+        if (res.ok && data.data) {
+          renderDocuments(data.data);
+        }
+      } catch (err) {
+        console.error('Fetch documents error', err);
+      }
     }
 
-    function shareDocument(docName) {
-      alert(`Share options for ${docName}:\\n- Email\\n- SMS\\n- Generate Share Link\\n- Print`);
+    function renderDocuments(docs) {
+      const grid = document.getElementById('docs-grid');
+      grid.innerHTML = '';
+      docs.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'doc-card';
+        card.innerHTML = `
+          <div class="doc-header">
+            <div class="doc-icon"><span class="material-symbols-outlined">description</span></div>
+            <div class="doc-info">
+              <div class="doc-name">${doc.documentName || doc.documentType}</div>
+              <div class="doc-type">${doc.documentType}</div>
+            </div>
+          </div>
+          <div class="doc-date">Issued: ${doc.issuedDate || ''}</div>
+          <div class="doc-status ${doc.status === 'VERIFIED' ? 'verified' : 'pending'}">
+            <span class="material-symbols-outlined" style="font-size: 14px;">${doc.status === 'VERIFIED' ? 'check_circle' : 'schedule'}</span>
+            ${doc.status}
+          </div>
+          <div class="doc-actions">
+            <button class="doc-action-btn" onclick="downloadDocument('${doc.id}', '${doc.documentName || ''}')">
+              <span class="material-symbols-outlined">download</span>
+              Download
+            </button>
+            <button class="doc-action-btn" onclick="shareDocument('${doc.id}', '${doc.documentName || ''}')">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    async function downloadDocument(id, name) {
+      try {
+        if (!token) { alert('Please sign in to download documents.'); window.location.href = 'login.html'; return; }
+        const res = await fetch(`/api/v1/documents/${id}/download`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (res.ok) {
+          alert(`Download ready for ${name}: ${data.data.downloadUrl}`);
+        } else {
+          alert(data.message || 'Unable to generate download');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Download error');
+      }
+    }
+
+    function shareDocument(id, name) {
+      alert(`Share options for ${name}:\n- Email\n- SMS\n- Generate Share Link\n- Print`);
     }
 
     function requestRenewal(docName) {
-      alert(`Renewal request for ${docName} has been initiated.\\n\\nYou will receive further instructions via email.`);
+      alert(`Renewal request for ${docName} has been initiated.\n\nYou will receive further instructions via email.`);
     }
 
+    // Search/filter
     document.getElementById('search-input').addEventListener('keyup', function(e) {
       const term = e.target.value.toLowerCase();
       document.querySelectorAll('.doc-card').forEach(card => {
@@ -300,6 +375,9 @@
         card.style.display = text.includes(term) ? '' : 'none';
       });
     });
+
+    // Try to fetch documents on load
+    fetchDocuments();
   </script>
 </body>
 </html>
