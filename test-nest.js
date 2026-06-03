@@ -96,6 +96,32 @@ function makeRequest(path, method, body, cookies = '') {
     const reports = await makeRequest('/api/v1/documents/reports', 'GET', null, cookies);
     console.log(JSON.stringify(reports.data, null, 2));
 
+    console.log('\n=== GET SETTINGS PROFILE ===');
+    const settingsProfile = await makeRequest('/api/v1/settings/profile', 'GET', null, cookies);
+    console.log(JSON.stringify(settingsProfile.data, null, 2));
+
+    console.log('\n=== UPDATE PROFILE ===');
+    const updatedProfile = await makeRequest('/api/v1/settings/profile', 'PUT', {
+      fullName: 'Updated Test User',
+      phone: '+2348123456789',
+      nationalId: 'NG-202401999'
+    }, cookies);
+    console.log(JSON.stringify(updatedProfile.data, null, 2));
+
+    console.log('\n=== UPDATE PREFERENCES ===');
+    const prefs = await makeRequest('/api/v1/settings/preferences', 'PUT', {
+      emailNotifications: false,
+      smsNotifications: true,
+      publicProfile: true,
+      shareWithAgencies: false,
+      twoFactorAuth: false
+    }, cookies);
+    console.log(JSON.stringify(prefs.data, null, 2));
+
+    console.log('\n=== EXPORT DATA (JSON) ===');
+    const exportedData = await makeRequest('/api/v1/settings/export?format=json', 'GET', null, cookies);
+    console.log(JSON.stringify(exportedData.data, null, 2));
+
   } catch (err) {
     console.error('Error:', err);
   }

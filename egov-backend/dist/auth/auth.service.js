@@ -46,12 +46,15 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
+const settings_service_1 = require("../settings/settings.service");
 let AuthService = class AuthService {
     jwtService;
+    settingsService;
     users = [];
     nextUserId = 1;
-    constructor(jwtService) {
+    constructor(jwtService, settingsService) {
         this.jwtService = jwtService;
+        this.settingsService = settingsService;
     }
     async generateCitizenId() {
         let isUnique = false;
@@ -84,6 +87,7 @@ let AuthService = class AuthService {
             updatedAt: now,
         };
         this.users.push(user);
+        this.settingsService.initializeSettings(user.id, user.citizenId, user.email);
         console.log('[AUTH] User registered:', citizenId);
         const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
         return {
@@ -139,6 +143,7 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService])
+    __metadata("design:paramtypes", [jwt_1.JwtService,
+        settings_service_1.SettingsService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

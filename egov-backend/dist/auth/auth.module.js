@@ -13,6 +13,7 @@ const passport_1 = require("@nestjs/passport");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const jwt_strategy_1 = require("./jwt.strategy");
+const settings_module_1 = require("../settings/settings.module");
 exports.jwtSecret = 'super-secret-egov-key-12345';
 let AuthModule = class AuthModule {
 };
@@ -25,6 +26,7 @@ exports.AuthModule = AuthModule = __decorate([
                 secret: exports.jwtSecret,
                 signOptions: { expiresIn: '1d' },
             }),
+            settings_module_1.SettingsModule,
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],

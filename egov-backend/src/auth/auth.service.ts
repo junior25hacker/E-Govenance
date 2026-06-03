@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { SettingsService } from '../settings/settings.service';
 
 interface User {
   id: number;
@@ -20,7 +21,10 @@ export class AuthService {
   private users: User[] = [];
   private nextUserId = 1;
 
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private settingsService: SettingsService,
+  ) {}
 
   async generateCitizenId(): Promise<string> {
     let isUnique = false;
@@ -56,6 +60,10 @@ export class AuthService {
     };
 
     this.users.push(user);
+    
+    // Initialize settings for new user
+    this.settingsService.initializeSettings(user.id, user.citizenId, user.email);
+    
     console.log('[AUTH] User registered:', citizenId);
 
     const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };

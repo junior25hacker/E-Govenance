@@ -1,10 +1,12 @@
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
+import { SettingsService } from '../settings/settings.service';
 export declare class AuthService {
     private jwtService;
+    private settingsService;
     private users;
     private nextUserId;
-    constructor(jwtService: JwtService);
+    constructor(jwtService: JwtService, settingsService: SettingsService);
     generateCitizenId(): Promise<string>;
     register(dto: RegisterDto): Promise<{
         status: string;
