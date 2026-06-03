@@ -67,7 +67,7 @@ let AuthController = class AuthController {
             path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
-        return res.json({ status: 'success', citizenId: result.citizenId });
+        return { status: 'success', citizenId: result.citizenId };
     }
     async login(loginDto, res) {
         const result = await this.authService.login(loginDto.citizenId, loginDto.password);
@@ -81,7 +81,7 @@ let AuthController = class AuthController {
             path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
-        return res.json({ status: 'success' });
+        return { status: 'success' };
     }
     async verifyDocument(req, verifyDto) {
         return this.authService.completeProfile(req.user.id, verifyDto.docType, verifyDto.docPath);

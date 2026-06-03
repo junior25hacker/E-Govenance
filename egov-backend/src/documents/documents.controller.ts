@@ -11,7 +11,7 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async getUserDocuments(@Req() req) {
+  async getUserDocuments(@Req() req): Promise<any> {
     console.log('[DOCUMENTS] Fetch user documents for:', req.user.citizenId);
     const documents = await this.documentsService.findByCitizen(req.user.citizenId);
     return {
@@ -22,7 +22,7 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('submit')
-  async submitRequest(@Req() req, @Body() submitDto: SubmitDocumentRequestDto) {
+  async submitRequest(@Req() req, @Body() submitDto: SubmitDocumentRequestDto): Promise<any> {
     console.log('[DOCUMENTS] Submit request received:', submitDto);
     const result = await this.documentsService.submitRequest(req.user.citizenId, submitDto);
     return {
@@ -34,7 +34,7 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post('report')
-  async submitReport(@Req() req, @Body() reportDto: SubmitReportDto) {
+  async submitReport(@Req() req, @Body() reportDto: SubmitReportDto): Promise<any> {
     console.log('[REPORTS] Submit report received:', reportDto);
     const result = await this.documentsService.submitReport(req.user.citizenId, reportDto);
     return {
@@ -46,7 +46,7 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('requests')
-  async getRequests(@Req() req) {
+  async getRequests(@Req() req): Promise<any> {
     console.log('[DOCUMENTS] Fetch requests for:', req.user.citizenId);
     const requests = await this.documentsService.getRequests(req.user.citizenId);
     return {
@@ -57,7 +57,7 @@ export class DocumentsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('reports')
-  async getReports(@Req() req) {
+  async getReports(@Req() req): Promise<any> {
     console.log('[REPORTS] Fetch reports for:', req.user.citizenId);
     const reports = await this.documentsService.getReports(req.user.citizenId);
     return {

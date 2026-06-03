@@ -28,7 +28,7 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('dashboard')
   @Render('dashboard')
-  async dashboard(@Req() req) {
+  async dashboard(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
     const documents = await this.documentsService.findByCitizen(userProfile.citizenId);
     
