@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Documents | Emergence-Connect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #050d1f; --navy-2: #0a1833; --navy-3: #0f2347;
+      --blue-mid: #1a3a6b; --blue-acc: #2563b0; --gold: #c9a84c;
+      --gold-lt: #e8c96a; --gold-dim: #7a5f20; --cream: #f2eedf;
+      --cream-dim: #cdc8b4; --white: #ffffff;
+      --glass: rgba(255,255,255,0.05); --glass-b: rgba(255,255,255,0.10);
+      --border: rgba(201,168,76,0.18); --border-b: rgba(201,168,76,0.35);
+      --r: 8px; --r-lg: 16px; --r-xl: 24px;
+      --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--cream);
+      overflow-x: hidden; line-height: 1.6; display: flex; min-height: 100vh;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px; background: rgba(5, 13, 31, 0.92); backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border); padding: 0; height: 100vh;
+      position: fixed; top: 0; left: 0; z-index: 100; overflow-y: auto;
+      display: flex; flex-direction: column;
+    }
+    .sidebar-header { display: flex; align-items: center; padding: 28px 20px 22px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo { width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy-3)); border: 1px solid var(--border-b);
+      display: flex; align-items: center; justify-content: center; color: var(--gold); margin-right: 12px; flex-shrink: 0;
+    }
+    .sidebar-brand { display: flex; flex-direction: column; }
+    .sidebar-logo-text { font-family: 'Cinzel', serif; font-weight: 700; color: var(--white); font-size: 15px; line-height: 1.2; }
+    .sidebar-logo-sub { font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
+    .sidebar-nav { list-style: none; padding: 4px 12px; flex: 1; }
+    .sidebar-nav li { margin-bottom: 4px; }
+    .sidebar-nav a {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r);
+      color: var(--cream-dim); text-decoration: none; font-size: 14px; font-weight: 500;
+      transition: background 0.2s, color 0.2s; position: relative;
+    }
+    .sidebar-nav a:hover { background: var(--glass-b); color: var(--white); }
+    .sidebar-nav a.active { background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08));
+      color: var(--gold) !important; border: 1px solid rgba(201,168,76,0.25);
+    }
+    .sidebar-nav a.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px;
+      background: var(--gold); border-radius: 0 3px 3px 0;
+    }
+
+    /* MAIN CONTENT */
+    .main-content { flex: 1; margin-left: 260px; padding: 0; display: flex; flex-direction: column; }
+    .top-nav { background: rgba(5,13,31,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 68px; display: flex; align-items: center; justify-content: space-between; z-index: 50;
+    }
+    .page-title { font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700; color: var(--white); }
+    
+    /* CONTENT AREA */
+    .content-wrapper { flex: 1; padding: 32px; overflow-y: auto; position: relative; z-index: 1; }
+    .page-header { margin-bottom: 32px; }
+    .page-heading { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--white); margin-bottom: 8px; }
+    .page-desc { color: var(--cream-dim); font-size: 14px; }
+
+    /* SEARCH & FILTER */
+    .controls-bar {
+      display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .search-box {
+      flex: 1; min-width: 200px; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+    }
+    .search-box input {
+      flex: 1; background: transparent; border: none; outline: none; color: var(--cream);
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+    }
+    .search-box input::placeholder { color: rgba(205,200,180,0.4); }
+    .search-box .ms { color: var(--gold); font-size: 20px; flex-shrink: 0; }
+
+    .filter-btn {
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--cream);
+      padding: 10px 16px; border-radius: var(--r-lg); cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: background 0.2s; font-size: 14px;
+    }
+    .filter-btn:hover { background: var(--glass-b); }
+
+    /* DOCUMENT GRID */
+    .documents-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+    }
+    .doc-card {
+      background: var(--glass); border: 1px solid var(--border); border-radius: var(--r-lg);
+      padding: 24px; transition: border-color 0.3s, transform 0.3s;
+    }
+    .doc-card:hover { border-color: var(--border-b); transform: translateY(-4px); }
+    .doc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .doc-icon { width: 48px; height: 48px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy-3)); border: 1px solid var(--border-b);
+      display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 24px;
+    }
+    .doc-info { flex: 1; }
+    .doc-name { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+    .doc-type { font-size: 12px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .doc-date { font-size: 13px; color: var(--cream-dim); margin-bottom: 16px; }
+    .doc-status {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;
+    }
+    .doc-status.verified { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .doc-status.pending { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .doc-actions { display: flex; gap: 8px; }
+    .doc-action-btn {
+      flex: 1; padding: 8px 12px; border: 1px solid var(--border); background: transparent;
+      color: var(--cream-dim); border-radius: var(--r); cursor: pointer; font-size: 12px;
+      transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+    .doc-action-btn:hover { background: var(--glass-b); color: var(--white); border-color: var(--border-b); }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--cream-dim);
+    }
+    .empty-state .ms { font-size: 64px; margin-bottom: 16px; opacity: 0.4; }
+    .empty-state h3 { font-size: 1.2rem; color: var(--white); margin-bottom: 8px; }
+    .empty-state p { margin-bottom: 24px; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--navy);
+      border: none; padding: 10px 20px; border-radius: var(--r-lg); cursor: pointer;
+      font-weight: 600; transition: transform 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .documents-grid { grid-template-columns: 1fr; }
+      .controls-bar { flex-direction: column; }
+      .search-box { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <span class="material-symbols-outlined">account_balance</span>
+      </div>
+      <div class="sidebar-brand">
+        <div class="sidebar-logo-text">Emergence</div>
+        <div class="sidebar-logo-sub">Connect</div>
+      </div>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="dashboard.html"><span class="material-symbols-outlined">dashboard</span> Dashboard</a></li>
+      <li><a href="documents.html" class="active"><span class="material-symbols-outlined">description</span> My Documents</a></li>
+      <li><a href="request.html"><span class="material-symbols-outlined">add_circle</span> New Request</a></li>
+      <li><a href="report.html"><span class="material-symbols-outlined">bug_report</span> Report Issue</a></li>
+      <li><a href="settings.html"><span class="material-symbols-outlined">settings</span> Settings</a></li>
+      <li><a href="help.html"><span class="material-symbols-outlined">help_outline</span> Help & Support</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <nav class="top-nav">
+      <h1 class="page-title">My Documents</h1>
+      <span class="material-symbols-outlined" style="color: var(--gold);">verified</span>
+    </nav>
+
+    <div class="content-wrapper">
+      <div class="page-header">
+        <h2 class="page-heading">My Documents</h2>
+        <p class="page-desc">View, share, and manage your digitally-verified documents and certificates.</p>
+      </div>
+
+      <div class="controls-bar">
+        <div class="search-box">
+          <span class="ms material-symbols-outlined">search</span>
+          <input type="text" placeholder="Search by document name or type…" id="search-input" />
+        </div>
+        <button class="filter-btn">
+          <span class="material-symbols-outlined">tune</span>
+          Filter
+        </button>
+      </div>
+
+      <div class="documents-grid" id="docs-grid">
+        <div class="doc-card">
+          <div class="doc-header">
+            <div class="doc-icon">
+              <span class="material-symbols-outlined">description</span>
+            </div>
+            <div class="doc-info">
+              <div class="doc-name">Birth Certificate</div>
+              <div class="doc-type">Certificate</div>
+            </div>
+          </div>
+          <div class="doc-date">Issued: April 10, 2026</div>
+          <div class="doc-status verified">
+            <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+            Verified
+          </div>
+          <div class="doc-actions">
+            <button class="doc-action-btn" onclick="downloadDocument('Birth Certificate')">
+              <span class="material-symbols-outlined">download</span>
+              Download
+            </button>
+            <button class="doc-action-btn" onclick="shareDocument('Birth Certificate')">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="doc-card">
+          <div class="doc-header">
+            <div class="doc-icon">
+              <span class="material-symbols-outlined">map</span>
+            </div>
+            <div class="doc-info">
+              <div class="doc-name">Certificate of Origin</div>
+              <div class="doc-type">Certificate</div>
+            </div>
+          </div>
+          <div class="doc-date">Issued: April 15, 2026</div>
+          <div class="doc-status verified">
+            <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+            Verified
+          </div>
+          <div class="doc-actions">
+            <button class="doc-action-btn" onclick="downloadDocument('Certificate of Origin')">
+              <span class="material-symbols-outlined">download</span>
+              Download
+            </button>
+            <button class="doc-action-btn" onclick="shareDocument('Certificate of Origin')">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        </div>
+
+        <div class="doc-card">
+          <div class="doc-header">
+            <div class="doc-icon">
+              <span class="material-symbols-outlined">home_pin</span>
+            </div>
+            <div class="doc-info">
+              <div class="doc-name">Residence Permit</div>
+              <div class="doc-type">Permit</div>
+            </div>
+          </div>
+          <div class="doc-date">Issued: March 20, 2026</div>
+          <div class="doc-status pending">
+            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
+            Renewal Due
+          </div>
+          <div class="doc-actions">
+            <button class="doc-action-btn" onclick="downloadDocument('Residence Permit')">
+              <span class="material-symbols-outlined">download</span>
+              Download
+            </button>
+            <button class="doc-action-btn" onclick="requestRenewal('Residence Permit')">
+              <span class="material-symbols-outlined">refresh</span>
+              Renew
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const token = localStorage.getItem('egov_token');
+
+    async function fetchDocuments() {
+      try {
+        if (!token) {
+          // Not authenticated
+          return;
+        }
+
+        const res = await fetch('/api/v1/documents', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.status === 401) {
+          alert('Please sign in to view your documents.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const data = await res.json();
+        if (res.ok && data.data) {
+          renderDocuments(data.data);
+        }
+      } catch (err) {
+        console.error('Fetch documents error', err);
+      }
+    }
+
+    function renderDocuments(docs) {
+      const grid = document.getElementById('docs-grid');
+      grid.innerHTML = '';
+      docs.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'doc-card';
+        card.innerHTML = `
+          <div class="doc-header">
+            <div class="doc-icon"><span class="material-symbols-outlined">description</span></div>
+            <div class="doc-info">
+              <div class="doc-name">${doc.documentName || doc.documentType}</div>
+              <div class="doc-type">${doc.documentType}</div>
+            </div>
+          </div>
+          <div class="doc-date">Issued: ${doc.issuedDate || ''}</div>
+          <div class="doc-status ${doc.status === 'VERIFIED' ? 'verified' : 'pending'}">
+            <span class="material-symbols-outlined" style="font-size: 14px;">${doc.status === 'VERIFIED' ? 'check_circle' : 'schedule'}</span>
+            ${doc.status}
+          </div>
+          <div class="doc-actions">
+            <button class="doc-action-btn" onclick="downloadDocument('${doc.id}', '${doc.documentName || ''}')">
+              <span class="material-symbols-outlined">download</span>
+              Download
+            </button>
+            <button class="doc-action-btn" onclick="shareDocument('${doc.id}', '${doc.documentName || ''}')">
+              <span class="material-symbols-outlined">share</span>
+              Share
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    async function downloadDocument(id, name) {
+      try {
+        if (!token) { alert('Please sign in to download documents.'); window.location.href = 'login.html'; return; }
+        const res = await fetch(`/api/v1/documents/${id}/download`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (res.ok) {
+          alert(`Download ready for ${name}: ${data.data.downloadUrl}`);
+        } else {
+          alert(data.message || 'Unable to generate download');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Download error');
+      }
+    }
+
+    function shareDocument(id, name) {
+      alert(`Share options for ${name}:\n- Email\n- SMS\n- Generate Share Link\n- Print`);
+    }
+
+    function requestRenewal(docName) {
+      alert(`Renewal request for ${docName} has been initiated.\n\nYou will receive further instructions via email.`);
+    }
+
+    // Search/filter
+    document.getElementById('search-input').addEventListener('keyup', function(e) {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll('.doc-card').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(term) ? '' : 'none';
+      });
+    });
+
+    // Try to fetch documents on load
+    fetchDocuments();
+  </script>
+</body>
+</html>

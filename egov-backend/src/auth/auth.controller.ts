@@ -15,28 +15,28 @@ export class AuthController {
         const result = await this.authService.register(registerDto);
         res.cookie('token', result.token, {
             httpOnly: true,
-            secure: false, // Set to true if using HTTPS
+            secure: false,
             sameSite: 'lax',
             path: '/',
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+            maxAge: 24 * 60 * 60 * 1000
         });
-        return res.json({ status: 'success', citizenId: result.citizenId });
+        return { status: 'success', citizenId: result.citizenId };
     }
 
     @Post('login')
     async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: express.Response) {
-        const result = await this.authService.login(loginDto.citizenId, loginDto.email);
+        const result = await this.authService.login(loginDto.citizenId, loginDto.password);
         if (!result) {
-            throw new UnauthorizedException('Invalid citizen ID or email');
+            throw new UnauthorizedException('Invalid citizen ID or password');
         }
         res.cookie('token', result.token, {
             httpOnly: true,
-            secure: false, // Set to true if using HTTPS
+            secure: false,
             sameSite: 'lax',
             path: '/',
-            maxAge: 24 * 60 * 60 * 1000 // 1 day
+            maxAge: 24 * 60 * 60 * 1000
         });
-        return res.json({ status: 'success' });
+        return { status: 'success' };
     }
 
     @UseGuards(JwtAuthGuard)

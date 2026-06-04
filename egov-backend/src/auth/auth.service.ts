@@ -1,17 +1,29 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
+import { SettingsService } from '../settings/settings.service';
+
+interface User {
+  id: number;
+  email: string;
+  citizenId: string;
+  passwordHash: string;
+  profileComplete: boolean;
+  verificationDocType?: string;
+  verificationDocPath?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 @Injectable()
 export class AuthService {
+  private users: User[] = [];
+  private nextUserId = 1;
+
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private settingsService: SettingsService,
   ) {}
 
   async generateCitizenId(): Promise<string> {
@@ -20,14 +32,14 @@ export class AuthService {
     while (!isUnique) {
       const random4 = Math.floor(1000 + Math.random() * 9000);
       citizenId = `CITIZEN-${random4}`;
-      const existing = await this.userRepository.findOne({ where: { citizenId } });
+      const existing = this.users.find(u => u.citizenId === citizenId);
       if (!existing) isUnique = true;
     }
     return citizenId;
   }
 
   async register(dto: RegisterDto) {
-    const existing = await this.userRepository.findOne({ where: { email: dto.email } });
+    const existing = this.users.find(u => u.email === dto.email);
     if (existing) {
       throw new UnauthorizedException('Email already registered');
     }
@@ -35,15 +47,24 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(dto.password, salt);
     const citizenId = await this.generateCitizenId();
+    const now = new Date();
 
-    const user = this.userRepository.create({
+    const user: User = {
+      id: this.nextUserId++,
       email: dto.email,
       passwordHash: hash,
       citizenId: citizenId,
       profileComplete: false,
-    });
+      createdAt: now,
+      updatedAt: now,
+    };
 
-    await this.userRepository.save(user);
+    this.users.push(user);
+    
+    // Initialize settings for new user
+    this.settingsService.initializeSettings(user.id, user.citizenId, user.email);
+    
+    console.log('[AUTH] User registered:', citizenId);
 
     const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
     return {
@@ -53,12 +74,20 @@ export class AuthService {
     };
   }
 
-  async login(citizenId: string, email: string) {
-    const user = await this.userRepository.findOne({ where: { citizenId, email } });
+  async login(citizenId: string, password: string) {
+    const user = this.users.find(u => u.citizenId === citizenId);
     if (!user) {
+      console.log('[AUTH] Login failed: citizen not found', citizenId);
       return null;
     }
 
+    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordMatch) {
+      console.log('[AUTH] Login failed: password mismatch for', citizenId);
+      return null;
+    }
+
+    console.log('[AUTH] Login successful for', citizenId);
     const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
     return {
       status: 'success',
@@ -67,30 +96,30 @@ export class AuthService {
   }
 
   async completeProfile(userId: number, docType: string, docPath: string) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = this.users.find(u => u.id === userId);
     if (!user) throw new UnauthorizedException('User not found');
 
     user.verificationDocType = docType;
     user.verificationDocPath = docPath || 'uploaded_doc.png';
     user.profileComplete = true;
+    user.updatedAt = new Date();
 
-    await this.userRepository.save(user);
+    console.log('[AUTH] Profile completed for user', userId);
     return { status: 'success', message: 'Profile verified' };
   }
 
   async skipVerification(userId: number) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = this.users.find(u => u.id === userId);
     if (!user) throw new UnauthorizedException('User not found');
 
-    // Profile remains incomplete
+    console.log('[AUTH] Verification skipped for user', userId);
     return { status: 'success', message: 'Verification skipped' };
   }
 
   async getUserProfile(userId: number) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = this.users.find(u => u.id === userId);
     if (!user) throw new UnauthorizedException('User not found');
 
-    // Make sure we never return the password hash
     const { passwordHash, ...result } = user;
     return result;
   }

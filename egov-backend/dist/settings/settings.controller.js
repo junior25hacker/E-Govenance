@@ -1,0 +1,136 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SettingsController = void 0;
+const common_1 = require("@nestjs/common");
+const settings_service_1 = require("./settings.service");
+const update_profile_dto_1 = require("./dto/update-profile.dto");
+const change_password_dto_1 = require("./dto/change-password.dto");
+const update_preferences_dto_1 = require("./dto/update-preferences.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+let SettingsController = class SettingsController {
+    settingsService;
+    constructor(settingsService) {
+        this.settingsService = settingsService;
+    }
+    async getProfile(req) {
+        console.log('[SETTINGS] Fetch profile for user:', req.user.id);
+        const settings = this.settingsService.getSettings(req.user.id);
+        return {
+            status: 'success',
+            data: settings,
+        };
+    }
+    async updateProfile(req, updateProfileDto) {
+        console.log('[SETTINGS] Update profile for user:', req.user.id);
+        const updated = await this.settingsService.updateProfile(req.user.id, updateProfileDto);
+        return {
+            status: 'success',
+            message: 'Profile updated successfully',
+            data: updated,
+        };
+    }
+    async changePassword(req, changePasswordDto) {
+        console.log('[SETTINGS] Change password for user:', req.user.id);
+        const result = await this.settingsService.changePassword(req.user.id, changePasswordDto);
+        return {
+            status: result.status,
+            message: result.message,
+        };
+    }
+    async updatePreferences(req, updatePreferencesDto) {
+        console.log('[SETTINGS] Update preferences for user:', req.user.id);
+        const updated = await this.settingsService.updatePreferences(req.user.id, updatePreferencesDto);
+        return {
+            status: 'success',
+            message: 'Preferences updated successfully',
+            data: updated.preferences,
+        };
+    }
+    async exportData(req, format = 'json') {
+        console.log('[SETTINGS] Export data for user:', req.user.id, 'Format:', format);
+        const data = this.settingsService.exportData(req.user.id, format);
+        return {
+            status: 'success',
+            message: `Data exported as ${format}`,
+            data: data,
+        };
+    }
+    async deleteAccount(req) {
+        console.log('[SETTINGS] Delete account for user:', req.user.id);
+        const result = this.settingsService.deleteAccount(req.user.id);
+        return {
+            status: result.status,
+            message: result.message,
+        };
+    }
+};
+exports.SettingsController = SettingsController;
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('profile'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)('profile'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_profile_dto_1.UpdateProfileDto]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('change-password'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, change_password_dto_1.ChangePasswordDto]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "changePassword", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)('preferences'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_preferences_dto_1.UpdatePreferencesDto]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "updatePreferences", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('export'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('format')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "exportData", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)('account'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], SettingsController.prototype, "deleteAccount", null);
+exports.SettingsController = SettingsController = __decorate([
+    (0, common_1.Controller)('api/v1/settings'),
+    __metadata("design:paramtypes", [settings_service_1.SettingsService])
+], SettingsController);
+//# sourceMappingURL=settings.controller.js.map

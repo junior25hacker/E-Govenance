@@ -1,18 +1,19 @@
-import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { User } from './entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
+import { SettingsService } from '../settings/settings.service';
 export declare class AuthService {
-    private userRepository;
     private jwtService;
-    constructor(userRepository: Repository<User>, jwtService: JwtService);
+    private settingsService;
+    private users;
+    private nextUserId;
+    constructor(jwtService: JwtService, settingsService: SettingsService);
     generateCitizenId(): Promise<string>;
     register(dto: RegisterDto): Promise<{
         status: string;
         citizenId: string;
         token: string;
     }>;
-    login(citizenId: string, email: string): Promise<{
+    login(citizenId: string, password: string): Promise<{
         status: string;
         token: string;
     } | null>;
@@ -26,12 +27,11 @@ export declare class AuthService {
     }>;
     getUserProfile(userId: number): Promise<{
         id: number;
-        citizenId: string;
         email: string;
-        fullName: string;
+        citizenId: string;
         profileComplete: boolean;
-        verificationDocType: string;
-        verificationDocPath: string;
+        verificationDocType?: string;
+        verificationDocPath?: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

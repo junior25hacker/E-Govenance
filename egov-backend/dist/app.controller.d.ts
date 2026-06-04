@@ -13,22 +13,7 @@ export declare class AppController {
     login(): {
         title: string;
     };
-    dashboard(req: any): Promise<{
-        title: string;
-        user: {
-            id: number;
-            citizenId: string;
-            email: string;
-            fullName: string;
-            profileComplete: boolean;
-            verificationDocType: string;
-            verificationDocPath: string;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-        documents: import("./documents/entities/document.entity").Document[];
-        documentCount: number;
-    }>;
+    dashboard(req: any): Promise<any>;
     civilStatus(): {
         title: string;
     };
