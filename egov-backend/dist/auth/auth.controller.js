@@ -69,7 +69,13 @@ let AuthController = class AuthController {
         });
         return { status: 'success', citizenId: result.citizenId };
     }
+    async citizenLogin(loginDto, res) {
+        return this._handleLogin(loginDto, res);
+    }
     async login(loginDto, res) {
+        return this._handleLogin(loginDto, res);
+    }
+    async _handleLogin(loginDto, res) {
         const result = await this.authService.login(loginDto.citizenId, loginDto.password);
         if (!result) {
             throw new common_1.UnauthorizedException('Invalid citizen ID or password');
@@ -81,7 +87,7 @@ let AuthController = class AuthController {
             path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
-        return { status: 'success' };
+        return { status: 'success', token: result.token, citizen: result.citizen };
     }
     async verifyDocument(req, verifyDto) {
         return this.authService.completeProfile(req.user.id, verifyDto.docType, verifyDto.docPath);
@@ -99,13 +105,21 @@ let AuthController = class AuthController {
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)('register'),
+    (0, common_1.Post)('citizen/register'),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [register_dto_1.RegisterDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('citizen/login'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "citizenLogin", null);
 __decorate([
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),
@@ -116,7 +130,7 @@ __decorate([
 ], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)('verify-document'),
+    (0, common_1.Post)('citizen/verify-document'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -125,7 +139,7 @@ __decorate([
 ], AuthController.prototype, "verifyDocument", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Post)('skip-verification'),
+    (0, common_1.Post)('citizen/skip-verification'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -133,13 +147,14 @@ __decorate([
 ], AuthController.prototype, "skipVerification", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)('profile'),
+    (0, common_1.Get)('citizen/profile'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getProfile", null);
 __decorate([
+    (0, common_1.Post)('citizen/logout'),
     (0, common_1.Post)('logout'),
     __param(0, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
@@ -147,7 +162,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
 exports.AuthController = AuthController = __decorate([
-    (0, common_1.Controller)('api/v1/auth/citizen'),
+    (0, common_1.Controller)('api/v1/auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

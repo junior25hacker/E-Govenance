@@ -17,5 +17,16 @@ export declare class AppController {
     civilStatus(): {
         title: string;
     };
+    documentsView(req: any): Promise<any>;
+    requestView(req: any): Promise<any>;
+    reportView(req: any): Promise<any>;
+    settingsView(req: any): Promise<any>;
+    helpView(): {
+        title: string;
+    };
+    submitView(): {
+        title: string;
+    };
+    getCitizenMetrics(req: any, res: express.Response): Promise<express.Response<any, Record<string, any>>>;
     getLostDocumentSchema(type: string, res: express.Response): express.Response<any, Record<string, any>>;
 }

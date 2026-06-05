@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Document = void 0;
 const typeorm_1 = require("typeorm");
-const user_entity_1 = require("../../auth/entities/user.entity");
 let Document = class Document {
     id;
     citizenId;
@@ -19,13 +18,14 @@ let Document = class Document {
     councilJurisdiction;
     data;
     status;
+    verifiedBy;
     createdAt;
-    user;
+    updatedAt;
 };
 exports.Document = Document;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
-    __metadata("design:type", String)
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
 ], Document.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
@@ -44,17 +44,21 @@ __decorate([
     __metadata("design:type", String)
 ], Document.prototype, "data", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: 'PENDING' }),
+    (0, typeorm_1.Column)({ default: 'pending' }),
     __metadata("design:type", String)
 ], Document.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "verifiedBy", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
 ], Document.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.citizenId),
-    __metadata("design:type", user_entity_1.User)
-], Document.prototype, "user", void 0);
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Document.prototype, "updatedAt", void 0);
 exports.Document = Document = __decorate([
     (0, typeorm_1.Entity)('documents')
 ], Document);

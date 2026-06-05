@@ -1251,7 +1251,45 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(201, 168, 76, 0.4);
     }
-  </style>
+  
+    /* MODAL STYLES */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(5,13,31,0.85); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-content {
+      background: rgba(10,24,51,0.95); border: 1px solid var(--border); border-radius: var(--r-xl);
+      width: 100%; max-width: 500px; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      transform: translateY(20px); transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .modal-title { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 600; color: var(--white); }
+    .modal-close { background: none; border: none; color: var(--cream-dim); cursor: pointer; display: flex; transition: color 0.2s; }
+    .modal-close:hover { color: var(--white); }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--cream-dim); margin-bottom: 8px; }
+    .form-control {
+      width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 12px 16px; color: var(--white); font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-control:focus { border-color: var(--gold); background: rgba(255,255,255,0.08); outline: none; }
+    .form-control option { background: var(--navy-2); color: var(--white); }
+    input[type="file"]::file-selector-button {
+      background: var(--glass); border: 1px solid var(--border); color: var(--cream);
+      padding: 8px 12px; border-radius: var(--r); margin-right: 12px; cursor: pointer; transition: background 0.2s;
+    }
+    input[type="file"]::file-selector-button:hover { background: var(--glass-b); color: var(--white); }
+    .btn-submit { width: 100%; display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+    .spinner { display: none; width: 18px; height: 18px; border: 2px solid var(--navy); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+    .btn-loading .spinner { display: block; }
+    .btn-loading .btn-text { opacity: 0.8; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
 </head>
 
 <body>
@@ -1272,11 +1310,11 @@
           <span class="material-symbols-outlined">dashboard</span>
           <span>Dashboard</span>
         </a></li>
-      <li><a href="documents.html">
+      <li><a href="/documents">
           <span class="material-symbols-outlined">description</span>
           <span>My Documents</span><span class="nav-badge">4</span>
         </a></li>
-      <li><a href="request.html">
+      <li><a href="/request">
           <span class="material-symbols-outlined">add_task</span>
           <span>Request Certificate</span>
         </a></li>
@@ -1288,8 +1326,8 @@
 
     <div class="sidebar-section-label">Account</div>
     <ul class="sidebar-nav">
-      <li><a href="settings.html"><span class="material-symbols-outlined">settings</span><span>Settings</span></a></li>
-      <li><a href="help.html"><span class="material-symbols-outlined">help_outline</span><span>Help & Support</span></a>
+      <li><a href="/settings"><span class="material-symbols-outlined">settings</span><span>Settings</span></a></li>
+      <li><a href="/help"><span class="material-symbols-outlined">help_outline</span><span>Help & Support</span></a>
       </li>
       <li><a onclick="logout()"><span class="material-symbols-outlined">logout</span><span>Secure Logout</span></a></li>
     </ul>
@@ -1337,7 +1375,7 @@
         <span class="material-symbols-outlined alert-icon">warning_amber</span>
         <div class="alert-text"><strong>Action required:</strong> Your profile is incomplete. Please finish registration
           to unlock all features.</div>
-        <a href="settings.html" class="btn btn-ghost" style="padding:6px 12px;font-size:12px;">Complete Profile</a>
+        <a href="/settings" class="btn btn-ghost" style="padding:6px 12px;font-size:12px;">Complete Profile</a>
         <button class="alert-close" onclick="dismissAlert()"><span class="material-symbols-outlined"
             style="font-size:18px">close</span></button>
       </div>
@@ -1351,9 +1389,9 @@
           <p class="dashboard-subtitle">Your documents are secure and up to date</p>
         </div>
         <div class="page-header-actions">
-          <a href="request.html" class="btn btn-ghost"><span class="material-symbols-outlined"
+          <a href="/request" class="btn btn-ghost"><span class="material-symbols-outlined"
               style="font-size:16px">add</span>New Request</a>
-          <a href="documents.html" class="btn btn-primary"><span class="material-symbols-outlined"
+          <a href="/documents" class="btn btn-primary"><span class="material-symbols-outlined"
               style="font-size:16px">folder_open</span>My Documents</a>
         </div>
       </div>
@@ -1364,33 +1402,32 @@
             <div class="kpi-label">Active Documents</div>
             <div class="kpi-icon"><span class="material-symbols-outlined">description</span></div>
           </div>
-          <div class="kpi-value">{{documentCount}}</div>
-          <div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">remove</span>No change</div>
+          <div class="kpi-value" id="kpi-total">{{documentCount}}</div>
+          <div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">remove</span>Total submitted</div>
           <div class="kpi-progress">
             <div class="kpi-progress-bar" style="width:{{#if documentCount}}75{{else}}0{{/if}}%"></div>
           </div>
         </div>
         <div class="kpi-card">
           <div class="kpi-header">
-            <div class="kpi-label">Pending Requests</div>
+            <div class="kpi-label">Pending Actions</div>
             <div class="kpi-icon"><span class="material-symbols-outlined">hourglass_top</span></div>
           </div>
-          <div class="kpi-value">0</div>
-          <div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">remove</span>No change</div>
+          <div class="kpi-value" id="kpi-pending">{{pendingCount}}</div>
+          <div class="kpi-trend neutral"><span class="material-symbols-outlined" style="font-size:14px">schedule</span>Awaiting review</div>
           <div class="kpi-progress">
-            <div class="kpi-progress-bar" style="width:0%;background:linear-gradient(90deg,#1a3a6b,#3b82f6)"></div>
+            <div class="kpi-progress-bar" style="width:{{#if pendingCount}}50{{else}}0{{/if}}%;background:linear-gradient(90deg,#1a3a6b,#3b82f6)"></div>
           </div>
         </div>
         <div class="kpi-card">
           <div class="kpi-header">
-            <div class="kpi-label">Profile Completion</div>
-            <div class="kpi-icon"><span class="material-symbols-outlined">person_check</span></div>
+            <div class="kpi-label">Approved Documents</div>
+            <div class="kpi-icon"><span class="material-symbols-outlined">task_alt</span></div>
           </div>
-          <div class="kpi-value">{{#if user.profileComplete}}100%{{else}}40%{{/if}}</div>
-          <div class="kpi-trend {{#if user.profileComplete}}up{{else}}neutral{{/if}}"><span class="material-symbols-outlined"
-              style="font-size:14px">{{#if user.profileComplete}}trending_up{{else}}remove{{/if}}</span>{{#if user.profileComplete}}Fully Verified{{else}}Incomplete{{/if}}</div>
+          <div class="kpi-value" id="kpi-approved">{{approvedCount}}</div>
+          <div class="kpi-trend up"><span class="material-symbols-outlined" style="font-size:14px">trending_up</span>Verified</div>
           <div class="kpi-progress">
-            <div class="kpi-progress-bar" style="width:{{#if user.profileComplete}}100{{else}}40{{/if}}%"></div>
+            <div class="kpi-progress-bar" style="width:{{#if approvedCount}}60{{else}}0{{/if}}%;background:linear-gradient(90deg,#15803d,#22c55e)"></div>
           </div>
         </div>
         <div class="kpi-card">
@@ -1416,7 +1453,7 @@
                 <div class="widget-subtitle">Your verified government documents</div>
               </div>
             </div>
-            <a href="documents.html" class="widget-action-link">View all <span class="material-symbols-outlined"
+            <a href="/documents" class="widget-action-link">View all <span class="material-symbols-outlined"
                 style="font-size:15px">arrow_forward</span></a>
           </div>
           <div class="digital-wallet">
@@ -1487,49 +1524,7 @@
           </div>
         </section>
 
-        <section class="widget-card col-4 s4">
-          <div class="widget-header">
-            <div class="widget-header-left">
-              <div class="widget-icon"><span class="material-symbols-outlined">bolt</span></div>
-              <div>
-                <div class="widget-title">Quick Actions</div>
-                <div class="widget-subtitle">Common tasks</div>
-              </div>
-            </div>
-          </div>
-          <div class="quick-actions">
-            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="digitizeDocument(event)">
-              <div class="action-icon"><span class="material-symbols-outlined">document_scanner</span></div>
-              <div class="action-text">
-                <div class="action-label">Digitize Document</div>
-                <div class="action-desc">Scan & upload</div>
-              </div>
-            </a>
-            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="generatePassport(event)">
-              <div class="action-icon"><span class="material-symbols-outlined">passport</span></div>
-              <div class="action-text">
-                <div class="action-label">Generate Passport</div>
-                <div class="action-desc">From national ID</div>
-              </div>
-            </a>
-            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="switchView('report-lost', event)">
-              <div class="action-icon"><span class="material-symbols-outlined">report_problem</span></div>
-              <div class="action-text">
-                <div class="action-label">Report Lost Doc</div>
-                <div class="action-desc">Instant notification</div>
-              </div>
-            </a>
-            <a href="#" class="action-btn {{#unless user.profileComplete}}disabled-action{{/unless}}" onclick="downloadAll(event)">
-              <div class="action-icon"><span class="material-symbols-outlined">download</span></div>
-              <div class="action-text">
-                <div class="action-label">Download All</div>
-                <div class="action-desc">Export as PDF</div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <section class="widget-card col-8 s4">
+        <section class="widget-card col-12 s4">
           <div class="widget-header">
             <div class="widget-header-left">
               <div class="widget-icon"><span class="material-symbols-outlined">history</span></div>
@@ -1594,7 +1589,7 @@
                 <div class="widget-subtitle">Track your active submissions</div>
               </div>
             </div>
-            <a href="request.html" class="btn btn-ghost" style="padding:8px 14px;font-size:12px;"><span
+            <a href="/request" class="btn btn-ghost" style="padding:8px 14px;font-size:12px;"><span
                 class="material-symbols-outlined" style="font-size:16px">add</span>New Request</a>
           </div>
           <table class="requests-table">
@@ -1710,16 +1705,83 @@
 
   </main>
 
-  <script>
+  
+  <!-- DIGITIZE MODAL -->
+  <div class="modal-overlay" id="digitize-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Digitize Document</h3>
+        <button class="modal-close" onclick="closeModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="digitize-form" onsubmit="submitVerification(event)">
+        <div class="form-group">
+          <label class="form-label">Document Type</label>
+          <select class="form-control" id="doc-type" required>
+            <option value="" disabled selected>Select document type...</option>
+            <option value="Birth Certificate">Birth Certificate</option>
+            <option value="National ID">National ID</option>
+            <option value="Passport">Passport</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Council Jurisdiction</label>
+          <select class="form-control" id="council-jurisdiction" required>
+            <option value="" disabled selected>Select council jurisdiction...</option>
+            <option value="Central Registry">Central Registry</option>
+            <option value="City Council District 1">City Council District 1</option>
+            <option value="City Council District 2">City Council District 2</option>
+            <option value="City Council District 3">City Council District 3</option>
+            <option value="City Council District 4">City Council District 4</option>
+            <option value="Municipal Council East">Municipal Council East</option>
+            <option value="Municipal Council West">Municipal Council West</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Upload File</label>
+          <input type="file" class="form-control" id="doc-file" accept="image/*,.pdf" required />
+        </div>
+        <button type="submit" class="btn-primary btn-submit" id="submit-btn">
+          <div class="spinner"></div>
+          <span class="btn-text">Submit for Verification</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+<script>
+
     async function logout() {
-      await fetch('/api/v1/auth/logout', { method: 'POST' });
+      await fetch('/api/v1/auth/citizen/logout', { method: 'POST' });
       localStorage.clear();
       window.location.href = '/login';
     }
 
+    // ── Dynamic KPI Loader ──
+    async function loadMetrics() {
+      try {
+        const res = await fetch('/api/v1/citizen/metrics');
+        if (res.ok) {
+          const json = await res.json();
+          const m = json.data;
+          const kpiTotal = document.getElementById('kpi-total');
+          const kpiPending = document.getElementById('kpi-pending');
+          const kpiApproved = document.getElementById('kpi-approved');
+          if (kpiTotal) kpiTotal.textContent = m.totalDocuments;
+          if (kpiPending) kpiPending.textContent = m.pendingActions;
+          if (kpiApproved) kpiApproved.textContent = m.approvedDocuments;
+        }
+      } catch (e) {
+        console.warn('[DASHBOARD] Metrics refresh failed:', e);
+      }
+    }
+    // Refresh metrics on page load
+    window.addEventListener('load', loadMetrics);
+
     // Existing Dashboard JS
     function dismissAlert() { document.getElementById('alertBanner').style.display = 'none'; }
-    function digitizeDocument(e) { e.preventDefault(); showToast('Opening document scanner…'); }
+    
     function generatePassport(e) { e.preventDefault(); showToast('Connecting to passport generation service…'); }
     function downloadAll(e) { e.preventDefault(); showToast('Preparing your documents for download…'); }
 
@@ -1849,7 +1911,75 @@
         btn.disabled = false;
       }
     });
-  </script>
+  
+
+    const citizenId = '{{user.citizenId}}';
+
+    function openDigitizeModal(e) {
+      e.preventDefault();
+      if (e.currentTarget.classList.contains('disabled-action')) return;
+      document.getElementById('digitize-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('digitize-modal').classList.remove('active');
+      document.getElementById('digitize-form').reset();
+    }
+
+    async function submitVerification(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('submit-btn');
+      btn.classList.add('btn-loading');
+      btn.disabled = true;
+
+      try {
+        const docType = document.getElementById('doc-type').value;
+        const council = document.getElementById('council-jurisdiction').value;
+        const fileInput = document.getElementById('doc-file');
+        
+        // Store just the file name — avoids the "request too large" error
+        // from sending multi-MB base64 blobs in JSON
+        let filePath = 'no_file_selected';
+        if (fileInput.files.length > 0) {
+          filePath = fileInput.files[0].name;
+        }
+
+        const payload = {
+          citizenId: citizenId,
+          documentType: docType,
+          councilJurisdiction: council,
+          filePath: filePath,
+          purpose: "Verification"
+        };
+
+        const res = await fetch('/api/v1/documents/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        
+        if (res.ok && data.status === 'success') {
+          closeModal();
+          showToast("Document sent to Civil Registry for verification");
+          loadMetrics(); // refresh KPI cards
+        } else {
+          showToast(data.message || 'Error submitting document');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Submission failed. Please try again.');
+      } finally {
+        btn.classList.remove('btn-loading');
+        btn.disabled = false;
+      }
+    }
+
+</script>
 </body>
 
 </html>

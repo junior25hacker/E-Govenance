@@ -1,5 +1,5 @@
 export declare class Report {
-    id: string;
+    id: number;
     citizenId: string;
     referenceId: string;
     category: string;

@@ -1259,10 +1259,12 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="login-email">Registered Email Address</label>
+            <label for="login-password">Password</label>
             <div class="input-wrap">
-              <span class="material-symbols-outlined input-icon">mail_outline</span>
-              <input type="email" id="login-email" placeholder="citizen@example.com" required />
+              <span class="material-symbols-outlined input-icon">lock_outline</span>
+              <input type="password" id="login-password" placeholder="••••••••" required />
+              <button type="button" class="pw-toggle" onclick="toggleVis('login-password',this)"><span
+                  class="material-symbols-outlined" style="font-size:17px">visibility_off</span></button>
             </div>
           </div>
           <div class="field-error" id="err-login" style="margin-bottom:10px">Invalid credentials. Please try again.
@@ -1281,7 +1283,7 @@
           <span id="toggle-auth-text">Already a member? Sign In</span>
         </button>
 
-        <div class="footer-links"><a href="/">← Home</a> &nbsp;·&nbsp; <a href="help.html">Help</a></div>
+        <div class="footer-links"><a href="/">← Home</a> &nbsp;·&nbsp; <a href="/help">Help</a></div>
 
       </div>
     </div>
@@ -1529,28 +1531,44 @@
 
     $('signin-form').addEventListener('submit', async function (e) {
       e.preventDefault();
-      const citizenId = $('login-id').value;
-      const email = $('login-email').value;
+      const citizenId = ($('login-id').value || '').trim();
+      const password = ($('login-password').value || '').trim();
+
+      if (!citizenId || !password) {
+        const errEl = $('err-login');
+        errEl.textContent = 'Please enter your Citizen ID and password.';
+        errEl.classList.add('show');
+        return;
+      }
 
       $('signin-btn').disabled = true;
       $('signin-spinner').style.display = 'inline-block';
       $('signin-icon').style.display = 'none';
       $('signin-text').textContent = 'Verifying identity...';
-      $('err-login').classList.remove('show');
+      const errEl = $('err-login');
+      errEl.classList.remove('show');
 
       try {
         const res = await fetch('/api/v1/auth/citizen/login', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ citizenId, email })
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ citizenId, password })
         });
         const data = await res.json();
 
-        if (data.status === 'success') {
+        if (res.ok && data.status === 'success') {
           window.location.replace('/dashboard');
-        } else {
-          throw new Error(data.message);
+          return;
         }
+
+        // Show server-side error message
+        const msg = data.message || (Array.isArray(data.message) ? data.message.join(', ') : null) || 'Invalid Citizen ID or password.';
+        errEl.textContent = msg;
+        errEl.classList.add('show');
       } catch (err) {
-        $('err-login').classList.add('show');
+        errEl.textContent = 'Network error — could not reach server. Please try again.';
+        errEl.classList.add('show');
+      } finally {
         $('signin-btn').disabled = false;
         $('signin-spinner').style.display = 'none';
         $('signin-icon').style.display = 'inline-block';

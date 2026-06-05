@@ -70,15 +70,58 @@ let AppController = class AppController {
     async dashboard(req) {
         const userProfile = await this.authService.getUserProfile(req.user.id);
         const documents = await this.documentsService.findByCitizen(userProfile.citizenId);
+        const metrics = await this.documentsService.getMetrics(userProfile.citizenId);
         return {
             title: 'CitizenNode | Dashboard',
             user: userProfile,
             documents: documents,
             documentCount: documents.length,
+            approvedCount: metrics.approvedDocuments,
+            pendingCount: metrics.pendingActions,
+            rejectedCount: metrics.rejectedDocuments,
         };
     }
     civilStatus() {
         return { title: 'CitizenNode | Civil Status' };
+    }
+    async documentsView(req) {
+        const userProfile = await this.authService.getUserProfile(req.user.id);
+        return { title: 'CitizenNode | My Documents', user: userProfile };
+    }
+    async requestView(req) {
+        const userProfile = await this.authService.getUserProfile(req.user.id);
+        return { title: 'CitizenNode | New Request', user: userProfile };
+    }
+    async reportView(req) {
+        const userProfile = await this.authService.getUserProfile(req.user.id);
+        return { title: 'CitizenNode | Report Issue', user: userProfile };
+    }
+    async settingsView(req) {
+        const userProfile = await this.authService.getUserProfile(req.user.id);
+        return { title: 'CitizenNode | Settings', user: userProfile };
+    }
+    helpView() {
+        return { title: 'CitizenNode | Help & Support' };
+    }
+    submitView() {
+        return { title: 'CitizenNode | Document Submission' };
+    }
+    async getCitizenMetrics(req, res) {
+        try {
+            const citizenId = req.user?.citizenId || undefined;
+            const metrics = await this.documentsService.getMetrics(citizenId);
+            return res.status(common_1.HttpStatus.OK).json({
+                status: 'success',
+                data: metrics,
+            });
+        }
+        catch {
+            const metrics = await this.documentsService.getMetrics();
+            return res.status(common_1.HttpStatus.OK).json({
+                status: 'success',
+                data: metrics,
+            });
+        }
     }
     getLostDocumentSchema(type, res) {
         const dataSchema = this.appService.getDocumentSchema(type);
@@ -116,6 +159,64 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "civilStatus", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('documents'),
+    (0, common_1.Render)('documents'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "documentsView", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('request'),
+    (0, common_1.Render)('request'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "requestView", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('report'),
+    (0, common_1.Render)('report'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "reportView", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('settings'),
+    (0, common_1.Render)('settings'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "settingsView", null);
+__decorate([
+    (0, common_1.Get)('help'),
+    (0, common_1.Render)('help'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "helpView", null);
+__decorate([
+    (0, common_1.Get)('submit'),
+    (0, common_1.Render)('submit'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "submitView", null);
+__decorate([
+    (0, common_1.Get)('api/v1/citizen/metrics'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getCitizenMetrics", null);
 __decorate([
     (0, common_1.Get)('api/lost-doc-schema'),
     __param(0, (0, common_1.Query)('type')),

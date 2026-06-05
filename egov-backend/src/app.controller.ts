@@ -31,12 +31,16 @@ export class AppController {
   async dashboard(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
     const documents = await this.documentsService.findByCitizen(userProfile.citizenId);
+    const metrics = await this.documentsService.getMetrics(userProfile.citizenId);
     
     return {
       title: 'CitizenNode | Dashboard',
       user: userProfile,
       documents: documents,
       documentCount: documents.length,
+      approvedCount: metrics.approvedDocuments,
+      pendingCount: metrics.pendingActions,
+      rejectedCount: metrics.rejectedDocuments,
     };
   }
 
@@ -44,6 +48,72 @@ export class AppController {
   @Render('civil-status')
   civilStatus() {
     return { title: 'CitizenNode | Civil Status' };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('documents')
+  @Render('documents')
+  async documentsView(@Req() req): Promise<any> {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    return { title: 'CitizenNode | My Documents', user: userProfile };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('request')
+  @Render('request')
+  async requestView(@Req() req): Promise<any> {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    return { title: 'CitizenNode | New Request', user: userProfile };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('report')
+  @Render('report')
+  async reportView(@Req() req): Promise<any> {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    return { title: 'CitizenNode | Report Issue', user: userProfile };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('settings')
+  @Render('settings')
+  async settingsView(@Req() req): Promise<any> {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    return { title: 'CitizenNode | Settings', user: userProfile };
+  }
+
+  @Get('help')
+  @Render('help')
+  helpView() {
+    return { title: 'CitizenNode | Help & Support' };
+  }
+
+  @Get('submit')
+  @Render('submit')
+  submitView() {
+    return { title: 'CitizenNode | Document Submission' };
+  }
+
+  // ── API: Citizen Metrics (for dashboard KPI cards & frontend JS loaders) ──
+
+  @Get('api/v1/citizen/metrics')
+  async getCitizenMetrics(@Req() req, @Res() res: express.Response) {
+    try {
+      // If authenticated, return user-specific metrics
+      const citizenId = req.user?.citizenId || undefined;
+      const metrics = await this.documentsService.getMetrics(citizenId);
+      return res.status(HttpStatus.OK).json({
+        status: 'success',
+        data: metrics,
+      });
+    } catch {
+      // Unauthenticated: return global metrics
+      const metrics = await this.documentsService.getMetrics();
+      return res.status(HttpStatus.OK).json({
+        status: 'success',
+        data: metrics,
+      });
+    }
   }
 
   // FIXED: Using express.Response explicitly so the decorator metadata can safely generate

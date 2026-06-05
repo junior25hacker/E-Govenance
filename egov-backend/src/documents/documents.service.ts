@@ -1,91 +1,134 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Document } from './entities/document.entity';
+import { DocumentRequest } from './entities/document-request.entity';
+import { Report } from './entities/report.entity';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { SubmitDocumentRequestDto } from './dto/submit-document-request.dto';
 import { SubmitReportDto } from './dto/submit-report.dto';
 
-export interface DocumentItem {
-  id: string;
-  citizenId: string;
-  documentType: string;
-  councilJurisdiction: string;
-  data: string;
-  status: string;
-  createdAt: Date;
-}
-
-export interface DocumentRequest {
-  id: string;
-  citizenId: string;
-  referenceId: string;
-  documentType: string;
-  fullName?: string;
-  nationalId?: string;
-  email?: string;
-  phone?: string;
-  purpose?: string;
-  status: string;
-  createdAt: Date;
-}
-
-export interface Report {
-  id: string;
-  citizenId: string;
-  referenceId: string;
-  category: string;
-  priority: string;
-  location: string;
-  description: string;
-  phone?: string;
-  status: string;
-  createdAt: Date;
-}
-
 @Injectable()
 export class DocumentsService {
-  private documents: DocumentItem[] = [];
-  private requests: DocumentRequest[] = [];
-  private reports: Report[] = [];
-  private nextDocId = 1;
-  private nextReqId = 1;
-  private nextRptId = 1;
+  constructor(
+    @InjectRepository(Document)
+    private readonly documentRepository: Repository<Document>,
+    @InjectRepository(DocumentRequest)
+    private readonly requestRepository: Repository<DocumentRequest>,
+    @InjectRepository(Report)
+    private readonly reportRepository: Repository<Report>,
+  ) {}
 
-  // Generate unique reference ID for requests
+  // ── Document CRUD ──
+
+  async create(citizenId: string, dto: CreateDocumentDto) {
+    const doc = this.documentRepository.create({
+      citizenId,
+      documentType: dto.documentType,
+      councilJurisdiction: dto.councilJurisdiction,
+      data: dto.filePath,
+      status: 'pending',
+    });
+    const saved = await this.documentRepository.save(doc);
+    console.log('[DOCUMENTS] Document created:', saved.id);
+    return saved;
+  }
+
+  /**
+   * Submit a document from the frontend "Digitize New Document" modal
+   * or from the JavaFX admin panel. Accepts citizenId in the DTO body
+   * so external clients can specify the citizen.
+   */
+  async submitDocument(citizenId: string, dto: SubmitDocumentRequestDto) {
+    const doc = this.documentRepository.create({
+      citizenId: dto.citizenId || citizenId,
+      documentType: dto.documentType,
+      councilJurisdiction: dto.councilJurisdiction || 'Central Registry',
+      data: dto.filePath || '',
+      status: 'pending',
+    });
+    const saved = await this.documentRepository.save(doc);
+    console.log('[DOCUMENTS] Document submitted for verification:', saved.id);
+    return saved;
+  }
+
+  async findByCitizen(citizenId: string) {
+    return this.documentRepository.find({
+      where: { citizenId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findById(id: number) {
+    return this.documentRepository.findOneBy({ id });
+  }
+
+  // ── JavaFX Admin API Bridge ──
+
+  /**
+   * GET /api/v1/documents?status=pending
+   * Fetches all documents matching a given status (for admin extraction)
+   */
+  async findByStatus(status: string) {
+    return this.documentRepository.find({
+      where: { status },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  /**
+   * POST /api/v1/documents/:id/verify-status
+   * Admin decision — approve or reject a document
+   */
+  async updateVerifyStatus(id: number, status: string, verifiedBy: string) {
+    const doc = await this.documentRepository.findOneBy({ id });
+    if (!doc) {
+      throw new NotFoundException(`Document with ID ${id} not found`);
+    }
+
+    doc.status = status;
+    doc.verifiedBy = verifiedBy;
+    // updatedAt is handled automatically by @UpdateDateColumn
+
+    const saved = await this.documentRepository.save(doc);
+    console.log(`[DOCUMENTS] Document ${id} status updated to ${status} by ${verifiedBy}`);
+    return saved;
+  }
+
+  // ── Metrics (for dashboard KPI cards) ──
+
+  async getMetrics(citizenId?: string) {
+    const whereClause = citizenId ? { citizenId } : {};
+
+    const totalDocuments = await this.documentRepository.count({ where: whereClause });
+    const approvedDocuments = await this.documentRepository.count({
+      where: { ...whereClause, status: 'verified' },
+    });
+    const pendingActions = await this.documentRepository.count({
+      where: { ...whereClause, status: 'pending' },
+    });
+    const rejectedDocuments = await this.documentRepository.count({
+      where: { ...whereClause, status: 'rejected' },
+    });
+
+    return {
+      totalDocuments,
+      approvedDocuments,
+      pendingActions,
+      rejectedDocuments,
+    };
+  }
+
+  // ── Document Requests ──
+
   private generateRequestId(): string {
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();
     return `REQ-2026-${random}`;
   }
 
-  // Generate unique reference ID for reports
-  private generateReportId(): string {
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-    return `RPT-2026-${random}`;
-  }
-
-  async create(citizenId: string, dto: CreateDocumentDto) {
-    const doc: DocumentItem = {
-      id: `doc-${this.nextDocId++}`,
-      citizenId,
-      documentType: dto.documentType,
-      councilJurisdiction: dto.councilJurisdiction,
-      data: dto.filePath,
-      status: 'PENDING',
-      createdAt: new Date(),
-    };
-    this.documents.push(doc);
-    console.log('[DOCUMENTS] Document created:', doc.id);
-    return doc;
-  }
-
-  async findByCitizen(citizenId: string) {
-    return this.documents
-      .filter(d => d.citizenId === citizenId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-  }
-
   async submitRequest(citizenId: string, dto: SubmitDocumentRequestDto) {
     const referenceId = this.generateRequestId();
-    const req: DocumentRequest = {
-      id: `req-${this.nextReqId++}`,
+    const req = this.requestRepository.create({
       citizenId,
       referenceId,
       documentType: dto.documentType,
@@ -95,17 +138,29 @@ export class DocumentsService {
       phone: dto.phone,
       purpose: dto.purpose,
       status: 'PENDING',
-      createdAt: new Date(),
-    };
-    this.requests.push(req);
+    });
+    const saved = await this.requestRepository.save(req);
     console.log('[DOCUMENTS] Request submitted with ID:', referenceId);
-    return req;
+    return saved;
+  }
+
+  async getRequests(citizenId: string) {
+    return this.requestRepository.find({
+      where: { citizenId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  // ── Reports ──
+
+  private generateReportId(): string {
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `RPT-2026-${random}`;
   }
 
   async submitReport(citizenId: string, dto: SubmitReportDto) {
     const referenceId = this.generateReportId();
-    const rpt: Report = {
-      id: `rpt-${this.nextRptId++}`,
+    const rpt = this.reportRepository.create({
       citizenId,
       referenceId,
       category: dto.category,
@@ -114,22 +169,16 @@ export class DocumentsService {
       description: dto.description,
       phone: dto.phone,
       status: 'OPEN',
-      createdAt: new Date(),
-    };
-    this.reports.push(rpt);
+    });
+    const saved = await this.reportRepository.save(rpt);
     console.log('[REPORTS] Report submitted with ID:', referenceId);
-    return rpt;
-  }
-
-  async getRequests(citizenId: string) {
-    return this.requests
-      .filter(r => r.citizenId === citizenId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return saved;
   }
 
   async getReports(citizenId: string) {
-    return this.reports
-      .filter(r => r.citizenId === citizenId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return this.reportRepository.find({
+      where: { citizenId },
+      order: { createdAt: 'DESC' },
+    });
   }
 }

@@ -1,11 +1,11 @@
-import { User } from '../../auth/entities/user.entity';
 export declare class Document {
-    id: string;
+    id: number;
     citizenId: string;
     documentType: string;
     councilJurisdiction: string;
     data: string;
     status: string;
+    verifiedBy: string;
     createdAt: Date;
-    user: User;
+    updatedAt: Date;
 }

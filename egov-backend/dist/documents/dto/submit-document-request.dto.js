@@ -18,6 +18,9 @@ class SubmitDocumentRequestDto {
     email;
     phone;
     purpose;
+    councilJurisdiction;
+    filePath;
+    citizenId;
 }
 exports.SubmitDocumentRequestDto = SubmitDocumentRequestDto;
 __decorate([
@@ -50,4 +53,19 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], SubmitDocumentRequestDto.prototype, "purpose", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SubmitDocumentRequestDto.prototype, "councilJurisdiction", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SubmitDocumentRequestDto.prototype, "filePath", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], SubmitDocumentRequestDto.prototype, "citizenId", void 0);
 //# sourceMappingURL=submit-document-request.dto.js.map

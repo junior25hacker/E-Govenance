@@ -5,47 +5,105 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsService = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const document_entity_1 = require("./entities/document.entity");
+const document_request_entity_1 = require("./entities/document-request.entity");
+const report_entity_1 = require("./entities/report.entity");
 let DocumentsService = class DocumentsService {
-    documents = [];
-    requests = [];
-    reports = [];
-    nextDocId = 1;
-    nextReqId = 1;
-    nextRptId = 1;
-    generateRequestId() {
-        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-        return `REQ-2026-${random}`;
-    }
-    generateReportId() {
-        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-        return `RPT-2026-${random}`;
+    documentRepository;
+    requestRepository;
+    reportRepository;
+    constructor(documentRepository, requestRepository, reportRepository) {
+        this.documentRepository = documentRepository;
+        this.requestRepository = requestRepository;
+        this.reportRepository = reportRepository;
     }
     async create(citizenId, dto) {
-        const doc = {
-            id: `doc-${this.nextDocId++}`,
+        const doc = this.documentRepository.create({
             citizenId,
             documentType: dto.documentType,
             councilJurisdiction: dto.councilJurisdiction,
             data: dto.filePath,
-            status: 'PENDING',
-            createdAt: new Date(),
-        };
-        this.documents.push(doc);
-        console.log('[DOCUMENTS] Document created:', doc.id);
-        return doc;
+            status: 'pending',
+        });
+        const saved = await this.documentRepository.save(doc);
+        console.log('[DOCUMENTS] Document created:', saved.id);
+        return saved;
+    }
+    async submitDocument(citizenId, dto) {
+        const doc = this.documentRepository.create({
+            citizenId: dto.citizenId || citizenId,
+            documentType: dto.documentType,
+            councilJurisdiction: dto.councilJurisdiction || 'Central Registry',
+            data: dto.filePath || '',
+            status: 'pending',
+        });
+        const saved = await this.documentRepository.save(doc);
+        console.log('[DOCUMENTS] Document submitted for verification:', saved.id);
+        return saved;
     }
     async findByCitizen(citizenId) {
-        return this.documents
-            .filter(d => d.citizenId === citizenId)
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        return this.documentRepository.find({
+            where: { citizenId },
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async findById(id) {
+        return this.documentRepository.findOneBy({ id });
+    }
+    async findByStatus(status) {
+        return this.documentRepository.find({
+            where: { status },
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async updateVerifyStatus(id, status, verifiedBy) {
+        const doc = await this.documentRepository.findOneBy({ id });
+        if (!doc) {
+            throw new common_1.NotFoundException(`Document with ID ${id} not found`);
+        }
+        doc.status = status;
+        doc.verifiedBy = verifiedBy;
+        const saved = await this.documentRepository.save(doc);
+        console.log(`[DOCUMENTS] Document ${id} status updated to ${status} by ${verifiedBy}`);
+        return saved;
+    }
+    async getMetrics(citizenId) {
+        const whereClause = citizenId ? { citizenId } : {};
+        const totalDocuments = await this.documentRepository.count({ where: whereClause });
+        const approvedDocuments = await this.documentRepository.count({
+            where: { ...whereClause, status: 'verified' },
+        });
+        const pendingActions = await this.documentRepository.count({
+            where: { ...whereClause, status: 'pending' },
+        });
+        const rejectedDocuments = await this.documentRepository.count({
+            where: { ...whereClause, status: 'rejected' },
+        });
+        return {
+            totalDocuments,
+            approvedDocuments,
+            pendingActions,
+            rejectedDocuments,
+        };
+    }
+    generateRequestId() {
+        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+        return `REQ-2026-${random}`;
     }
     async submitRequest(citizenId, dto) {
         const referenceId = this.generateRequestId();
-        const req = {
-            id: `req-${this.nextReqId++}`,
+        const req = this.requestRepository.create({
             citizenId,
             referenceId,
             documentType: dto.documentType,
@@ -55,16 +113,24 @@ let DocumentsService = class DocumentsService {
             phone: dto.phone,
             purpose: dto.purpose,
             status: 'PENDING',
-            createdAt: new Date(),
-        };
-        this.requests.push(req);
+        });
+        const saved = await this.requestRepository.save(req);
         console.log('[DOCUMENTS] Request submitted with ID:', referenceId);
-        return req;
+        return saved;
+    }
+    async getRequests(citizenId) {
+        return this.requestRepository.find({
+            where: { citizenId },
+            order: { createdAt: 'DESC' },
+        });
+    }
+    generateReportId() {
+        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+        return `RPT-2026-${random}`;
     }
     async submitReport(citizenId, dto) {
         const referenceId = this.generateReportId();
-        const rpt = {
-            id: `rpt-${this.nextRptId++}`,
+        const rpt = this.reportRepository.create({
             citizenId,
             referenceId,
             category: dto.category,
@@ -73,25 +139,26 @@ let DocumentsService = class DocumentsService {
             description: dto.description,
             phone: dto.phone,
             status: 'OPEN',
-            createdAt: new Date(),
-        };
-        this.reports.push(rpt);
+        });
+        const saved = await this.reportRepository.save(rpt);
         console.log('[REPORTS] Report submitted with ID:', referenceId);
-        return rpt;
-    }
-    async getRequests(citizenId) {
-        return this.requests
-            .filter(r => r.citizenId === citizenId)
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        return saved;
     }
     async getReports(citizenId) {
-        return this.reports
-            .filter(r => r.citizenId === citizenId)
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        return this.reportRepository.find({
+            where: { citizenId },
+            order: { createdAt: 'DESC' },
+        });
     }
 };
 exports.DocumentsService = DocumentsService;
 exports.DocumentsService = DocumentsService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(document_entity_1.Document)),
+    __param(1, (0, typeorm_1.InjectRepository)(document_request_entity_1.DocumentRequest)),
+    __param(2, (0, typeorm_1.InjectRepository)(report_entity_1.Report)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository])
 ], DocumentsService);
 //# sourceMappingURL=documents.service.js.map

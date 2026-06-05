@@ -1,5 +1,5 @@
 export declare class DocumentRequest {
-    id: string;
+    id: number;
     citizenId: string;
     referenceId: string;
     documentType: string;

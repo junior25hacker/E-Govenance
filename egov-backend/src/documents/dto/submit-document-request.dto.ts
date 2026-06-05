@@ -24,4 +24,16 @@ export class SubmitDocumentRequestDto {
   @IsString()
   @IsOptional()
   purpose: string;
+
+  @IsString()
+  @IsOptional()
+  councilJurisdiction?: string;
+
+  @IsString()
+  @IsOptional()
+  filePath?: string;
+
+  @IsString()
+  @IsOptional()
+  citizenId?: string;
 }

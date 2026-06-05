@@ -41,18 +41,24 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
+const user_entity_1 = require("./entities/user.entity");
 const settings_service_1 = require("../settings/settings.service");
 let AuthService = class AuthService {
+    userRepository;
     jwtService;
     settingsService;
-    users = [];
-    nextUserId = 1;
-    constructor(jwtService, settingsService) {
+    constructor(userRepository, jwtService, settingsService) {
+        this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.settingsService = settingsService;
     }
@@ -62,42 +68,38 @@ let AuthService = class AuthService {
         while (!isUnique) {
             const random4 = Math.floor(1000 + Math.random() * 9000);
             citizenId = `CITIZEN-${random4}`;
-            const existing = this.users.find(u => u.citizenId === citizenId);
+            const existing = await this.userRepository.findOneBy({ citizenId });
             if (!existing)
                 isUnique = true;
         }
         return citizenId;
     }
     async register(dto) {
-        const existing = this.users.find(u => u.email === dto.email);
+        const existing = await this.userRepository.findOneBy({ email: dto.email });
         if (existing) {
             throw new common_1.UnauthorizedException('Email already registered');
         }
         const salt = await bcrypt.genSalt();
         const hash = await bcrypt.hash(dto.password, salt);
         const citizenId = await this.generateCitizenId();
-        const now = new Date();
-        const user = {
-            id: this.nextUserId++,
+        const user = this.userRepository.create({
             email: dto.email,
             passwordHash: hash,
             citizenId: citizenId,
             profileComplete: false,
-            createdAt: now,
-            updatedAt: now,
-        };
-        this.users.push(user);
-        this.settingsService.initializeSettings(user.id, user.citizenId, user.email);
+        });
+        const savedUser = await this.userRepository.save(user);
+        this.settingsService.initializeSettings(savedUser.id, savedUser.citizenId, savedUser.email);
         console.log('[AUTH] User registered:', citizenId);
-        const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
+        const payload = { sub: savedUser.id, email: savedUser.email, citizenId: savedUser.citizenId };
         return {
             status: 'success',
-            citizenId: user.citizenId,
+            citizenId: savedUser.citizenId,
             token: this.jwtService.sign(payload),
         };
     }
     async login(citizenId, password) {
-        const user = this.users.find(u => u.citizenId === citizenId);
+        const user = await this.userRepository.findOneBy({ citizenId });
         if (!user) {
             console.log('[AUTH] Login failed: citizen not found', citizenId);
             return null;
@@ -112,28 +114,33 @@ let AuthService = class AuthService {
         return {
             status: 'success',
             token: this.jwtService.sign(payload),
+            citizen: {
+                id: user.citizenId,
+                email: user.email,
+                role: 'SUPER_ADMIN'
+            }
         };
     }
     async completeProfile(userId, docType, docPath) {
-        const user = this.users.find(u => u.id === userId);
+        const user = await this.userRepository.findOneBy({ id: userId });
         if (!user)
             throw new common_1.UnauthorizedException('User not found');
         user.verificationDocType = docType;
         user.verificationDocPath = docPath || 'uploaded_doc.png';
         user.profileComplete = true;
-        user.updatedAt = new Date();
+        await this.userRepository.save(user);
         console.log('[AUTH] Profile completed for user', userId);
         return { status: 'success', message: 'Profile verified' };
     }
     async skipVerification(userId) {
-        const user = this.users.find(u => u.id === userId);
+        const user = await this.userRepository.findOneBy({ id: userId });
         if (!user)
             throw new common_1.UnauthorizedException('User not found');
         console.log('[AUTH] Verification skipped for user', userId);
         return { status: 'success', message: 'Verification skipped' };
     }
     async getUserProfile(userId) {
-        const user = this.users.find(u => u.id === userId);
+        const user = await this.userRepository.findOneBy({ id: userId });
         if (!user)
             throw new common_1.UnauthorizedException('User not found');
         const { passwordHash, ...result } = user;
@@ -143,7 +150,9 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService,
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        jwt_1.JwtService,
         settings_service_1.SettingsService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

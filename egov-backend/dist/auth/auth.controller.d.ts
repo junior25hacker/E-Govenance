@@ -10,9 +10,25 @@ export declare class AuthController {
         status: string;
         citizenId: string;
     }>;
+    citizenLogin(loginDto: LoginDto, res: express.Response): Promise<{
+        status: string;
+        token: string;
+        citizen: {
+            id: string;
+            email: string;
+            role: string;
+        };
+    }>;
     login(loginDto: LoginDto, res: express.Response): Promise<{
         status: string;
+        token: string;
+        citizen: {
+            id: string;
+            email: string;
+            role: string;
+        };
     }>;
+    private _handleLogin;
     verifyDocument(req: any, verifyDto: VerifyDocumentDto): Promise<{
         status: string;
         message: string;
@@ -23,11 +39,12 @@ export declare class AuthController {
     }>;
     getProfile(req: any): Promise<{
         id: number;
-        email: string;
         citizenId: string;
+        email: string;
+        fullName: string;
         profileComplete: boolean;
-        verificationDocType?: string;
-        verificationDocPath?: string;
+        verificationDocType: string;
+        verificationDocPath: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

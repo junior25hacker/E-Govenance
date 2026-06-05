@@ -1,10 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
-import { User } from '../../auth/entities/user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('documents')
 export class Document {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   citizenId: string;
@@ -16,14 +15,17 @@ export class Document {
   councilJurisdiction: string;
 
   @Column('text')
-  data: string; // JSON string of document details
+  data: string; // JSON string of document details or Base64 payload
 
-  @Column({ default: 'PENDING' })
-  status: string;
+  @Column({ default: 'pending' })
+  status: string; // pending, verified, rejected
+
+  @Column({ nullable: true })
+  verifiedBy: string; // admin ID who approved/rejected
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.citizenId)
-  user: User;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
