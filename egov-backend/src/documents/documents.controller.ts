@@ -1,4 +1,22 @@
-import { Controller, Post, Body, Get, UseGuards, Req, Param, Query, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  UseGuards,
+  Req,
+  Param,
+  Query,
+  HttpException,
+  HttpStatus,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+import * as crypto from 'crypto';
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { SubmitDocumentRequestDto } from './dto/submit-document-request.dto';
@@ -6,9 +24,32 @@ import { SubmitReportDto } from './dto/submit-report.dto';
 import { VerifyStatusDto } from './dto/verify-status.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+// ─── Multer storage config ───────────────────────────────────────────────────
+
+const multerStorage = diskStorage({
+  destination: path.join(process.cwd(), 'uploads'),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9_-]/g, '_');
+    cb(null, `${Date.now()}-${baseName}${ext}`);
+  },
+});
+
+const multerFileFilter = (_req: any, file: Express.Multer.File, cb: any) => {
+  const allowed = /pdf|jpeg|jpg|png|gif|bmp|tiff|doc|docx/i;
+  const ext = path.extname(file.originalname).toLowerCase().slice(1);
+  if (allowed.test(ext)) {
+    cb(null, true);
+  } else {
+    cb(new BadRequestException(`File type .${ext} is not allowed.`), false);
+  }
+};
+
+// ─── Controller ─────────────────────────────────────────────────────────────
+
 @Controller('api/v1/documents')
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) { }
+  constructor(private readonly documentsService: DocumentsService) {}
 
   /**
    * GET /api/v1/documents
@@ -39,7 +80,89 @@ export class DocumentsController {
     const documents = await this.documentsService.findByCitizen(req.user.citizenId);
     return {
       status: 'success',
+      count: documents.length,
       data: documents,
+    };
+  }
+
+  /**
+   * GET /api/v1/documents/user/:userId
+   * External endpoint for teammate / JavaFX desktop integration.
+   * Returns a clean, consistent JSON structure.
+   * No auth required so the desktop app can call it directly.
+   */
+  @Get('user/:userId')
+  async getDocumentsByUserId(@Param('userId') userId: string): Promise<any> {
+    if (!userId) {
+      throw new HttpException(
+        { success: false, message: 'userId is required' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    console.log(`[DOCUMENTS] External fetch for userId: ${userId}`);
+    const documents = await this.documentsService.findByUserId(userId);
+
+    return {
+      success: true,
+      count: documents.length,
+      data: documents,
+    };
+  }
+
+  /**
+   * POST /api/v1/documents/upload
+   * Upload a physical/scanned document and persist it to the database.
+   * multipart/form-data fields:
+   *   file                — the document file (required)
+   *   documentType        — e.g. "birth-cert" (required)
+   *   documentName        — human label e.g. "Birth Certificate"
+   *   councilJurisdiction — e.g. "Yaounde City Council"
+   *   citizenFullName     — citizen's full name
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: multerStorage,
+      limits: { fileSize: 100 * 1024 * 1024 }, // 100 MB
+      fileFilter: multerFileFilter,
+    }),
+  )
+  async uploadDocument(
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: any,
+  ): Promise<any> {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    if (!body.documentType) {
+      throw new BadRequestException('documentType is required');
+    }
+
+    const citizenId: string = req.user?.citizenId || 'ANONYMOUS';
+    console.log(`[DOCUMENTS] Upload received from ${citizenId}: ${file.originalname}`);
+
+    const saved = await this.documentsService.uploadDocument(citizenId, file, {
+      documentType: body.documentType,
+      documentName: body.documentName,
+      councilJurisdiction: body.councilJurisdiction,
+      citizenFullName: body.citizenFullName,
+    });
+
+    return {
+      status: 'success',
+      message: 'Document uploaded and saved for verification',
+      data: {
+        id: String(saved.id),
+        documentName: saved.documentName,
+        documentType: saved.documentType,
+        fileUrl: saved.fileUrl,
+        status: saved.status,
+        verificationHash: saved.verificationHash,
+        uploadedAt: saved.createdAt,
+      },
     };
   }
 
@@ -51,7 +174,7 @@ export class DocumentsController {
   @Post('submit')
   async submitDocument(@Req() req, @Body() submitDto: SubmitDocumentRequestDto): Promise<any> {
     console.log('[DOCUMENTS] Submit document received:', submitDto);
-    
+
     // Determine citizen ID: from JWT user context, or from body (for JavaFX admin)
     const citizenId = req.user?.citizenId || submitDto.citizenId || 'ANONYMOUS';
 
@@ -77,9 +200,7 @@ export class DocumentsController {
         HttpStatus.BAD_REQUEST,
       );
     }
-    
-    // In a real app we'd fetch this specific document by ID. 
-    // Since DocumentsService lacks findById, let's fetch all and filter for now (or implement findById).
+
     const doc = await this.documentsService.findById(documentId);
     if (!doc) {
       throw new HttpException(
@@ -126,7 +247,7 @@ export class DocumentsController {
   }
 
   /**
-   * POST /api/v1/documents/request  (renamed from old 'submit' to avoid collision)
+   * POST /api/v1/documents/request
    * Submit a document request (e.g., request for birth certificate)
    */
   @UseGuards(JwtAuthGuard)

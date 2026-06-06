@@ -8,20 +8,47 @@ export class Document {
   @Column()
   citizenId: string;
 
+  @Column({ nullable: true })
+  citizenFullName: string;
+
   @Column()
   documentType: string;
 
-  @Column()
-  councilJurisdiction: string;
-
-  @Column('text')
-  data: string; // JSON string of document details or Base64 payload
-
-  @Column({ default: 'pending' })
-  status: string; // pending, verified, rejected
+  @Column({ nullable: true })
+  documentName: string; // Human-readable name e.g. "Birth Certificate"
 
   @Column({ nullable: true })
-  verifiedBy: string; // admin ID who approved/rejected
+  councilJurisdiction: string;
+
+  @Column('text', { nullable: true })
+  data: string; // Legacy: JSON string of details or base64 payload
+
+  /** Disk path for internal server use */
+  @Column({ nullable: true })
+  filePath: string;
+
+  /** Publicly accessible URL served via /uploads/ static route */
+  @Column({ nullable: true })
+  fileUrl: string;
+
+  /** Original filename from the user's machine */
+  @Column({ nullable: true })
+  originalFilename: string;
+
+  @Column({ default: 'pending' })
+  status: string; // pending | verified | rejected
+
+  @Column({ nullable: true })
+  verifiedBy: string; // Admin ID / name who approved or rejected
+
+  @Column({ nullable: true })
+  verificationHash: string;
+
+  @Column({ nullable: true })
+  issuedDate: string;
+
+  @Column({ nullable: true })
+  expiryDate: string;
 
   @CreateDateColumn()
   createdAt: Date;

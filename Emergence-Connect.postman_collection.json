@@ -1,0 +1,418 @@
+{
+  "info": {
+    "_postman_id": "emergence-connect-api-v1",
+    "name": "Emergence-Connect API",
+    "description": "Complete API collection for the Emergence-Connect e-governance portal.\n\nHow to use:\n1. Import this file into Postman\n2. Set the `base_url` and `token` variables in the collection\n3. Run 'Login' first — it auto-saves the token\n4. All protected endpoints will use the saved token automatically",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "Change to your VPS URL when deploying e.g. https://your-vps.com"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT token — auto-filled by the Login request"
+    },
+    {
+      "key": "citizen_id",
+      "value": "CITIZEN-1234",
+      "type": "string",
+      "description": "Citizen ID for testing"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.data && json.data.token) {",
+                  "    pm.collectionVariables.set('token', json.data.token);",
+                  "    pm.collectionVariables.set('citizen_id', json.data.user.citizenId);",
+                  "    console.log('✅ Token saved:', json.data.token.slice(0, 20) + '...');",
+                  "    console.log('✅ CitizenId saved:', json.data.user.citizenId);",
+                  "  }",
+                  "  pm.test('Login successful', () => pm.expect(json.status).to.eql('success'));",
+                  "} else {",
+                  "  pm.test('Login failed', () => pm.expect(pm.response.code).to.eql(200));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"citizenId\": \"CITIZEN-1234\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            },
+            "description": "Authenticate a citizen and retrieve a JWT token.\nThe token is automatically saved to the `token` collection variable."
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123\",\n  \"passwordConfirm\": \"SecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📄 Documents — Citizen",
+      "item": [
+        {
+          "name": "Get My Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has data array', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.data).to.be.an('array');",
+                  "  console.log(`📄 Found ${json.count} document(s)`);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents"]
+            },
+            "description": "Returns all documents belonging to the authenticated citizen.\nRequires a valid JWT token."
+          }
+        },
+        {
+          "name": "Upload & Digitalize Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  pm.test('Has document data', () => {",
+                  "    pm.expect(json.status).to.eql('success');",
+                  "    pm.expect(json.data.fileUrl).to.be.a('string');",
+                  "  });",
+                  "  console.log('✅ Uploaded:', json.data.documentName);",
+                  "  console.log('🔗 File URL:', json.data.fileUrl);",
+                  "  console.log('🔑 Hash:', json.data.verificationHash);",
+                  "  pm.collectionVariables.set('last_doc_id', json.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Select a PDF, JPEG, PNG, or Word document (max 100 MB)"
+                },
+                {
+                  "key": "documentType",
+                  "value": "birth-cert",
+                  "type": "text",
+                  "description": "Required: birth-cert | origin-cert | marriage-cert | national-id | passport | residence-permit | land-title | other"
+                },
+                {
+                  "key": "documentName",
+                  "value": "Birth Certificate — Test",
+                  "type": "text",
+                  "description": "Optional: human-readable label"
+                },
+                {
+                  "key": "councilJurisdiction",
+                  "value": "Yaounde City Council",
+                  "type": "text",
+                  "description": "Optional: issuing council"
+                },
+                {
+                  "key": "citizenFullName",
+                  "value": "John Okonkwo",
+                  "type": "text",
+                  "description": "Optional: citizen's full legal name"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "upload"]
+            },
+            "description": "⭐ MAIN ENDPOINT — Uploads a physical/scanned document.\n\nSelect a real file in the 'file' field.\nThe file is saved to the server's uploads/ folder AND its metadata is persisted to the database.\n\nAfter success, the document appears in 'Get My Documents' and 'Get Documents by userId'."
+          }
+        },
+        {
+          "name": "Download Document",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{last_doc_id}}/download",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{last_doc_id}}", "download"]
+            },
+            "description": "Returns a download URL for a specific document.\nUses the `last_doc_id` variable auto-set by the Upload request."
+          }
+        },
+        {
+          "name": "Verify Document (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/{{last_doc_id}}/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "{{last_doc_id}}", "verify"]
+            },
+            "description": "Public endpoint — anyone can verify a document by its ID.\nNo authentication required. Used for QR code scanning."
+          }
+        },
+        {
+          "name": "Submit Document Request (no file)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentType\": \"birth-cert\",\n  \"councilJurisdiction\": \"Douala City Council\",\n  \"purpose\": \"School enrollment\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/submit",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "submit"]
+            },
+            "description": "Submit a service request (e.g., apply for a birth certificate).\nNo file upload — just a request form."
+          }
+        },
+        {
+          "name": "Get My Document Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/requests",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "requests"]
+            }
+          }
+        },
+        {
+          "name": "Submit Issue Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Road\",\n  \"priority\": \"High\",\n  \"location\": \"Main Street, Yaounde\",\n  \"description\": \"Large pothole causing accidents near the junction.\",\n  \"phone\": \"+237600000000\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/report",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "report"]
+            }
+          }
+        },
+        {
+          "name": "Get My Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/reports",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "reports"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔗 External / Teammate API",
+      "item": [
+        {
+          "name": "Get Documents by UserId ⭐",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success flag is true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('Has data array', () => pm.expect(json.data).to.be.an('array'));",
+                  "pm.test('Count matches data length', () => pm.expect(json.count).to.eql(json.data.length));",
+                  "if (json.data.length > 0) {",
+                  "  const doc = json.data[0];",
+                  "  pm.test('Document has required fields', () => {",
+                  "    pm.expect(doc).to.have.property('id');",
+                  "    pm.expect(doc).to.have.property('name');",
+                  "    pm.expect(doc).to.have.property('status');",
+                  "    pm.expect(doc).to.have.property('uploadedAt');",
+                  "  });",
+                  "  console.log(`📄 ${json.count} documents for citizen ${pm.collectionVariables.get('citizen_id')}`);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/user/{{citizen_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "user", "{{citizen_id}}"]
+            },
+            "description": "⭐ TEAMMATE / JavaFX ENDPOINT\n\nNo authentication required — designed for the external system to call.\n\nReturns:\n{\n  \"success\": true,\n  \"count\": 2,\n  \"data\": [\n    {\n      \"id\": \"uuid\",\n      \"name\": \"Birth Certificate\",\n      \"documentType\": \"birth-cert\",\n      \"status\": \"PENDING_VERIFICATION\",\n      \"url\": \"/uploads/filename.pdf\",\n      \"verificationHash\": \"a1b2c3d4\",\n      \"uploadedAt\": \"2026-06-06T14:00:00Z\"\n    }\n  ]\n}\n\nShare this with your teammate:\nGET https://your-vps.com/api/v1/documents/user/{citizenId}"
+          }
+        },
+        {
+          "name": "Admin — Get All Pending Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents?status=pending",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents"],
+              "query": [
+                { "key": "status", "value": "pending", "description": "pending | verified | rejected" }
+              ]
+            },
+            "description": "NestJS backend only — JavaFX admin fetches all pending documents for review.\nNo auth required (designed for the desktop client)."
+          }
+        },
+        {
+          "name": "Admin — Approve/Reject Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"verified\",\n  \"verifiedBy\": \"Admin John Smith\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/documents/1/verify-status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "documents", "1", "verify-status"]
+            },
+            "description": "JavaFX 'Approve' (Green) or 'Reject' (Red) button endpoint.\nStatus options: verified | rejected\nverifiedBy: name or ID of the admin making the decision."
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Health Check",
+      "item": [
+        {
+          "name": "API Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('API is online', () => pm.response.to.have.status(200));",
+                  "console.log('✅ Server is running');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

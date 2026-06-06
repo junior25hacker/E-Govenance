@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Documents | Emergence-Connect</title>
+  <meta name="description" content="View, upload, and manage your digitally-verified government documents on Emergence-Connect." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -19,6 +20,7 @@
       --border: rgba(201,168,76,0.18); --border-b: rgba(201,168,76,0.35);
       --r: 8px; --r-lg: 16px; --r-xl: 24px;
       --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6;
+      --sidebar-w: 260px;
     }
     html { scroll-behavior: smooth; }
     body {
@@ -31,15 +33,16 @@
       opacity: 0.35;
     }
 
-    /* SIDEBAR */
+    /* ─── SIDEBAR ─────────────────────────────────────────────────────────── */
     .sidebar {
-      width: 260px; background: rgba(5, 13, 31, 0.92); backdrop-filter: blur(20px);
-      border-right: 1px solid var(--border); padding: 0; height: 100vh;
+      width: var(--sidebar-w); background: rgba(5,13,31,0.92); backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border); height: 100vh;
       position: fixed; top: 0; left: 0; z-index: 100; overflow-y: auto;
       display: flex; flex-direction: column;
     }
     .sidebar-header { display: flex; align-items: center; padding: 28px 20px 22px; border-bottom: 1px solid var(--border); }
-    .sidebar-logo { width: 40px; height: 40px; border-radius: 10px;
+    .sidebar-logo {
+      width: 40px; height: 40px; border-radius: 10px;
       background: linear-gradient(135deg, var(--blue-mid), var(--navy-3)); border: 1px solid var(--border-b);
       display: flex; align-items: center; justify-content: center; color: var(--gold); margin-right: 12px; flex-shrink: 0;
     }
@@ -54,30 +57,42 @@
       transition: background 0.2s, color 0.2s; position: relative;
     }
     .sidebar-nav a:hover { background: var(--glass-b); color: var(--white); }
-    .sidebar-nav a.active { background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08));
+    .sidebar-nav a.active {
+      background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08));
       color: var(--gold) !important; border: 1px solid rgba(201,168,76,0.25);
     }
-    .sidebar-nav a.active::before { content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px;
+    .sidebar-nav a.active::before {
+      content: ''; position: absolute; left: 0; top: 20%; bottom: 20%; width: 3px;
       background: var(--gold); border-radius: 0 3px 3px 0;
     }
 
-    /* MAIN CONTENT */
-    .main-content { flex: 1; margin-left: 260px; padding: 0; display: flex; flex-direction: column; }
-    .top-nav { background: rgba(5,13,31,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
-      padding: 0 32px; height: 68px; display: flex; align-items: center; justify-content: space-between; z-index: 50;
+    /* ─── MAIN CONTENT ────────────────────────────────────────────────────── */
+    .main-content { flex: 1; margin-left: var(--sidebar-w); display: flex; flex-direction: column; }
+    .top-nav {
+      background: rgba(5,13,31,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 68px; display: flex; align-items: center; justify-content: space-between; z-index: 50; position: sticky; top: 0;
     }
     .page-title { font-family: 'Cinzel', serif; font-size: 1.3rem; font-weight: 700; color: var(--white); }
-    
-    /* CONTENT AREA */
+    .top-nav-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* ─── UPLOAD BUTTON ───────────────────────────────────────────────────── */
+    .btn-upload {
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--navy);
+      border: none; padding: 10px 18px; border-radius: var(--r-lg); cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px;
+      transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap;
+    }
+    .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+
+    /* ─── CONTENT AREA ────────────────────────────────────────────────────── */
     .content-wrapper { flex: 1; padding: 32px; overflow-y: auto; position: relative; z-index: 1; }
-    .page-header { margin-bottom: 32px; }
-    .page-heading { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--white); margin-bottom: 8px; }
+    .page-header { margin-bottom: 28px; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .page-heading { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--white); margin-bottom: 6px; }
     .page-desc { color: var(--cream-dim); font-size: 14px; }
 
-    /* SEARCH & FILTER */
-    .controls-bar {
-      display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;
-    }
+    /* ─── SEARCH & FILTER ─────────────────────────────────────────────────── */
+    .controls-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
     .search-box {
       flex: 1; min-width: 200px; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
       border-radius: var(--r-lg); padding: 10px 16px; display: flex; align-items: center; gap: 10px;
@@ -88,70 +103,164 @@
     }
     .search-box input::placeholder { color: rgba(205,200,180,0.4); }
     .search-box .ms { color: var(--gold); font-size: 20px; flex-shrink: 0; }
-
-    .filter-btn {
+    .filter-select {
       background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--cream);
-      padding: 10px 16px; border-radius: var(--r-lg); cursor: pointer; display: flex; align-items: center; gap: 8px;
-      transition: background 0.2s; font-size: 14px;
+      padding: 10px 14px; border-radius: var(--r-lg); cursor: pointer; font-size: 14px;
+      font-family: 'DM Sans', sans-serif; outline: none;
     }
-    .filter-btn:hover { background: var(--glass-b); }
+    .filter-select option { background: var(--navy-2); }
 
-    /* DOCUMENT GRID */
-    .documents-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
-    }
+    /* ─── DOCUMENT GRID ───────────────────────────────────────────────────── */
+    .documents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
     .doc-card {
       background: var(--glass); border: 1px solid var(--border); border-radius: var(--r-lg);
-      padding: 24px; transition: border-color 0.3s, transform 0.3s;
+      padding: 24px; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      animation: fadeInUp 0.4s ease both;
     }
-    .doc-card:hover { border-color: var(--border-b); transform: translateY(-4px); }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .doc-card:hover { border-color: var(--border-b); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
     .doc-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .doc-icon { width: 48px; height: 48px; border-radius: 10px;
+    .doc-icon {
+      width: 48px; height: 48px; border-radius: 10px;
       background: linear-gradient(135deg, var(--blue-mid), var(--navy-3)); border: 1px solid var(--border-b);
-      display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 24px;
+      display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 24px; flex-shrink: 0;
     }
-    .doc-info { flex: 1; }
-    .doc-name { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 2px; }
-    .doc-type { font-size: 12px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 0.08em; }
-    .doc-date { font-size: 13px; color: var(--cream-dim); margin-bottom: 16px; }
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-name { font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 600; color: var(--white); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .doc-type { font-size: 11px; color: var(--cream-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+    .doc-meta { font-size: 12px; color: var(--cream-dim); margin-bottom: 14px; display: flex; flex-direction: column; gap: 3px; }
+    .doc-hash { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(201,168,76,0.6); letter-spacing: 0.05em; }
     .doc-status {
       display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 12px;
       font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;
     }
-    .doc-status.verified { background: rgba(34,197,94,0.15); color: #22c55e; }
-    .doc-status.pending { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .doc-status.verified     { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .doc-status.pending      { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+    .doc-status.rejected     { background: rgba(239,68,68,0.15);   color: #ef4444; }
+    .doc-status.renewal-due  { background: rgba(59,130,246,0.15);  color: #3b82f6; }
     .doc-actions { display: flex; gap: 8px; }
     .doc-action-btn {
       flex: 1; padding: 8px 12px; border: 1px solid var(--border); background: transparent;
       color: var(--cream-dim); border-radius: var(--r); cursor: pointer; font-size: 12px;
       transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px;
+      font-family: 'DM Sans', sans-serif;
     }
     .doc-action-btn:hover { background: var(--glass-b); color: var(--white); border-color: var(--border-b); }
 
-    /* EMPTY STATE */
-    .empty-state {
-      text-align: center; padding: 60px 20px; color: var(--cream-dim);
-    }
-    .empty-state .ms { font-size: 64px; margin-bottom: 16px; opacity: 0.4; }
-    .empty-state h3 { font-size: 1.2rem; color: var(--white); margin-bottom: 8px; }
-    .empty-state p { margin-bottom: 24px; }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--gold-dim), var(--gold)); color: var(--navy);
-      border: none; padding: 10px 20px; border-radius: var(--r-lg); cursor: pointer;
-      font-weight: 600; transition: transform 0.2s;
-    }
-    .btn-primary:hover { transform: translateY(-2px); }
+    /* ─── EMPTY STATE ─────────────────────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--cream-dim); }
+    .empty-state .empty-icon { font-size: 72px; margin-bottom: 20px; opacity: 0.3; display: block; }
+    .empty-state h3 { font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 10px; }
+    .empty-state p { margin-bottom: 28px; max-width: 360px; margin-inline: auto; }
 
+    /* ─── LOADING STATE ───────────────────────────────────────────────────── */
+    .loading-state { text-align: center; padding: 60px 20px; color: var(--cream-dim); }
+    .spinner {
+      width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--gold);
+      border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── TOAST NOTIFICATIONS ─────────────────────────────────────────────── */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast {
+      padding: 14px 20px; border-radius: var(--r-lg); font-size: 14px; font-weight: 500;
+      animation: toastIn 0.3s ease; max-width: 360px; display: flex; align-items: center; gap: 10px;
+      border: 1px solid;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: none; } }
+    .toast.success { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); color: #22c55e; }
+    .toast.error   { background: rgba(239,68,68,0.15);  border-color: rgba(239,68,68,0.4);  color: #ef4444; }
+    .toast.info    { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.4); color: #93c5fd; }
+
+    /* ─── UPLOAD MODAL ────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(5,13,31,0.85); backdrop-filter: blur(8px);
+      z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--navy-2); border: 1px solid var(--border-b); border-radius: var(--r-xl);
+      padding: 36px; width: 100%; max-width: 520px; position: relative;
+      transform: translateY(20px); transition: transform 0.3s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px; background: none; border: none;
+      color: var(--cream-dim); cursor: pointer; font-size: 24px; line-height: 1;
+      transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--white); }
+    .modal-title { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--white); margin-bottom: 6px; }
+    .modal-sub { font-size: 13px; color: var(--cream-dim); margin-bottom: 28px; }
+
+    /* ─── DROP ZONE ───────────────────────────────────────────────────────── */
+    .drop-zone {
+      border: 2px dashed var(--border-b); border-radius: var(--r-lg); padding: 40px 20px;
+      text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 20px; position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-zone-icon { font-size: 48px; color: var(--gold); opacity: 0.6; margin-bottom: 10px; display: block; }
+    .drop-zone-text { font-size: 14px; color: var(--cream-dim); }
+    .drop-zone-text strong { color: var(--gold); }
+    .drop-zone-file-name { font-size: 13px; color: var(--success); margin-top: 8px; font-weight: 500; display: none; }
+
+    /* ─── FORM FIELDS ─────────────────────────────────────────────────────── */
+    .form-row { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--cream-dim); margin-bottom: 8px; }
+    .form-input, .form-select {
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      color: var(--cream); padding: 12px 14px; border-radius: var(--r-lg); font-size: 14px;
+      font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus { border-color: var(--border-b); }
+    .form-select option { background: var(--navy-2); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ─── PROGRESS BAR ────────────────────────────────────────────────────── */
+    .progress-wrap { margin-bottom: 16px; display: none; }
+    .progress-label { font-size: 12px; color: var(--cream-dim); margin-bottom: 6px; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); border-radius: 3px; width: 0%; transition: width 0.3s; }
+
+    .modal-footer { display: flex; gap: 12px; margin-top: 24px; }
+    .btn-cancel {
+      flex: 1; padding: 12px; border: 1px solid var(--border); background: transparent;
+      color: var(--cream-dim); border-radius: var(--r-lg); cursor: pointer; font-size: 14px;
+      font-family: 'DM Sans', sans-serif; transition: background 0.2s;
+    }
+    .btn-cancel:hover { background: var(--glass-b); color: var(--white); }
+    .btn-submit {
+      flex: 2; padding: 12px; background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: var(--navy); border: none; border-radius: var(--r-lg); cursor: pointer;
+      font-size: 14px; font-weight: 700; font-family: 'DM Sans', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────────────── */
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main-content { margin-left: 0; }
       .documents-grid { grid-template-columns: 1fr; }
       .controls-bar { flex-direction: column; }
       .search-box { width: 100%; }
+      .form-grid { grid-template-columns: 1fr; }
+      .top-nav { padding: 0 16px; }
+      .content-wrapper { padding: 20px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ─── SIDEBAR ──────────────────────────────────────────────────────────── -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
@@ -168,20 +277,29 @@
       <li><a href="request.html"><span class="material-symbols-outlined">add_circle</span> New Request</a></li>
       <li><a href="report.html"><span class="material-symbols-outlined">bug_report</span> Report Issue</a></li>
       <li><a href="settings.html"><span class="material-symbols-outlined">settings</span> Settings</a></li>
-      <li><a href="help.html"><span class="material-symbols-outlined">help_outline</span> Help & Support</a></li>
+      <li><a href="help.html"><span class="material-symbols-outlined">help_outline</span> Help &amp; Support</a></li>
     </ul>
   </aside>
 
+  <!-- ─── MAIN CONTENT ─────────────────────────────────────────────────────── -->
   <main class="main-content">
     <nav class="top-nav">
       <h1 class="page-title">My Documents</h1>
-      <span class="material-symbols-outlined" style="color: var(--gold);">verified</span>
+      <div class="top-nav-actions">
+        <button class="btn-upload" id="open-upload-modal" onclick="openUploadModal()">
+          <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span>
+          Digitalize Document
+        </button>
+        <span class="material-symbols-outlined" style="color: var(--gold);">verified</span>
+      </div>
     </nav>
 
     <div class="content-wrapper">
       <div class="page-header">
-        <h2 class="page-heading">My Documents</h2>
-        <p class="page-desc">View, share, and manage your digitally-verified documents and certificates.</p>
+        <div>
+          <h2 class="page-heading">My Documents</h2>
+          <p class="page-desc">View, share, and manage your digitally-verified documents and certificates.</p>
+        </div>
       </div>
 
       <div class="controls-bar">
@@ -189,194 +307,450 @@
           <span class="ms material-symbols-outlined">search</span>
           <input type="text" placeholder="Search by document name or type…" id="search-input" />
         </div>
-        <button class="filter-btn">
-          <span class="material-symbols-outlined">tune</span>
-          Filter
-        </button>
+        <select class="filter-select" id="status-filter" onchange="filterDocs()">
+          <option value="">All Statuses</option>
+          <option value="PENDING_VERIFICATION">Pending</option>
+          <option value="VERIFIED">Verified</option>
+          <option value="REJECTED">Rejected</option>
+        </select>
       </div>
 
+      <!-- Document grid — populated by JS -->
       <div class="documents-grid" id="docs-grid">
-        <div class="doc-card">
-          <div class="doc-header">
-            <div class="doc-icon">
-              <span class="material-symbols-outlined">description</span>
-            </div>
-            <div class="doc-info">
-              <div class="doc-name">Birth Certificate</div>
-              <div class="doc-type">Certificate</div>
-            </div>
-          </div>
-          <div class="doc-date">Issued: April 10, 2026</div>
-          <div class="doc-status verified">
-            <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
-            Verified
-          </div>
-          <div class="doc-actions">
-            <button class="doc-action-btn" onclick="downloadDocument('Birth Certificate')">
-              <span class="material-symbols-outlined">download</span>
-              Download
-            </button>
-            <button class="doc-action-btn" onclick="shareDocument('Birth Certificate')">
-              <span class="material-symbols-outlined">share</span>
-              Share
-            </button>
-          </div>
-        </div>
-
-        <div class="doc-card">
-          <div class="doc-header">
-            <div class="doc-icon">
-              <span class="material-symbols-outlined">map</span>
-            </div>
-            <div class="doc-info">
-              <div class="doc-name">Certificate of Origin</div>
-              <div class="doc-type">Certificate</div>
-            </div>
-          </div>
-          <div class="doc-date">Issued: April 15, 2026</div>
-          <div class="doc-status verified">
-            <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
-            Verified
-          </div>
-          <div class="doc-actions">
-            <button class="doc-action-btn" onclick="downloadDocument('Certificate of Origin')">
-              <span class="material-symbols-outlined">download</span>
-              Download
-            </button>
-            <button class="doc-action-btn" onclick="shareDocument('Certificate of Origin')">
-              <span class="material-symbols-outlined">share</span>
-              Share
-            </button>
-          </div>
-        </div>
-
-        <div class="doc-card">
-          <div class="doc-header">
-            <div class="doc-icon">
-              <span class="material-symbols-outlined">home_pin</span>
-            </div>
-            <div class="doc-info">
-              <div class="doc-name">Residence Permit</div>
-              <div class="doc-type">Permit</div>
-            </div>
-          </div>
-          <div class="doc-date">Issued: March 20, 2026</div>
-          <div class="doc-status pending">
-            <span class="material-symbols-outlined" style="font-size: 14px;">schedule</span>
-            Renewal Due
-          </div>
-          <div class="doc-actions">
-            <button class="doc-action-btn" onclick="downloadDocument('Residence Permit')">
-              <span class="material-symbols-outlined">download</span>
-              Download
-            </button>
-            <button class="doc-action-btn" onclick="requestRenewal('Residence Permit')">
-              <span class="material-symbols-outlined">refresh</span>
-              Renew
-            </button>
-          </div>
+        <!-- Loading state shown while fetching -->
+        <div class="loading-state" id="loading-state" style="grid-column:1/-1;">
+          <div class="spinner"></div>
+          <p>Loading your documents…</p>
         </div>
       </div>
     </div>
   </main>
 
+  <!-- ─── UPLOAD MODAL ─────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="upload-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <button class="modal-close" onclick="closeUploadModal()" aria-label="Close">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <h2 class="modal-title" id="modal-title">Digitalize Document</h2>
+      <p class="modal-sub">Upload a scanned copy of your document for official digitalization and verification.</p>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.bmp,.tiff,.doc,.docx" />
+        <span class="material-symbols-outlined drop-zone-icon">cloud_upload</span>
+        <div class="drop-zone-text">
+          <strong>Click to browse</strong> or drag &amp; drop your file here<br>
+          <small style="opacity:.6">PDF, JPEG, PNG, BMP, TIFF, DOC, DOCX — max 100 MB</small>
+        </div>
+        <div class="drop-zone-file-name" id="selected-file-name"></div>
+      </div>
+
+      <!-- Form fields -->
+      <div class="form-row">
+        <label class="form-label" for="doc-type">Document Type <span style="color:var(--danger)">*</span></label>
+        <select class="form-select" id="doc-type" required>
+          <option value="">Select document type…</option>
+          <option value="birth-cert">Birth Certificate</option>
+          <option value="origin-cert">Certificate of Origin</option>
+          <option value="marriage-cert">Marriage Certificate</option>
+          <option value="death-cert">Death Certificate</option>
+          <option value="residence-permit">Residence Permit</option>
+          <option value="national-id">National ID Card</option>
+          <option value="passport">Passport</option>
+          <option value="land-title">Land Title</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="doc-name">Document Name</label>
+        <input type="text" class="form-input" id="doc-name" placeholder="e.g. Birth Certificate — John Doe" />
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label" for="council-jurisdiction">Council Jurisdiction</label>
+          <input type="text" class="form-input" id="council-jurisdiction" placeholder="e.g. Yaounde City Council" />
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="citizen-full-name">Citizen Full Name</label>
+          <input type="text" class="form-input" id="citizen-full-name" placeholder="Full legal name" />
+        </div>
+      </div>
+
+      <!-- Progress bar (shown during upload) -->
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-label">Uploading… please wait</div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeUploadModal()">Cancel</button>
+        <button class="btn-submit" id="submit-upload-btn" onclick="submitUpload()">
+          <span class="material-symbols-outlined" style="font-size:18px;">upload</span>
+          Upload &amp; Digitalize
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TOAST CONTAINER ───────────────────────────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <!-- ─── SCRIPTS ──────────────────────────────────────────────────────────── -->
   <script>
-    const token = localStorage.getItem('egov_token');
+    // ── State ──────────────────────────────────────────────────────────────
+    const API_BASE = '/api/v1';
+    let allDocuments = [];
+    let selectedFile = null;
 
-    async function fetchDocuments() {
-      try {
-        if (!token) {
-          // Not authenticated
-          return;
-        }
-
-        const res = await fetch('/api/v1/documents', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.status === 401) {
-          alert('Please sign in to view your documents.');
-          window.location.href = 'login.html';
-          return;
-        }
-
-        const data = await res.json();
-        if (res.ok && data.data) {
-          renderDocuments(data.data);
-        }
-      } catch (err) {
-        console.error('Fetch documents error', err);
-      }
+    // ── Auth helpers ───────────────────────────────────────────────────────
+    function getToken() {
+      return localStorage.getItem('egov_token') || sessionStorage.getItem('egov_token');
+    }
+    function authHeaders() {
+      const t = getToken();
+      return t ? { Authorization: `Bearer ${t}` } : {};
     }
 
+    // ── Toast ──────────────────────────────────────────────────────────────
+    function showToast(message, type = 'info', duration = 4000) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      const icons = { success: 'check_circle', error: 'error', info: 'info' };
+      toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${icons[type] || 'info'}</span>${message}`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(40px)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, duration);
+    }
+
+    // ── Status helpers ─────────────────────────────────────────────────────
+    function statusClass(status) {
+      const s = (status || '').toUpperCase();
+      if (s === 'VERIFIED') return 'verified';
+      if (s.includes('REJECT')) return 'rejected';
+      if (s.includes('RENEWAL')) return 'renewal-due';
+      return 'pending';
+    }
+    function statusLabel(status) {
+      const s = (status || '').toUpperCase();
+      if (s === 'VERIFIED') return 'Verified';
+      if (s.includes('REJECT')) return 'Rejected';
+      if (s.includes('RENEWAL')) return 'Renewal Due';
+      if (s.includes('PENDING')) return 'Pending Verification';
+      return status || 'Unknown';
+    }
+    function statusIcon(status) {
+      const s = (status || '').toUpperCase();
+      if (s === 'VERIFIED') return 'check_circle';
+      if (s.includes('REJECT')) return 'cancel';
+      return 'schedule';
+    }
+    function docIcon(type) {
+      const icons = {
+        'birth-cert': 'child_care', 'origin-cert': 'map', 'marriage-cert': 'favorite',
+        'death-cert': 'sentiment_very_dissatisfied', 'residence-permit': 'home_pin',
+        'national-id': 'badge', 'passport': 'travel_explore', 'land-title': 'landscape',
+      };
+      return icons[type] || 'description';
+    }
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      return new Date(dateStr).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    // ── Render documents ───────────────────────────────────────────────────
     function renderDocuments(docs) {
       const grid = document.getElementById('docs-grid');
       grid.innerHTML = '';
-      docs.forEach(doc => {
+
+      if (!docs || docs.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <span class="material-symbols-outlined empty-icon">folder_open</span>
+            <h3>No Documents Yet</h3>
+            <p>Your digitalized documents will appear here once uploaded and verified by the administration.</p>
+            <button class="btn-upload" onclick="openUploadModal()" style="display:inline-flex;margin-top:8px;">
+              <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span>
+              Digitalize Your First Document
+            </button>
+          </div>`;
+        return;
+      }
+
+      docs.forEach((doc, i) => {
         const card = document.createElement('div');
         card.className = 'doc-card';
+        card.style.animationDelay = `${i * 60}ms`;
+        card.dataset.name = (doc.documentName || doc.documentType || '').toLowerCase();
+        card.dataset.type = (doc.documentType || '').toLowerCase();
+        card.dataset.status = (doc.status || '').toUpperCase();
+
+        const sClass = statusClass(doc.status);
+        const sLabel = statusLabel(doc.status);
+        const sIcon  = statusIcon(doc.status);
+        const dIcon  = docIcon(doc.documentType);
+        const hash   = doc.verificationHash ? doc.verificationHash.slice(0, 12) + '…' : '';
+
         card.innerHTML = `
           <div class="doc-header">
-            <div class="doc-icon"><span class="material-symbols-outlined">description</span></div>
+            <div class="doc-icon"><span class="material-symbols-outlined">${dIcon}</span></div>
             <div class="doc-info">
-              <div class="doc-name">${doc.documentName || doc.documentType}</div>
-              <div class="doc-type">${doc.documentType}</div>
+              <div class="doc-name" title="${doc.documentName || doc.documentType}">${doc.documentName || doc.documentType}</div>
+              <div class="doc-type">${(doc.documentType || '').replace(/-/g,' ')}</div>
             </div>
           </div>
-          <div class="doc-date">Issued: ${doc.issuedDate || ''}</div>
-          <div class="doc-status ${doc.status === 'VERIFIED' ? 'verified' : 'pending'}">
-            <span class="material-symbols-outlined" style="font-size: 14px;">${doc.status === 'VERIFIED' ? 'check_circle' : 'schedule'}</span>
-            ${doc.status}
+          <div class="doc-meta">
+            <span>Uploaded: ${formatDate(doc.createdAt || doc.uploadedAt)}</span>
+            ${doc.issuedDate ? `<span>Issued: ${formatDate(doc.issuedDate)}</span>` : ''}
+            ${hash ? `<span class="doc-hash">Hash: ${hash}</span>` : ''}
+          </div>
+          <div class="doc-status ${sClass}">
+            <span class="material-symbols-outlined" style="font-size:14px;">${sIcon}</span>
+            ${sLabel}
           </div>
           <div class="doc-actions">
             <button class="doc-action-btn" onclick="downloadDocument('${doc.id}', '${doc.documentName || ''}')">
-              <span class="material-symbols-outlined">download</span>
-              Download
+              <span class="material-symbols-outlined">download</span> Download
             </button>
-            <button class="doc-action-btn" onclick="shareDocument('${doc.id}', '${doc.documentName || ''}')">
-              <span class="material-symbols-outlined">share</span>
-              Share
+            <button class="doc-action-btn" onclick="shareDocument('${doc.id}', '${doc.documentName || ''}', '${doc.fileUrl || ''}')">
+              <span class="material-symbols-outlined">share</span> Share
             </button>
-          </div>
-        `;
+          </div>`;
         grid.appendChild(card);
       });
     }
 
-    async function downloadDocument(id, name) {
+    // ── Fetch documents on load ────────────────────────────────────────────
+    async function fetchDocuments() {
+      const grid = document.getElementById('docs-grid');
+      const token = getToken();
+
+      if (!token) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <span class="material-symbols-outlined empty-icon">lock</span>
+            <h3>Sign In Required</h3>
+            <p>Please sign in to view your documents.</p>
+            <button class="btn-upload" onclick="window.location.href='login.html'" style="display:inline-flex;margin-top:8px;">
+              <span class="material-symbols-outlined" style="font-size:18px;">login</span> Sign In
+            </button>
+          </div>`;
+        return;
+      }
+
       try {
-        if (!token) { alert('Please sign in to download documents.'); window.location.href = 'login.html'; return; }
-        const res = await fetch(`/api/v1/documents/${id}/download`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await fetch(`${API_BASE}/documents`, {
+          headers: { ...authHeaders() },
+        });
+
+        if (res.status === 401) {
+          showToast('Session expired. Please sign in again.', 'error');
+          setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+          return;
+        }
+
         const data = await res.json();
-        if (res.ok) {
-          alert(`Download ready for ${name}: ${data.data.downloadUrl}`);
+        if (res.ok && Array.isArray(data.data)) {
+          allDocuments = data.data;
+          renderDocuments(allDocuments);
         } else {
-          alert(data.message || 'Unable to generate download');
+          renderDocuments([]);
         }
       } catch (err) {
-        console.error(err);
-        alert('Download error');
+        console.error('[DOCUMENTS] Fetch error:', err);
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <span class="material-symbols-outlined empty-icon">wifi_off</span>
+            <h3>Could Not Reach Server</h3>
+            <p>Make sure the backend is running and try refreshing.</p>
+          </div>`;
       }
     }
 
-    function shareDocument(id, name) {
-      alert(`Share options for ${name}:\n- Email\n- SMS\n- Generate Share Link\n- Print`);
+    // ── Search / filter ────────────────────────────────────────────────────
+    function filterDocs() {
+      const term = document.getElementById('search-input').value.toLowerCase();
+      const status = document.getElementById('status-filter').value.toUpperCase();
+      const cards = document.querySelectorAll('.doc-card');
+      cards.forEach(card => {
+        const matchTerm = !term || card.dataset.name.includes(term) || card.dataset.type.includes(term);
+        const matchStatus = !status || card.dataset.status === status;
+        card.style.display = (matchTerm && matchStatus) ? '' : 'none';
+      });
     }
 
-    function requestRenewal(docName) {
-      alert(`Renewal request for ${docName} has been initiated.\n\nYou will receive further instructions via email.`);
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('search-input').addEventListener('keyup', filterDocs);
+    });
+
+    // ── Upload modal ───────────────────────────────────────────────────────
+    function openUploadModal() {
+      document.getElementById('upload-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeUploadModal() {
+      document.getElementById('upload-modal').classList.remove('open');
+      document.body.style.overflow = '';
+      resetUploadForm();
+    }
+    function resetUploadForm() {
+      document.getElementById('file-input').value = '';
+      document.getElementById('selected-file-name').style.display = 'none';
+      document.getElementById('selected-file-name').textContent = '';
+      document.getElementById('doc-type').value = '';
+      document.getElementById('doc-name').value = '';
+      document.getElementById('council-jurisdiction').value = '';
+      document.getElementById('citizen-full-name').value = '';
+      document.getElementById('progress-wrap').style.display = 'none';
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('submit-upload-btn').disabled = false;
+      document.getElementById('drop-zone').classList.remove('dragover');
+      selectedFile = null;
     }
 
-    // Search/filter
-    document.getElementById('search-input').addEventListener('keyup', function(e) {
-      const term = e.target.value.toLowerCase();
-      document.querySelectorAll('.doc-card').forEach(card => {
-        const text = card.textContent.toLowerCase();
-        card.style.display = text.includes(term) ? '' : 'none';
+    // Close modal on overlay click
+    document.getElementById('upload-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeUploadModal();
+    });
+    // Close on Escape key
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeUploadModal(); });
+
+    // ── Drop zone interactions ─────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const fileNameEl = document.getElementById('selected-file-name');
+
+      function handleFileSelect(file) {
+        if (!file) return;
+        selectedFile = file;
+        fileNameEl.textContent = `✓ ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        fileNameEl.style.display = 'block';
+        // Auto-fill doc name if empty
+        const docNameInput = document.getElementById('doc-name');
+        if (!docNameInput.value) {
+          docNameInput.value = file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+        }
+      }
+
+      fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFileSelect(fileInput.files[0]); });
+
+      dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+      dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file) { fileInput.files = e.dataTransfer.files; handleFileSelect(file); }
       });
     });
 
-    // Try to fetch documents on load
+    // ── Submit upload ──────────────────────────────────────────────────────
+    async function submitUpload() {
+      const token = getToken();
+      if (!token) { showToast('Please sign in to upload documents.', 'error'); return; }
+
+      const fileInput = document.getElementById('file-input');
+      const docType = document.getElementById('doc-type').value;
+      const file = fileInput.files[0] || selectedFile;
+
+      if (!file) { showToast('Please select a file to upload.', 'error'); return; }
+      if (!docType) { showToast('Please select a document type.', 'error'); return; }
+
+      const docName = document.getElementById('doc-name').value;
+      const council = document.getElementById('council-jurisdiction').value;
+      const citizenName = document.getElementById('citizen-full-name').value;
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('documentType', docType);
+      if (docName) formData.append('documentName', docName);
+      if (council) formData.append('councilJurisdiction', council);
+      if (citizenName) formData.append('citizenFullName', citizenName);
+
+      // Show progress
+      document.getElementById('progress-wrap').style.display = 'block';
+      document.getElementById('submit-upload-btn').disabled = true;
+
+      // Animate progress bar (XHR for real progress)
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API_BASE}/documents/upload`);
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const pct = Math.round((e.loaded / e.total) * 95);
+          document.getElementById('progress-fill').style.width = pct + '%';
+        }
+      };
+
+      xhr.onload = () => {
+        document.getElementById('progress-fill').style.width = '100%';
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (xhr.status === 201 && data.status === 'success') {
+            showToast('Document uploaded successfully! Pending verification.', 'success');
+            closeUploadModal();
+            fetchDocuments(); // Refresh grid
+          } else {
+            showToast(data.message || 'Upload failed. Please try again.', 'error');
+            document.getElementById('submit-upload-btn').disabled = false;
+            document.getElementById('progress-wrap').style.display = 'none';
+          }
+        } catch {
+          showToast('Unexpected server response.', 'error');
+          document.getElementById('submit-upload-btn').disabled = false;
+          document.getElementById('progress-wrap').style.display = 'none';
+        }
+      };
+
+      xhr.onerror = () => {
+        showToast('Network error. Please check your connection.', 'error');
+        document.getElementById('submit-upload-btn').disabled = false;
+        document.getElementById('progress-wrap').style.display = 'none';
+      };
+
+      xhr.send(formData);
+    }
+
+    // ── Download document ──────────────────────────────────────────────────
+    async function downloadDocument(id, name) {
+      const token = getToken();
+      if (!token) { showToast('Please sign in to download documents.', 'error'); return; }
+      try {
+        const res = await fetch(`${API_BASE}/documents/${id}/download`, { headers: authHeaders() });
+        const data = await res.json();
+        if (res.ok && data.data && data.data.downloadUrl) {
+          // Open URL in new tab
+          window.open(data.data.downloadUrl, '_blank');
+          showToast(`Download started for "${name}"`, 'success');
+        } else {
+          showToast(data.message || 'Could not generate download link.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Download error. Try again.', 'error');
+      }
+    }
+
+    // ── Share document ─────────────────────────────────────────────────────
+    function shareDocument(id, name, fileUrl) {
+      const url = fileUrl ? `${window.location.origin}${fileUrl}` : `${window.location.origin}/api/v1/documents/${id}/verify`;
+      if (navigator.share) {
+        navigator.share({ title: name, text: `View my verified document: ${name}`, url })
+          .then(() => showToast('Shared successfully!', 'success'))
+          .catch(() => {});
+      } else {
+        navigator.clipboard.writeText(url)
+          .then(() => showToast('Document link copied to clipboard!', 'success'))
+          .catch(() => showToast('Share: ' + url, 'info'));
+      }
+    }
+
+    // ── Init ───────────────────────────────────────────────────────────────
     fetchDocuments();
   </script>
 </body>

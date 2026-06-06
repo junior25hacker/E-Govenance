@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as crypto from 'crypto';
 import { Document } from './entities/document.entity';
 import { DocumentRequest } from './entities/document-request.entity';
 import { Report } from './entities/report.entity';
@@ -19,7 +20,17 @@ export class DocumentsService {
     private readonly reportRepository: Repository<Report>,
   ) {}
 
-  // ── Document CRUD ──
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  private generateVerificationHash(citizenId: string, filename: string): string {
+    return crypto
+      .createHash('sha256')
+      .update(`${citizenId}:${filename}:${Date.now()}`)
+      .digest('hex')
+      .slice(0, 16);
+  }
+
+  // ── Document CRUD ─────────────────────────────────────────────────────────
 
   async create(citizenId: string, dto: CreateDocumentDto) {
     const doc = this.documentRepository.create({
@@ -31,6 +42,44 @@ export class DocumentsService {
     });
     const saved = await this.documentRepository.save(doc);
     console.log('[DOCUMENTS] Document created:', saved.id);
+    return saved;
+  }
+
+  /**
+   * Upload and persist a digitalized document (with actual file from disk)
+   * Called by POST /api/v1/documents/upload
+   */
+  async uploadDocument(
+    citizenId: string,
+    file: Express.Multer.File,
+    meta: {
+      documentType: string;
+      documentName?: string;
+      councilJurisdiction?: string;
+      citizenFullName?: string;
+    },
+  ) {
+    const filePath = file.path.replace(/\\/g, '/');
+    const fileUrl = `/uploads/${file.filename}`;
+    const originalFilename = file.originalname;
+    const verificationHash = this.generateVerificationHash(citizenId, originalFilename);
+
+    const doc = this.documentRepository.create({
+      citizenId,
+      citizenFullName: meta.citizenFullName || '',
+      documentType: meta.documentType,
+      documentName: meta.documentName || meta.documentType,
+      councilJurisdiction: meta.councilJurisdiction || 'Central Registry',
+      filePath,
+      fileUrl,
+      originalFilename,
+      data: '',
+      status: 'pending',
+      verificationHash,
+    });
+
+    const saved = await this.documentRepository.save(doc);
+    console.log('[DOCUMENTS] ✅ Document uploaded and saved to DB:', saved.id, '—', fileUrl);
     return saved;
   }
 
@@ -63,7 +112,32 @@ export class DocumentsService {
     return this.documentRepository.findOneBy({ id });
   }
 
-  // ── JavaFX Admin API Bridge ──
+  // ── External / Teammate API ────────────────────────────────────────────────
+
+  /**
+   * GET /api/v1/documents/user/:userId
+   * Returns the clean JSON structure expected by the JavaFX desktop app / teammate system
+   */
+  async findByUserId(userId: string) {
+    const docs = await this.documentRepository.find({
+      where: { citizenId: userId },
+      order: { createdAt: 'DESC' },
+    });
+
+    return docs.map((doc) => ({
+      id: String(doc.id),
+      name: doc.documentName || doc.documentType,
+      documentType: doc.documentType,
+      status: doc.status,
+      url: doc.fileUrl || null,
+      verificationHash: doc.verificationHash || null,
+      councilJurisdiction: doc.councilJurisdiction,
+      uploadedAt: doc.createdAt,
+      issuedDate: doc.issuedDate || null,
+    }));
+  }
+
+  // ── JavaFX Admin API Bridge ────────────────────────────────────────────────
 
   /**
    * GET /api/v1/documents?status=pending
@@ -95,7 +169,7 @@ export class DocumentsService {
     return saved;
   }
 
-  // ── Metrics (for dashboard KPI cards) ──
+  // ── Metrics (for dashboard KPI cards) ─────────────────────────────────────
 
   async getMetrics(citizenId?: string) {
     const whereClause = citizenId ? { citizenId } : {};
@@ -119,7 +193,7 @@ export class DocumentsService {
     };
   }
 
-  // ── Document Requests ──
+  // ── Document Requests ──────────────────────────────────────────────────────
 
   private generateRequestId(): string {
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -151,7 +225,7 @@ export class DocumentsService {
     });
   }
 
-  // ── Reports ──
+  // ── Reports ───────────────────────────────────────────────────────────────
 
   private generateReportId(): string {
     const random = Math.random().toString(36).substring(2, 8).toUpperCase();
