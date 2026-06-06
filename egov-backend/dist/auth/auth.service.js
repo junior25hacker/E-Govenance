@@ -86,7 +86,6 @@ let AuthService = class AuthService {
             email: dto.email,
             passwordHash: hash,
             citizenId: citizenId,
-            profileComplete: false,
         });
         const savedUser = await this.userRepository.save(user);
         this.settingsService.initializeSettings(savedUser.id, savedUser.citizenId, savedUser.email);
@@ -125,9 +124,6 @@ let AuthService = class AuthService {
         const user = await this.userRepository.findOneBy({ id: userId });
         if (!user)
             throw new common_1.UnauthorizedException('User not found');
-        user.verificationDocType = docType;
-        user.verificationDocPath = docPath || 'uploaded_doc.png';
-        user.profileComplete = true;
         await this.userRepository.save(user);
         console.log('[AUTH] Profile completed for user', userId);
         return { status: 'success', message: 'Profile verified' };

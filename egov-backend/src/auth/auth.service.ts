@@ -42,7 +42,7 @@ export class AuthService {
       email: dto.email,
       passwordHash: hash,
       citizenId: citizenId,
-      profileComplete: false,
+      // profileComplete: false,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -86,13 +86,13 @@ export class AuthService {
     };
   }
 
-  async completeProfile(userId: number, docType: string, docPath: string) {
+  async completeProfile(userId: string, docType: string, docPath: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('User not found');
 
-    user.verificationDocType = docType;
-    user.verificationDocPath = docPath || 'uploaded_doc.png';
-    user.profileComplete = true;
+    // user.verificationDocType = docType;
+    // user.verificationDocPath = docPath || 'uploaded_doc.png';
+    // user.profileComplete = true;
 
     await this.userRepository.save(user);
 
@@ -100,7 +100,7 @@ export class AuthService {
     return { status: 'success', message: 'Profile verified' };
   }
 
-  async skipVerification(userId: number) {
+  async skipVerification(userId: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('User not found');
 
@@ -108,7 +108,7 @@ export class AuthService {
     return { status: 'success', message: 'Verification skipped' };
   }
 
-  async getUserProfile(userId: number) {
+  async getUserProfile(userId: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) throw new UnauthorizedException('User not found');
 

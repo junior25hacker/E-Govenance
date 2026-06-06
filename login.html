@@ -227,9 +227,9 @@
           }
 
           // store token and basic profile
-          if (data.token) {
-            localStorage.setItem('egov_token', data.token);
-            localStorage.setItem('egov_citizenId', data.citizen?.id || '');
+          if (data.data && data.data.token) {
+            localStorage.setItem('egov_token', data.data.token);
+            localStorage.setItem('egov_citizenId', data.data.user?.citizenId || '');
           }
 
           status.innerText = 'System: Login successful — redirecting...';

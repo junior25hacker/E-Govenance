@@ -1,36 +1,36 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-@Entity('document_requests')
+@Entity('requests')
 export class DocumentRequest {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   citizenId: string;
 
   @Column()
-  referenceId: string; // REQ-2026-XXXXX
-
-  @Column()
   documentType: string;
 
-  @Column({ nullable: true })
-  fullName: string;
+  @Column()
+  councilJurisdiction: string;
 
-  @Column({ nullable: true })
-  nationalId: string;
-
-  @Column({ nullable: true })
-  email: string;
-
-  @Column({ nullable: true })
-  phone: string;
-
-  @Column({ nullable: true })
+  @Column()
   purpose: string;
 
-  @Column({ default: 'PENDING' })
-  status: string; // PENDING, APPROVED, REJECTED, COMPLETED
+  @Column()
+  applicantName: string;
+
+  @Column()
+  applicantId: string;
+
+  @Column()
+  applicantEmail: string;
+
+  @Column()
+  applicantPhone: string;
+
+  @Column({ default: 'PENDING' }) // PENDING, PROCESSING, APPROVED, REJECTED
+  status: string;
 
   @CreateDateColumn()
   createdAt: Date;

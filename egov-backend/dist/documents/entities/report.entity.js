@@ -13,29 +13,20 @@ exports.Report = void 0;
 const typeorm_1 = require("typeorm");
 let Report = class Report {
     id;
-    citizenId;
-    referenceId;
     category;
     priority;
     location;
     description;
     phone;
+    citizenId;
     status;
     createdAt;
 };
 exports.Report = Report;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
 ], Report.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Report.prototype, "citizenId", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Report.prototype, "referenceId", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -49,13 +40,17 @@ __decorate([
     __metadata("design:type", String)
 ], Report.prototype, "location", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Report.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Report.prototype, "phone", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Report.prototype, "citizenId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 'OPEN' }),
     __metadata("design:type", String)

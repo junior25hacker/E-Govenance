@@ -507,18 +507,59 @@
       alert('Avatar upload feature coming soon!\\n\\nYou will be able to upload a profile picture.');
     }
 
-    function savePersonalInfo() {
+    async function loadProfile() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await fetch('/api/v1/auth/profile', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          const profile = data.data || data; // handle express or nestjs structure
+          document.querySelectorAll('input[type="text"]')[0].value = profile.fullName || '';
+          document.querySelectorAll('input[type="email"]')[0].value = profile.email || '';
+          document.querySelectorAll('input[type="tel"]')[0].value = profile.phone || '';
+          document.querySelectorAll('input[type="text"]')[1].value = profile.citizenId || '';
+          document.querySelectorAll('input[type="text"]')[1].disabled = true; // Citizen ID should not be editable
+          
+          document.querySelector('.profile-info h4').textContent = profile.fullName || profile.citizenId;
+          document.querySelector('.profile-info p').textContent = `Citizen ID: ${profile.citizenId}`;
+        }
+      } catch (err) { console.error('Failed to load profile', err); }
+    }
+    document.addEventListener('DOMContentLoaded', loadProfile);
+
+    async function savePersonalInfo() {
       const fullName = document.querySelectorAll('input[type="text"]')[0].value;
       const email = document.querySelectorAll('input[type="email"]')[0].value;
       const phone = document.querySelectorAll('input[type="tel"]')[0].value;
-      const id = document.querySelectorAll('input[type="text"]')[1].value;
 
-      if (!fullName || !email || !phone || !id) {
+      if (!fullName || !email || !phone) {
         alert('Please fill in all fields.');
         return;
       }
 
-      alert('Your personal information has been updated successfully!');
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/v1/auth/update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ fullName, email, phone })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          alert('Your personal information has been updated successfully!');
+          loadProfile();
+        } else {
+          alert('Failed to update: ' + data.message);
+        }
+      } catch (err) {
+        alert('An error occurred.');
+      }
     }
 
     function updatePassword() {

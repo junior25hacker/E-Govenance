@@ -5,7 +5,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdatePreferencesDto } from './dto/update-preferences.dto';
 
 export interface UserSettings {
-  userId: number;
+  userId: string;
   citizenId: string;
   fullName?: string;
   email: string;
@@ -25,10 +25,10 @@ export interface UserSettings {
 
 @Injectable()
 export class SettingsService {
-  private userSettings: Map<number, UserSettings> = new Map();
+  private userSettings: Map<string, UserSettings> = new Map();
 
   // Initialize user settings (called from auth service on registration)
-  initializeSettings(userId: number, citizenId: string, email: string) {
+  initializeSettings(userId: string, citizenId: string, email: string) {
     const settings: UserSettings = {
       userId,
       citizenId,
@@ -50,7 +50,7 @@ export class SettingsService {
   }
 
   // Get user settings
-  getSettings(userId: number): UserSettings {
+  getSettings(userId: string): UserSettings {
     const settings = this.userSettings.get(userId);
     if (!settings) {
       throw new UnauthorizedException('User settings not found');
@@ -59,7 +59,7 @@ export class SettingsService {
   }
 
   // Update profile
-  async updateProfile(userId: number, updateProfileDto: UpdateProfileDto): Promise<UserSettings> {
+  async updateProfile(userId: string, updateProfileDto: UpdateProfileDto): Promise<UserSettings> {
     const settings = this.userSettings.get(userId);
     if (!settings) {
       throw new UnauthorizedException('User settings not found');
@@ -77,7 +77,7 @@ export class SettingsService {
   }
 
   // Change password (placeholder - requires auth service integration)
-  async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<{ status: string; message: string }> {
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<{ status: string; message: string }> {
     if (changePasswordDto.newPassword !== changePasswordDto.confirmPassword) {
       throw new BadRequestException('Passwords do not match');
     }
@@ -95,7 +95,7 @@ export class SettingsService {
   }
 
   // Update preferences
-  async updatePreferences(userId: number, updatePreferencesDto: UpdatePreferencesDto): Promise<UserSettings> {
+  async updatePreferences(userId: string, updatePreferencesDto: UpdatePreferencesDto): Promise<UserSettings> {
     const settings = this.userSettings.get(userId);
     if (!settings) {
       throw new UnauthorizedException('User settings not found');
@@ -124,7 +124,7 @@ export class SettingsService {
   }
 
   // Export user data
-  exportData(userId: number, format: 'json' | 'pdf' | 'zip'): any {
+  exportData(userId: string, format: 'json' | 'pdf' | 'zip'): any {
     const settings = this.userSettings.get(userId);
     if (!settings) {
       throw new UnauthorizedException('User settings not found');
@@ -149,7 +149,7 @@ export class SettingsService {
   }
 
   // Delete account
-  deleteAccount(userId: number): { status: string; message: string } {
+  deleteAccount(userId: string): { status: string; message: string } {
     if (!this.userSettings.has(userId)) {
       throw new UnauthorizedException('User not found');
     }

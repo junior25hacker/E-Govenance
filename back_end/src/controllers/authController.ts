@@ -1,193 +1,110 @@
 import { Request, Response } from 'express';
 import { generateJWT } from '../utils/jwtUtils';
 import { AppDataSource } from '../config/database';
-import { Document } from '../entities/Document';
-
-// Mock user database (in production, use TypeORM repository)
-const users: any[] = [
-  {
-    id: 1,
-    citizenId: 'CITIZEN-1234',
-    email: 'john.okonkwo@example.com',
-    password: 'password123', // In production: hashed with bcrypt
-    firstName: 'John',
-    lastName: 'Okonkwo',
-  },
-  {
-    id: 2,
-    citizenId: '202401001',
-    email: 'test.citizen@example.com',
-    password: '1234',
-    firstName: 'Test',
-    lastName: 'User',
-  },
-];
+import { User } from '../entities/User';
+import bcrypt from 'bcryptjs';
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log('[AUTH] Login attempt with body:', req.body);
+    console.log('[AUTH] Login attempt for:', req.body.citizenId);
     const { citizenId, password } = req.body;
 
-    // Validation
     if (!citizenId || !password) {
-      console.log('[AUTH] Missing citizenId or password');
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Citizen ID and password are required',
-      });
+      return res.status(400).json({ status: 'fail', message: 'Citizen ID and password are required' });
     }
 
-    // Find user by citizenId
-    const user = users.find((u) => u.citizenId === citizenId);
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { citizenId } });
 
-    if (!user || user.password !== password) {
-      console.log('[AUTH] User not found or password mismatch');
-      return res.status(401).json({
-        status: 'fail',
-        message: 'Invalid Citizen ID or password',
-      });
+    if (!user) {
+      return res.status(401).json({ status: 'fail', message: 'Invalid Citizen ID or password' });
     }
 
-    // Generate JWT
-    const token = generateJWT(
-      {
-        id: user.id,
-        citizenId: user.citizenId,
-        email: user.email,
-      },
-      process.env.JWT_EXPIRY || '7d'
-    );
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return res.status(401).json({ status: 'fail', message: 'Invalid Citizen ID or password' });
+    }
 
-    console.log('[AUTH] Login successful for', citizenId);
+    const token = generateJWT({ id: user.id, citizenId: user.citizenId, email: user.email }, process.env.JWT_EXPIRY || '7d');
+
     res.status(200).json({
       status: 'success',
-      message: 'Login successful',
       data: {
         token,
-        user: {
-          id: user.id,
-          citizenId: user.citizenId,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-      },
+        user: { id: user.id, citizenId: user.citizenId, email: user.email, fullName: user.fullName }
+      }
     });
   } catch (error) {
     console.error('[AUTH] Login error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error',
-    });
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, password, passwordConfirm } = req.body;
+    const { firstName, lastName, email, password, passwordConfirm, phone } = req.body;
 
-    // Validation
-    if (!firstName || !lastName || !email || !password || !passwordConfirm) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'All fields are required',
-      });
+    if (!firstName || !lastName || !password || !passwordConfirm) {
+      return res.status(400).json({ status: 'fail', message: 'Name and password fields are required' });
     }
 
     if (password !== passwordConfirm) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Passwords do not match',
-      });
+      return res.status(400).json({ status: 'fail', message: 'Passwords do not match' });
     }
 
-    if (password.length < 8) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Password must be at least 8 characters',
-      });
+    const userRepository = AppDataSource.getRepository(User);
+    
+    if (email) {
+      const existingUser = await userRepository.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({ status: 'fail', message: 'Email already registered' });
+      }
     }
 
-    // Check if user exists
-    const existingUser = users.find((u) => u.email === email);
-    if (existingUser) {
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Email already registered',
-      });
-    }
+    const citizenId = `CITIZEN-${Math.floor(1000 + Math.random() * 9000)}`;
+    const passwordHash = await bcrypt.hash(password, 10);
+    const fullName = `${firstName} ${lastName}`;
 
-    // Create citizen ID
-    const citizenId = `CITIZEN-${Math.floor(Math.random() * 10000)}`;
-
-    // Create new user
-    const newUser = {
-      id: users.length + 1,
+    const newUser = userRepository.create({
       citizenId,
+      fullName,
       email,
-      password, // In production: use bcrypt.hash()
-      firstName,
-      lastName,
-    };
+      phone,
+      passwordHash
+    });
 
-    users.push(newUser);
+    await userRepository.save(newUser);
 
-    // Generate token
-    const token = generateJWT(
-      {
-        id: newUser.id,
-        citizenId: newUser.citizenId,
-        email: newUser.email,
-      },
-      process.env.JWT_EXPIRY || '7d'
-    );
+    const token = generateJWT({ id: newUser.id, citizenId: newUser.citizenId, email: newUser.email }, process.env.JWT_EXPIRY || '7d');
 
     res.status(201).json({
       status: 'success',
-      message: 'Registration successful',
       data: {
         token,
-        user: {
-          id: newUser.id,
-          citizenId: newUser.citizenId,
-          email: newUser.email,
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-        },
-      },
+        user: { id: newUser.id, citizenId: newUser.citizenId, email: newUser.email, fullName: newUser.fullName }
+      }
     });
   } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error',
-    });
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };
 
 export const logout = (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Logged out successfully',
-  });
+  res.status(200).json({ status: 'success', message: 'Logged out successfully' });
 };
 
-export const getProfile = (req: Request, res: Response) => {
+export const getProfile = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
-      return res.status(401).json({
-        status: 'fail',
-        message: 'Unauthorized',
-      });
+      return res.status(401).json({ status: 'fail', message: 'Unauthorized' });
     }
 
-    const user = users.find((u) => u.id === req.user.id);
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { id: req.user.id } });
 
     if (!user) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'User not found',
-      });
+      return res.status(404).json({ status: 'fail', message: 'User not found' });
     }
 
     res.status(200).json({
@@ -196,15 +113,58 @@ export const getProfile = (req: Request, res: Response) => {
         id: user.id,
         citizenId: user.citizenId,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
+        phone: user.phone,
+        fullName: user.fullName
+      }
     });
   } catch (error) {
     console.error('Get profile error:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'Internal server error',
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ status: 'fail', message: 'Unauthorized' });
+    }
+
+    const { fullName, email, phone, currentPassword, newPassword } = req.body;
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { id: req.user.id } });
+
+    if (!user) {
+      return res.status(404).json({ status: 'fail', message: 'User not found' });
+    }
+
+    // Optional password update
+    if (currentPassword && newPassword) {
+      const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!isPasswordValid) {
+        return res.status(400).json({ status: 'fail', message: 'Current password is incorrect' });
+      }
+      user.passwordHash = await bcrypt.hash(newPassword, 10);
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
+
+    await userRepository.save(user);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Profile updated successfully',
+      data: {
+        id: user.id,
+        citizenId: user.citizenId,
+        email: user.email,
+        phone: user.phone,
+        fullName: user.fullName
+      }
     });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 };

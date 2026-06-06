@@ -2,30 +2,56 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('documents')
 export class Document {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column()
-  citizenId: string;
-
-  @Column()
-  documentType: string;
-
-  @Column()
-  councilJurisdiction: string;
-
-  @Column('text')
-  data: string; // JSON string of document details or Base64 payload
-
-  @Column({ default: 'pending' })
-  status: string; // pending, verified, rejected
+  citizenId!: string;
 
   @Column({ nullable: true })
-  verifiedBy: string; // admin ID who approved/rejected
+  citizenFullName!: string;
+
+  @Column()
+  documentType!: string;
+
+  @Column({ nullable: true })
+  documentName!: string;
+
+  @Column({ nullable: true })
+  councilJurisdiction!: string;
+
+  /** Disk path for internal use (e.g. uploads/1234-cert.pdf) */
+  @Column({ nullable: true })
+  filePath!: string;
+
+  /** Publicly accessible URL path served by express.static */
+  @Column({ nullable: true })
+  fileUrl!: string;
+
+  /** Original filename from the user's machine */
+  @Column({ nullable: true })
+  originalFilename!: string;
+
+  @Column({ default: 'PENDING_VERIFICATION' })
+  status!: string;
+
+  /** Name / ID of the admin who verified the document */
+  @Column({ nullable: true })
+  verifiedBy!: string;
+
+  /** Short hash for integrity / QR verification */
+  @Column({ nullable: true })
+  verificationHash!: string;
+
+  @Column({ nullable: true })
+  issuedDate!: string;
+
+  @Column({ nullable: true })
+  expiryDate!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

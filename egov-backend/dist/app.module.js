@@ -31,7 +31,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'better-sqlite3',
-                database: process.env.DB_PATH || './database.sqlite',
+                database: process.env.DB_PATH || 'C:/Users/lenovo p14s/Music/E-Govenance/back_end/database.sqlite',
                 entities: [user_entity_1.User, document_entity_1.Document, document_request_entity_1.DocumentRequest, report_entity_1.Report],
                 synchronize: true,
                 logging: process.env.NODE_ENV === 'development',
