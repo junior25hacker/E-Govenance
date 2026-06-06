@@ -1,12 +1,11 @@
 export declare class Report {
-    id: number;
-    citizenId: string;
-    referenceId: string;
+    id: string;
     category: string;
     priority: string;
     location: string;
     description: string;
     phone: string;
+    citizenId: string;
     status: string;
     createdAt: Date;
 }

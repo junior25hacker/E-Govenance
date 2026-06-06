@@ -4,6 +4,8 @@ import { Document } from '../entities/Document';
 import { User } from '../entities/User';
 import { Request } from '../entities/Request';
 import { Report } from '../entities/Report';
+import { Notification } from '../entities/Notification';
+import { Message } from '../entities/Message';
 
 dotenv.config();
 
@@ -16,7 +18,9 @@ export const AppDataSource = new DataSource({
     User,
     Document,
     Request,
-    Report
+    Report,
+    Notification,
+    Message
   ],
   subscribers: [],
   migrations: [],

@@ -85,6 +85,17 @@ export class DocumentsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('dashboard-stats')
+  async getDashboardStats(@Req() req): Promise<any> {
+    console.log('[DOCUMENTS] Fetch dashboard stats for:', req.user.citizenId);
+    const metrics = await this.documentsService.getMetrics(req.user.citizenId);
+    return {
+      status: 'success',
+      data: metrics,
+    };
+  }
+
   /**
    * GET /api/v1/documents/user/:userId
    * External endpoint for teammate / JavaFX desktop integration.
@@ -193,13 +204,7 @@ export class DocumentsController {
    */
   @Get(':id')
   async getDocumentById(@Param('id') id: string): Promise<any> {
-    const documentId = parseInt(id, 10);
-    if (isNaN(documentId)) {
-      throw new HttpException(
-        { status: 'error', message: 'Invalid document ID', code: 'INVALID_ID' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const documentId = id;
 
     const doc = await this.documentsService.findById(documentId);
     if (!doc) {
@@ -225,13 +230,7 @@ export class DocumentsController {
   ): Promise<any> {
     console.log(`[DOCUMENTS] Verify status for document ${id}:`, verifyDto);
 
-    const documentId = parseInt(id, 10);
-    if (isNaN(documentId)) {
-      throw new HttpException(
-        { status: 'error', message: 'Invalid document ID', code: 'INVALID_ID' },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    const documentId = id;
 
     const result = await this.documentsService.updateVerifyStatus(
       documentId,

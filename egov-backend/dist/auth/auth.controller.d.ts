@@ -38,13 +38,12 @@ export declare class AuthController {
         message: string;
     }>;
     getProfile(req: any): Promise<{
-        id: number;
+        id: string;
         citizenId: string;
-        email: string;
         fullName: string;
-        profileComplete: boolean;
-        verificationDocType: string;
-        verificationDocPath: string;
+        email: string;
+        phone: string;
+        role: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

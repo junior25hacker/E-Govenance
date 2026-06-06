@@ -14,20 +14,20 @@ const typeorm_1 = require("typeorm");
 let DocumentRequest = class DocumentRequest {
     id;
     citizenId;
-    referenceId;
     documentType;
-    fullName;
-    nationalId;
-    email;
-    phone;
+    councilJurisdiction;
     purpose;
+    applicantName;
+    applicantId;
+    applicantEmail;
+    applicantPhone;
     status;
     createdAt;
 };
 exports.DocumentRequest = DocumentRequest;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
 ], DocumentRequest.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
@@ -36,31 +36,31 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], DocumentRequest.prototype, "referenceId", void 0);
+], DocumentRequest.prototype, "documentType", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], DocumentRequest.prototype, "documentType", void 0);
+], DocumentRequest.prototype, "councilJurisdiction", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], DocumentRequest.prototype, "fullName", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], DocumentRequest.prototype, "nationalId", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], DocumentRequest.prototype, "email", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], DocumentRequest.prototype, "phone", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], DocumentRequest.prototype, "purpose", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], DocumentRequest.prototype, "applicantName", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], DocumentRequest.prototype, "applicantId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], DocumentRequest.prototype, "applicantEmail", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], DocumentRequest.prototype, "applicantPhone", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 'PENDING' }),
     __metadata("design:type", String)
@@ -70,6 +70,6 @@ __decorate([
     __metadata("design:type", Date)
 ], DocumentRequest.prototype, "createdAt", void 0);
 exports.DocumentRequest = DocumentRequest = __decorate([
-    (0, typeorm_1.Entity)('document_requests')
+    (0, typeorm_1.Entity)('requests')
 ], DocumentRequest);
 //# sourceMappingURL=document-request.entity.js.map

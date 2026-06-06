@@ -14,43 +14,78 @@ const typeorm_1 = require("typeorm");
 let Document = class Document {
     id;
     citizenId;
+    citizenFullName;
     documentType;
+    documentName;
     councilJurisdiction;
-    data;
+    filePath;
+    fileUrl;
+    originalFilename;
     status;
     verifiedBy;
+    verificationHash;
+    issuedDate;
+    expiryDate;
     createdAt;
     updatedAt;
 };
 exports.Document = Document;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
 ], Document.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Document.prototype, "citizenId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "citizenFullName", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Document.prototype, "documentType", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "documentName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Document.prototype, "councilJurisdiction", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], Document.prototype, "data", void 0);
+], Document.prototype, "filePath", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: 'pending' }),
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "fileUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "originalFilename", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'PENDING_VERIFICATION' }),
     __metadata("design:type", String)
 ], Document.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Document.prototype, "verifiedBy", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "verificationHash", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "issuedDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "expiryDate", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

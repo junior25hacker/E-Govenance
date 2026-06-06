@@ -10,12 +10,30 @@ export declare class DocumentsService {
     private readonly requestRepository;
     private readonly reportRepository;
     constructor(documentRepository: Repository<Document>, requestRepository: Repository<DocumentRequest>, reportRepository: Repository<Report>);
+    private generateVerificationHash;
     create(citizenId: string, dto: CreateDocumentDto): Promise<Document>;
+    uploadDocument(citizenId: string, file: Express.Multer.File, meta: {
+        documentType: string;
+        documentName?: string;
+        councilJurisdiction?: string;
+        citizenFullName?: string;
+    }): Promise<Document>;
     submitDocument(citizenId: string, dto: SubmitDocumentRequestDto): Promise<Document>;
     findByCitizen(citizenId: string): Promise<Document[]>;
-    findById(id: number): Promise<Document | null>;
+    findById(id: string): Promise<Document | null>;
+    findByUserId(userId: string): Promise<{
+        id: string;
+        name: string;
+        documentType: string;
+        status: string;
+        url: string | null;
+        verificationHash: string | null;
+        councilJurisdiction: string;
+        uploadedAt: Date;
+        issuedDate: string | null;
+    }[]>;
     findByStatus(status: string): Promise<Document[]>;
-    updateVerifyStatus(id: number, status: string, verifiedBy: string): Promise<Document>;
+    updateVerifyStatus(id: string, status: string, verifiedBy: string): Promise<Document>;
     getMetrics(citizenId?: string): Promise<{
         totalDocuments: number;
         approvedDocuments: number;

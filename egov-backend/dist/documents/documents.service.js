@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -16,6 +49,7 @@ exports.DocumentsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const crypto = __importStar(require("crypto"));
 const document_entity_1 = require("./entities/document.entity");
 const document_request_entity_1 = require("./entities/document-request.entity");
 const report_entity_1 = require("./entities/report.entity");
@@ -28,16 +62,44 @@ let DocumentsService = class DocumentsService {
         this.requestRepository = requestRepository;
         this.reportRepository = reportRepository;
     }
+    generateVerificationHash(citizenId, filename) {
+        return crypto
+            .createHash('sha256')
+            .update(`${citizenId}:${filename}:${Date.now()}`)
+            .digest('hex')
+            .slice(0, 16);
+    }
     async create(citizenId, dto) {
         const doc = this.documentRepository.create({
             citizenId,
             documentType: dto.documentType,
             councilJurisdiction: dto.councilJurisdiction,
-            data: dto.filePath,
+            filePath: dto.filePath,
             status: 'pending',
         });
         const saved = await this.documentRepository.save(doc);
         console.log('[DOCUMENTS] Document created:', saved.id);
+        return saved;
+    }
+    async uploadDocument(citizenId, file, meta) {
+        const filePath = file.path.replace(/\\/g, '/');
+        const fileUrl = `/uploads/${file.filename}`;
+        const originalFilename = file.originalname;
+        const verificationHash = this.generateVerificationHash(citizenId, originalFilename);
+        const doc = this.documentRepository.create({
+            citizenId,
+            citizenFullName: meta.citizenFullName || '',
+            documentType: meta.documentType,
+            documentName: meta.documentName || meta.documentType,
+            councilJurisdiction: meta.councilJurisdiction || 'Central Registry',
+            filePath,
+            fileUrl,
+            originalFilename,
+            status: 'pending',
+            verificationHash,
+        });
+        const saved = await this.documentRepository.save(doc);
+        console.log('[DOCUMENTS] ✅ Document uploaded and saved to DB:', saved.id, '—', fileUrl);
         return saved;
     }
     async submitDocument(citizenId, dto) {
@@ -45,7 +107,7 @@ let DocumentsService = class DocumentsService {
             citizenId: dto.citizenId || citizenId,
             documentType: dto.documentType,
             councilJurisdiction: dto.councilJurisdiction || 'Central Registry',
-            data: dto.filePath || '',
+            filePath: dto.filePath || '',
             status: 'pending',
         });
         const saved = await this.documentRepository.save(doc);
@@ -60,6 +122,23 @@ let DocumentsService = class DocumentsService {
     }
     async findById(id) {
         return this.documentRepository.findOneBy({ id });
+    }
+    async findByUserId(userId) {
+        const docs = await this.documentRepository.find({
+            where: { citizenId: userId },
+            order: { createdAt: 'DESC' },
+        });
+        return docs.map((doc) => ({
+            id: String(doc.id),
+            name: doc.documentName || doc.documentType,
+            documentType: doc.documentType,
+            status: doc.status,
+            url: doc.fileUrl || null,
+            verificationHash: doc.verificationHash || null,
+            councilJurisdiction: doc.councilJurisdiction,
+            uploadedAt: doc.createdAt,
+            issuedDate: doc.issuedDate || null,
+        }));
     }
     async findByStatus(status) {
         return this.documentRepository.find({
@@ -105,12 +184,11 @@ let DocumentsService = class DocumentsService {
         const referenceId = this.generateRequestId();
         const req = this.requestRepository.create({
             citizenId,
-            referenceId,
             documentType: dto.documentType,
-            fullName: dto.fullName,
-            nationalId: dto.nationalId,
-            email: dto.email,
-            phone: dto.phone,
+            applicantName: dto.fullName,
+            applicantId: dto.nationalId,
+            applicantEmail: dto.email,
+            applicantPhone: dto.phone,
             purpose: dto.purpose,
             status: 'PENDING',
         });
@@ -132,7 +210,6 @@ let DocumentsService = class DocumentsService {
         const referenceId = this.generateReportId();
         const rpt = this.reportRepository.create({
             citizenId,
-            referenceId,
             category: dto.category,
             priority: dto.priority,
             location: dto.location,

@@ -25,7 +25,7 @@ import { Report } from './documents/entities/report.entity';
     // SQLite database via TypeORM
     TypeOrmModule.forRoot({
       type: 'better-sqlite3',
-      database: process.env.DB_PATH || './database.sqlite',
+      database: process.env.DB_PATH || 'C:/Users/lenovo p14s/Music/E-Govenance/back_end/database.sqlite',
       entities: [User, Document, DocumentRequest, Report],
       synchronize: true, // Auto-create tables in development
       logging: process.env.NODE_ENV === 'development',

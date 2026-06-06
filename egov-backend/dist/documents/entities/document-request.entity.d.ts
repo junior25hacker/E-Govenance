@@ -1,13 +1,13 @@
 export declare class DocumentRequest {
-    id: number;
+    id: string;
     citizenId: string;
-    referenceId: string;
     documentType: string;
-    fullName: string;
-    nationalId: string;
-    email: string;
-    phone: string;
+    councilJurisdiction: string;
     purpose: string;
+    applicantName: string;
+    applicantId: string;
+    applicantEmail: string;
+    applicantPhone: string;
     status: string;
     createdAt: Date;
 }

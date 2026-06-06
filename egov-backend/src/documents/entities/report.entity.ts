@@ -2,32 +2,29 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 
 @Entity('reports')
 export class Report {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  citizenId: string;
-
-  @Column()
-  referenceId: string; // RPT-2026-XXXXX
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   category: string;
 
   @Column()
-  priority: string; // LOW, MEDIUM, HIGH
+  priority: string;
 
   @Column()
   location: string;
 
-  @Column('text')
+  @Column()
   description: string;
 
   @Column({ nullable: true })
   phone: string;
 
-  @Column({ default: 'OPEN' })
-  status: string; // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  @Column()
+  citizenId: string;
+
+  @Column({ default: 'OPEN' }) // OPEN, IN_PROGRESS, RESOLVED
+  status: string;
 
   @CreateDateColumn()
   createdAt: Date;

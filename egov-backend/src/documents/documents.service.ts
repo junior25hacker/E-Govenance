@@ -37,7 +37,7 @@ export class DocumentsService {
       citizenId,
       documentType: dto.documentType,
       councilJurisdiction: dto.councilJurisdiction,
-      data: dto.filePath,
+      filePath: dto.filePath,
       status: 'pending',
     });
     const saved = await this.documentRepository.save(doc);
@@ -73,7 +73,6 @@ export class DocumentsService {
       filePath,
       fileUrl,
       originalFilename,
-      data: '',
       status: 'pending',
       verificationHash,
     });
@@ -93,7 +92,7 @@ export class DocumentsService {
       citizenId: dto.citizenId || citizenId,
       documentType: dto.documentType,
       councilJurisdiction: dto.councilJurisdiction || 'Central Registry',
-      data: dto.filePath || '',
+      filePath: dto.filePath || '',
       status: 'pending',
     });
     const saved = await this.documentRepository.save(doc);
@@ -108,7 +107,7 @@ export class DocumentsService {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     return this.documentRepository.findOneBy({ id });
   }
 
@@ -154,7 +153,7 @@ export class DocumentsService {
    * POST /api/v1/documents/:id/verify-status
    * Admin decision — approve or reject a document
    */
-  async updateVerifyStatus(id: number, status: string, verifiedBy: string) {
+  async updateVerifyStatus(id: string, status: string, verifiedBy: string) {
     const doc = await this.documentRepository.findOneBy({ id });
     if (!doc) {
       throw new NotFoundException(`Document with ID ${id} not found`);
@@ -175,21 +174,21 @@ export class DocumentsService {
     const whereClause = citizenId ? { citizenId } : {};
 
     const totalDocuments = await this.documentRepository.count({ where: whereClause });
-    const approvedDocuments = await this.documentRepository.count({
-      where: { ...whereClause, status: 'verified' },
+    const verifiedDocuments = await this.documentRepository.count({
+      where: { ...whereClause, status: 'VERIFIED' },
     });
-    const pendingActions = await this.documentRepository.count({
-      where: { ...whereClause, status: 'pending' },
+    const pendingRequests = await this.requestRepository.count({
+      where: { ...whereClause, status: 'PENDING' },
     });
-    const rejectedDocuments = await this.documentRepository.count({
-      where: { ...whereClause, status: 'rejected' },
+    const activeReports = await this.reportRepository.count({
+      where: { ...whereClause, status: 'OPEN' },
     });
 
     return {
       totalDocuments,
-      approvedDocuments,
-      pendingActions,
-      rejectedDocuments,
+      verifiedDocuments,
+      pendingRequests,
+      activeReports,
     };
   }
 
@@ -204,12 +203,12 @@ export class DocumentsService {
     const referenceId = this.generateRequestId();
     const req = this.requestRepository.create({
       citizenId,
-      referenceId,
+      // referenceId, // Not in Express schema, using standard id
       documentType: dto.documentType,
-      fullName: dto.fullName,
-      nationalId: dto.nationalId,
-      email: dto.email,
-      phone: dto.phone,
+      applicantName: dto.fullName,
+      applicantId: dto.nationalId,
+      applicantEmail: dto.email,
+      applicantPhone: dto.phone,
       purpose: dto.purpose,
       status: 'PENDING',
     });
@@ -236,7 +235,7 @@ export class DocumentsService {
     const referenceId = this.generateReportId();
     const rpt = this.reportRepository.create({
       citizenId,
-      referenceId,
+      // referenceId, // removed, uses standard id
       category: dto.category,
       priority: dto.priority,
       location: dto.location,

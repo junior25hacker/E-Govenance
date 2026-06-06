@@ -1,12 +1,11 @@
 export declare class User {
-    id: number;
+    id: string;
     citizenId: string;
-    email: string;
     passwordHash: string;
     fullName: string;
-    profileComplete: boolean;
-    verificationDocType: string;
-    verificationDocPath: string;
+    email: string;
+    phone: string;
+    role: string;
     createdAt: Date;
     updatedAt: Date;
 }

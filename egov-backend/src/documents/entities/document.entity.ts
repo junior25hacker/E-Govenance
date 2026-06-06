@@ -2,57 +2,56 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('documents')
 export class Document {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column()
-  citizenId: string;
+  citizenId!: string;
 
   @Column({ nullable: true })
-  citizenFullName: string;
+  citizenFullName!: string;
 
   @Column()
-  documentType: string;
+  documentType!: string;
 
   @Column({ nullable: true })
-  documentName: string; // Human-readable name e.g. "Birth Certificate"
+  documentName!: string;
 
   @Column({ nullable: true })
-  councilJurisdiction: string;
+  councilJurisdiction!: string;
 
-  @Column('text', { nullable: true })
-  data: string; // Legacy: JSON string of details or base64 payload
-
-  /** Disk path for internal server use */
+  /** Disk path for internal use (e.g. uploads/1234-cert.pdf) */
   @Column({ nullable: true })
-  filePath: string;
+  filePath!: string;
 
-  /** Publicly accessible URL served via /uploads/ static route */
+  /** Publicly accessible URL path served by express.static */
   @Column({ nullable: true })
-  fileUrl: string;
+  fileUrl!: string;
 
   /** Original filename from the user's machine */
   @Column({ nullable: true })
-  originalFilename: string;
+  originalFilename!: string;
 
-  @Column({ default: 'pending' })
-  status: string; // pending | verified | rejected
+  @Column({ default: 'PENDING_VERIFICATION' })
+  status!: string;
+
+  /** Name / ID of the admin who verified the document */
+  @Column({ nullable: true })
+  verifiedBy!: string;
+
+  /** Short hash for integrity / QR verification */
+  @Column({ nullable: true })
+  verificationHash!: string;
 
   @Column({ nullable: true })
-  verifiedBy: string; // Admin ID / name who approved or rejected
+  issuedDate!: string;
 
   @Column({ nullable: true })
-  verificationHash: string;
-
-  @Column({ nullable: true })
-  issuedDate: string;
-
-  @Column({ nullable: true })
-  expiryDate: string;
+  expiryDate!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

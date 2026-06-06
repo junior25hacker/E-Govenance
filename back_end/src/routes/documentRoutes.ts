@@ -9,6 +9,7 @@ import {
   submitReport,
   getUserReports,
   downloadDocument,
+  getDashboardStats,
 } from '../controllers/documentController';
 import { authMiddleware, optionalAuth } from '../middlewares/authMiddleware';
 
@@ -63,6 +64,9 @@ router.get('/user/:userId', optionalAuth, getDocumentsByUserId);
 
 /** List all documents for the logged-in citizen */
 router.get('/', authMiddleware, getUserDocuments);
+
+/** Get aggregated stats for the dashboard */
+router.get('/dashboard-stats', authMiddleware, getDashboardStats);
 
 /**
  * Upload + digitalize a document

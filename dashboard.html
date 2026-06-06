@@ -1409,7 +1409,7 @@
           <div class="kpi-label">Active Documents</div>
           <div class="kpi-icon"><span class="material-symbols-outlined">description</span></div>
         </div>
-        <div class="kpi-value">3</div>
+        <div class="kpi-value" id="kpi-active-docs">0</div>
         <div class="kpi-trend up">
           <span class="material-symbols-outlined" style="font-size:14px">trending_up</span>
           +1 this month
@@ -1424,7 +1424,7 @@
           <div class="kpi-label">Pending Requests</div>
           <div class="kpi-icon"><span class="material-symbols-outlined">hourglass_top</span></div>
         </div>
-        <div class="kpi-value">1</div>
+        <div class="kpi-value" id="kpi-pending-req">0</div>
         <div class="kpi-trend neutral">
           <span class="material-symbols-outlined" style="font-size:14px">remove</span>
           No change
@@ -1732,6 +1732,30 @@
         setTimeout(() => { bar.style.width = target; }, 300);
       });
     });
+    
+    async function loadDashboardStats() {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const res = await fetch('/api/v1/documents/dashboard-stats', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        if (data.status === 'success') {
+          const stats = data.data;
+          document.getElementById('kpi-active-docs').textContent = stats.totalDocuments;
+          document.getElementById('kpi-pending-req').textContent = stats.pendingRequests;
+          // You could also update Profile Completion and Security Score here if needed, 
+          // or use activeReports.
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard stats', err);
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadDashboardStats);
   </script>
 </body>
 

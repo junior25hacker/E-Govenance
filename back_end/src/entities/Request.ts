@@ -6,6 +6,9 @@ export class Request {
   id: string;
 
   @Column()
+  citizenId: string;
+
+  @Column()
   documentType: string;
 
   @Column()

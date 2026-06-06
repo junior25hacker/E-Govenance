@@ -23,22 +23,21 @@ export declare class AuthService {
             role: string;
         };
     } | null>;
-    completeProfile(userId: number, docType: string, docPath: string): Promise<{
+    completeProfile(userId: string, docType: string, docPath: string): Promise<{
         status: string;
         message: string;
     }>;
-    skipVerification(userId: number): Promise<{
+    skipVerification(userId: string): Promise<{
         status: string;
         message: string;
     }>;
-    getUserProfile(userId: number): Promise<{
-        id: number;
+    getUserProfile(userId: string): Promise<{
+        id: string;
         citizenId: string;
-        email: string;
         fullName: string;
-        profileComplete: boolean;
-        verificationDocType: string;
-        verificationDocPath: string;
+        email: string;
+        phone: string;
+        role: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
