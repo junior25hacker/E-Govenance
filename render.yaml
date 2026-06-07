@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: citizennode-web
+    env: node
+    plan: free
+    rootDir: egov-backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: ./database.sqlite
+      - key: CORS_ORIGINS
+        value: "*"
