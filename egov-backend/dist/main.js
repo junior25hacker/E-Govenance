@@ -35,6 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const path_1 = require("path");
 const fs = __importStar(require("fs"));
 const app_module_1 = require("./app.module");
@@ -90,9 +91,18 @@ async function bootstrap() {
     hbs.registerHelper('lt', (a, b) => a < b);
     hbs.registerHelper('and', (a, b) => a && b);
     hbs.registerHelper('or', (a, b) => a || b);
+    const config = new swagger_1.DocumentBuilder()
+        .setTitle('CitizenNode E-Governance API')
+        .setDescription('The API documentation for CitizenNode Web Portal and Desktop Admin Application.')
+        .setVersion('1.0')
+        .addBearerAuth()
+        .build();
+    const document = swagger_1.SwaggerModule.createDocument(app, config);
+    swagger_1.SwaggerModule.setup('api/docs', app, document);
     const port = process.env.PORT ?? 3000;
     await app.listen(port);
     console.log(`[BACKEND] 🚀 E-Governance Backend & Portal running on: http://localhost:${port}`);
+    console.log(`[BACKEND] 📚 Swagger API Documentation available at: http://localhost:${port}/api/docs`);
     console.log(`[BACKEND] 📦 Database: ${process.env.DATABASE_URL ? 'PostgreSQL (Render)' : 'SQLite (' + (process.env.DB_PATH || './database.sqlite') + ')'}`);
     console.log(`[BACKEND] 🔐 JWT Secret: ${process.env.JWT_SECRET ? '(from .env)' : '(default)'}`);
     console.log(`[BACKEND] 🌐 CORS Origins: ${corsOrigins.join(', ')}`);

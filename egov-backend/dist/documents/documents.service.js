@@ -52,7 +52,6 @@ const typeorm_2 = require("typeorm");
 const document_entity_1 = require("./entities/document.entity");
 const document_request_entity_1 = require("./entities/document-request.entity");
 const report_entity_1 = require("./entities/report.entity");
-const uuid_1 = require("uuid");
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
 const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads', 'documents');
@@ -113,17 +112,7 @@ let DocumentsService = class DocumentsService {
         if (file.size > MAX_FILE_SIZE) {
             throw new common_1.BadRequestException(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed: 20 MB.`);
         }
-        const ext = path.extname(file.originalname).toLowerCase() || '.pdf';
-        const storedFilename = `${(0, uuid_1.v4)()}${ext}`;
-        const storedPath = path.join(UPLOADS_DIR, storedFilename);
-        try {
-            fs.writeFileSync(storedPath, file.buffer);
-            console.log(`[DOCUMENTS] File written: ${storedPath} (${file.size} bytes)`);
-        }
-        catch (err) {
-            console.error('[DOCUMENTS] Failed to write file:', err);
-            throw new common_1.BadRequestException('Failed to store the uploaded file. Please try again.');
-        }
+        const base64Data = file.buffer.toString('base64');
         const doc = this.documentRepository.create({
             citizenId,
             documentType: dto.documentType,
@@ -131,10 +120,10 @@ let DocumentsService = class DocumentsService {
             fullName: dto.fullName,
             nationalId: dto.nationalId,
             originalFilename: file.originalname,
-            storedFilename,
             mimeType: file.mimetype,
             fileSize: file.size,
             status: 'pending',
+            data: base64Data,
         });
         const saved = await this.documentRepository.save(doc);
         console.log(`[DOCUMENTS] Document digitalized: ID=${saved.id}, type=${dto.documentType}, citizen=${citizenId}`);
@@ -145,15 +134,10 @@ let DocumentsService = class DocumentsService {
         if (!doc) {
             throw new common_1.NotFoundException(`Document with ID ${id} not found`);
         }
-        if (!doc.storedFilename) {
-            throw new common_1.NotFoundException(`Document ${id} has no associated file`);
+        if (!doc.data) {
+            throw new common_1.NotFoundException(`Document ${id} has no associated file data`);
         }
-        const filePath = path.join(UPLOADS_DIR, doc.storedFilename);
-        if (!fs.existsSync(filePath)) {
-            console.error(`[DOCUMENTS] File missing on disk: ${filePath}`);
-            throw new common_1.NotFoundException(`File for document ${id} is missing from storage`);
-        }
-        return { filePath, doc };
+        return { base64Data: doc.data, doc };
     }
     async findByCitizen(citizenId) {
         return this.documentRepository.find({
@@ -177,19 +161,16 @@ let DocumentsService = class DocumentsService {
         }
         doc.status = status;
         doc.verifiedBy = verifiedBy;
-        if (status.toLowerCase() === 'verified' && !doc.storedFilename) {
-            const ext = '.pdf';
-            const newFileName = `${(0, uuid_1.v4)()}${ext}`;
-            const destPath = path.join(UPLOADS_DIR, newFileName);
+        if (status.toLowerCase() === 'verified' && !doc.data) {
             const dummyPath = path.join(process.cwd(), 'dummy.pdf');
             if (fs.existsSync(dummyPath)) {
                 try {
-                    fs.copyFileSync(dummyPath, destPath);
-                    doc.storedFilename = newFileName;
+                    const dummyBuffer = fs.readFileSync(dummyPath);
+                    doc.data = dummyBuffer.toString('base64');
                     doc.mimeType = 'application/pdf';
                     doc.originalFilename = `${doc.documentType || 'Digitalized_Document'}.pdf`;
-                    doc.fileSize = fs.statSync(dummyPath).size;
-                    console.log(`[DOCUMENTS] Automatically digitalized document ${id} with dummy file.`);
+                    doc.fileSize = dummyBuffer.length;
+                    console.log(`[DOCUMENTS] Automatically digitalized document ${id} with dummy file data.`);
                 }
                 catch (err) {
                     console.error(`[DOCUMENTS] Failed to copy dummy file for document ${id}:`, err);

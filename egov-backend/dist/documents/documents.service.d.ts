@@ -16,7 +16,7 @@ export declare class DocumentsService {
     submitDocument(citizenId: string, dto: SubmitDocumentRequestDto): Promise<Document>;
     digitalizeDocument(citizenId: string, dto: DigitalizeDocumentDto, file: Express.Multer.File): Promise<Document>;
     getDocumentFile(id: number): Promise<{
-        filePath: string;
+        base64Data: string;
         doc: Document;
     }>;
     findByCitizen(citizenId: string): Promise<Document[]>;

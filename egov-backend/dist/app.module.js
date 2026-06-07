@@ -35,7 +35,7 @@ exports.AppModule = AppModule = __decorate([
                 database: process.env.DATABASE_URL ? undefined : (process.env.DB_PATH || './database.sqlite'),
                 ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
                 entities: [user_entity_1.User, document_entity_1.Document, document_request_entity_1.DocumentRequest, report_entity_1.Report],
-                synchronize: true,
+                synchronize: process.env.NODE_ENV !== 'production',
                 logging: process.env.NODE_ENV === 'development',
             }),
             settings_module_1.SettingsModule,
