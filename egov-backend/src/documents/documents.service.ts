@@ -114,20 +114,9 @@ export class DocumentsService {
       );
     }
 
-    // Generate UUID-based stored filename
-    const ext = path.extname(file.originalname).toLowerCase() || '.pdf';
-    const storedFilename = `${uuidv4()}${ext}`;
-    const storedPath = path.join(UPLOADS_DIR, storedFilename);
-
-    // Write file to disk
-    try {
-      fs.writeFileSync(storedPath, file.buffer);
-      console.log(`[DOCUMENTS] File written: ${storedPath} (${file.size} bytes)`);
-    } catch (err) {
-      console.error('[DOCUMENTS] Failed to write file:', err);
-      throw new BadRequestException('Failed to store the uploaded file. Please try again.');
-    }
-
+    // Store the file in the database as a base64 string
+    const base64Data = file.buffer.toString('base64');
+    
     // Create database record
     const doc = this.documentRepository.create({
       citizenId,
@@ -136,10 +125,10 @@ export class DocumentsService {
       fullName: dto.fullName,
       nationalId: dto.nationalId,
       originalFilename: file.originalname,
-      storedFilename,
       mimeType: file.mimetype,
       fileSize: file.size,
       status: 'pending',
+      data: base64Data, // Save file directly to DB!
     });
 
     const saved = await this.documentRepository.save(doc);
@@ -148,26 +137,20 @@ export class DocumentsService {
   }
 
   /**
-   * Returns file path and metadata for downloading a document's file.
+   * Returns file metadata and base64 string for downloading a document's file.
    * Throws if the document or its file is missing.
    */
-  async getDocumentFile(id: number): Promise<{ filePath: string; doc: Document }> {
+  async getDocumentFile(id: number): Promise<{ base64Data: string; doc: Document }> {
     const doc = await this.documentRepository.findOneBy({ id });
     if (!doc) {
       throw new NotFoundException(`Document with ID ${id} not found`);
     }
 
-    if (!doc.storedFilename) {
-      throw new NotFoundException(`Document ${id} has no associated file`);
+    if (!doc.data) {
+      throw new NotFoundException(`Document ${id} has no associated file data`);
     }
 
-    const filePath = path.join(UPLOADS_DIR, doc.storedFilename);
-    if (!fs.existsSync(filePath)) {
-      console.error(`[DOCUMENTS] File missing on disk: ${filePath}`);
-      throw new NotFoundException(`File for document ${id} is missing from storage`);
-    }
-
-    return { filePath, doc };
+    return { base64Data: doc.data, doc };
   }
 
   // ── Queries ──
@@ -210,21 +193,17 @@ export class DocumentsService {
     doc.verifiedBy = verifiedBy;
     // updatedAt is handled automatically by @UpdateDateColumn
 
-    // If the document is approved (verified) but has no file, attach a dummy digitalized file
-    if (status.toLowerCase() === 'verified' && !doc.storedFilename) {
-      const ext = '.pdf';
-      const newFileName = `${uuidv4()}${ext}`;
-      const destPath = path.join(UPLOADS_DIR, newFileName);
-      
+    // If the document is approved (verified) but has no file data, attach a dummy digitalized file
+    if (status.toLowerCase() === 'verified' && !doc.data) {
       const dummyPath = path.join(process.cwd(), 'dummy.pdf');
       if (fs.existsSync(dummyPath)) {
         try {
-          fs.copyFileSync(dummyPath, destPath);
-          doc.storedFilename = newFileName;
+          const dummyBuffer = fs.readFileSync(dummyPath);
+          doc.data = dummyBuffer.toString('base64');
           doc.mimeType = 'application/pdf';
           doc.originalFilename = `${doc.documentType || 'Digitalized_Document'}.pdf`;
-          doc.fileSize = fs.statSync(dummyPath).size;
-          console.log(`[DOCUMENTS] Automatically digitalized document ${id} with dummy file.`);
+          doc.fileSize = dummyBuffer.length;
+          console.log(`[DOCUMENTS] Automatically digitalized document ${id} with dummy file data.`);
         } catch (err) {
           console.error(`[DOCUMENTS] Failed to copy dummy file for document ${id}:`, err);
         }

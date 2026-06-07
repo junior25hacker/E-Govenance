@@ -117,16 +117,16 @@ export class DocumentsController {
       );
     }
 
-    const { filePath, doc } = await this.documentsService.getDocumentFile(documentId);
+    const { base64Data, doc } = await this.documentsService.getDocumentFile(documentId);
 
     // Set appropriate headers for file download
     res.setHeader('Content-Type', doc.mimeType || 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment; filename="${doc.originalFilename || 'document'}"`);
     res.setHeader('Content-Length', doc.fileSize?.toString() || '0');
 
-    // Stream the file
-    const fileStream = fs.createReadStream(filePath);
-    fileStream.pipe(res);
+    // Stream the base64 file data directly to the client
+    const fileBuffer = Buffer.from(base64Data, 'base64');
+    res.end(fileBuffer);
   }
 
   /**
@@ -165,7 +165,7 @@ export class DocumentsController {
         fileSizeFormatted: doc.fileSize
           ? `${(doc.fileSize / 1024 / 1024).toFixed(2)} MB`
           : null,
-        hasFile: !!doc.storedFilename,
+        hasFile: !!doc.data,
         status: doc.status,
         createdAt: doc.createdAt,
         updatedAt: doc.updatedAt,

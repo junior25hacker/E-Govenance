@@ -29,7 +29,7 @@ import { Report } from './documents/entities/report.entity';
       database: process.env.DATABASE_URL ? undefined : (process.env.DB_PATH || './database.sqlite'),
       ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
       entities: [User, Document, DocumentRequest, Report],
-      synchronize: true, // Auto-create tables in development
+      synchronize: process.env.NODE_ENV !== 'production', // Auto-create tables ONLY in development
       logging: process.env.NODE_ENV === 'development',
     }),
 
