@@ -93,7 +93,7 @@ async function bootstrap() {
     const port = process.env.PORT ?? 3000;
     await app.listen(port);
     console.log(`[BACKEND] 🚀 E-Governance Backend & Portal running on: http://localhost:${port}`);
-    console.log(`[BACKEND] 📦 Database: ${process.env.DB_PATH || './database.sqlite'}`);
+    console.log(`[BACKEND] 📦 Database: ${process.env.DATABASE_URL ? 'PostgreSQL (Render)' : 'SQLite (' + (process.env.DB_PATH || './database.sqlite') + ')'}`);
     console.log(`[BACKEND] 🔐 JWT Secret: ${process.env.JWT_SECRET ? '(from .env)' : '(default)'}`);
     console.log(`[BACKEND] 🌐 CORS Origins: ${corsOrigins.join(', ')}`);
     console.log(`[BACKEND] 📁 Uploads: ${uploadsDir}`);

@@ -22,10 +22,12 @@ import { Report } from './documents/entities/report.entity';
       envFilePath: '.env',
     }),
 
-    // SQLite database via TypeORM
+    // Dynamic database connection (Postgres for Render, SQLite for local fallback)
     TypeOrmModule.forRoot({
-      type: 'better-sqlite3',
-      database: process.env.DB_PATH || './database.sqlite',
+      type: process.env.DATABASE_URL ? 'postgres' : 'better-sqlite3',
+      url: process.env.DATABASE_URL,
+      database: process.env.DATABASE_URL ? undefined : (process.env.DB_PATH || './database.sqlite'),
+      ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
       entities: [User, Document, DocumentRequest, Report],
       synchronize: true, // Auto-create tables in development
       logging: process.env.NODE_ENV === 'development',
