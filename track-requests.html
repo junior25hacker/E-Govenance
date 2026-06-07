@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Requests | CitizenNode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --navy: #050d1f;
+      --navy-2: #0a1833;
+      --navy-3: #0f2347;
+      --blue-mid: #1a3a6b;
+      --blue-acc: #2563b0;
+      --gold: #c9a84c;
+      --gold-lt: #e8c96a;
+      --gold-dim: #7a5f20;
+      --cream: #f2eedf;
+      --cream-dim: #cdc8b4;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-b: rgba(255, 255, 255, 0.10);
+      --border: rgba(201, 168, 76, 0.18);
+      --border-b: rgba(201, 168, 76, 0.35);
+      --r: 8px;
+      --r-lg: 16px;
+      --r-xl: 24px;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--cream);
+      overflow-x: hidden;
+      line-height: 1.6;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: 260px;
+      background: rgba(5, 13, 31, 0.92);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      padding: 28px 20px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy-3));
+      border: 1px solid var(--border-b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-logo-text {
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      color: var(--white);
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .sidebar-logo-sub {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      padding: 20px 20px 8px;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      padding: 4px 12px;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--r);
+      color: var(--cream-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+      position: relative;
+    }
+
+    .sidebar-nav a:hover {
+      background: var(--glass-b);
+      color: var(--white);
+    }
+
+    .sidebar-nav a.active {
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.18), rgba(201, 168, 76, 0.08));
+      color: var(--gold) !important;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+    }
+
+    .sidebar-nav a.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 3px;
+      background: var(--gold);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+    }
+
+    .sidebar-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .sidebar-user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar-user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-user-role {
+      font-size: 11px;
+      color: var(--gold);
+    }
+
+    /* ─── TOP NAV ─── */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 260px;
+      right: 0;
+      height: 64px;
+      background: rgba(5, 13, 31, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      z-index: 99;
+    }
+
+    .top-nav-search {
+      flex: 1;
+      max-width: 360px;
+      position: relative;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cream-dim);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .top-nav-search-input {
+      width: 100%;
+      padding: 9px 14px 9px 40px;
+      background: rgba(10, 24, 51, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .top-nav-search-input::placeholder {
+      color: rgba(205, 200, 180, 0.4);
+    }
+
+    .top-nav-search-input:focus {
+      border-color: var(--border-b);
+      background: rgba(10, 24, 51, 0.95);
+    }
+
+    .top-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto;
+    }
+
+    .nav-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--cream-dim);
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .nav-icon-btn:hover {
+      background: var(--glass-b);
+      color: var(--white);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--danger);
+      border-radius: 50%;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    .main-content {
+      flex: 1;
+      margin-left: 260px;
+      margin-top: 64px;
+      padding: 28px 28px 40px;
+      overflow-y: auto;
+      height: calc(100vh - 64px);
+    }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+    }
+
+    .page-header-text {}
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--cream-dim);
+      margin-bottom: 8px;
+    }
+
+    .breadcrumb span {
+      color: var(--gold);
+    }
+
+    .dashboard-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .dashboard-subtitle {
+      font-size: 14px;
+      color: var(--cream-dim);
+      font-weight: 400;
+      margin-top: 4px;
+    }
+
+    /* ─── SECTIONS ─── */
+    .track-section {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.2), rgba(201, 168, 76, 0.1));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ─── REQUEST SELECTION ─── */
+    .request-select-group {
+      margin-bottom: 12px;
+    }
+
+    .request-select-label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    .request-select {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(10, 24, 51, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      cursor: pointer;
+    }
+
+    .request-select:focus,
+    .request-select:hover {
+      border-color: var(--border-b);
+      background: rgba(10, 24, 51, 0.95);
+    }
+
+    .request-select option {
+      background: var(--navy);
+      color: var(--cream);
+    }
+
+    /* ─── PROGRESS TRACKER ─── */
+    .progress-tracker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding: 20px;
+      background: rgba(5, 13, 31, 0.5);
+      border-radius: var(--r-lg);
+      position: relative;
+    }
+
+    .progress-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .progress-stage:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+    }
+
+    .progress-stage.completed:not(:last-child)::after {
+      background: var(--success);
+    }
+
+    .progress-stage.current:not(:last-child)::after {
+      background: var(--gold);
+    }
+
+    .stage-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--glass);
+      border: 2px solid var(--border);
+      color: var(--cream-dim);
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .progress-stage.completed .stage-dot {
+      background: var(--success);
+      border-color: var(--success);
+      color: var(--navy);
+    }
+
+    .progress-stage.current .stage-dot {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--navy);
+    }
+
+    .stage-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cream-dim);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .progress-stage.completed .stage-label,
+    .progress-stage.current .stage-label {
+      color: var(--white);
+    }
+
+    /* ─── REQUEST DETAILS ─── */
+    .request-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .detail-item {
+      padding: 16px;
+      background: rgba(5, 13, 31, 0.5);
+      border-radius: var(--r);
+      border: 1px solid rgba(201, 168, 76, 0.1);
+    }
+
+    .detail-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .detail-subvalue {
+      font-size: 12px;
+      color: var(--cream-dim);
+      margin-top: 2px;
+    }
+
+    /* ─── TIMELINE ─── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 30px;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--gold) 0%, var(--border) 100%);
+    }
+
+    .timeline-entry {
+      display: flex;
+      gap: 16px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .timeline-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--glass);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 18px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-top: -10px;
+    }
+
+    .timeline-entry:first-child .timeline-dot {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--navy);
+      margin-top: 0;
+    }
+
+    .timeline-content {
+      flex: 1;
+      padding: 16px;
+      background: rgba(5, 13, 31, 0.5);
+      border-radius: var(--r);
+      border: 1px solid rgba(201, 168, 76, 0.1);
+    }
+
+    .timeline-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .timeline-description {
+      font-size: 13px;
+      color: var(--cream-dim);
+      margin-bottom: 8px;
+    }
+
+    .timeline-datetime {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .request-details {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .top-nav {
+        left: 0;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .progress-tracker {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .progress-stage:not(:last-child)::after {
+        display: none;
+      }
+
+      .top-nav-search {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <span class="material-symbols-outlined">account_balance</span>
+      </div>
+      <div class="sidebar-brand">
+        <div class="sidebar-logo-text">CitizenNode</div>
+        <div class="sidebar-logo-sub">E-Governance</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section-label">Main Menu</div>
+    <ul class="sidebar-nav">
+      <li><a href="dashboard.html">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </a></li>
+      <li><a href="documents.html">
+          <span class="material-symbols-outlined">description</span>
+          <span>My Documents</span>
+          <span class="nav-badge">4</span>
+        </a></li>
+      <li><a href="request.html">
+          <span class="material-symbols-outlined">add_task</span>
+          <span>Request Certificate</span>
+        </a></li>
+      <li><a href="track-requests.html" class="active">
+          <span class="material-symbols-outlined">track_changes</span>
+          <span>Track Requests</span>
+        </a></li>
+      <li><a href="report.html">
+          <span class="material-symbols-outlined">report</span>
+          <span>Report Lost Doc</span>
+        </a></li>
+    </ul>
+
+    <div class="sidebar-section-label">Account</div>
+    <ul class="sidebar-nav">
+      <li><a href="settings.html">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a></li>
+      <li><a href="help.html">
+          <span class="material-symbols-outlined">help_outline</span>
+          <span>Help &amp; Support</span>
+        </a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user-pill">
+        <div class="sidebar-avatar">JD</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">John Doe</div>
+          <div class="sidebar-user-role">Citizen · Verified</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="top-nav-search">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input type="text" class="top-nav-search-input" placeholder="Search documents, certificates…" id="searchInput">
+    </div>
+
+    <div class="top-nav-actions">
+      <div class="nav-icon-btn" title="Notifications">
+        <span class="material-symbols-outlined" style="font-size:20px">notifications</span>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="nav-icon-btn" title="Messages">
+        <span class="material-symbols-outlined" style="font-size:20px">mail</span>
+      </div>
+      <div class="user-avatar" title="Profile">JD</div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="page-header">
+      <div class="page-header-text">
+        <div class="breadcrumb">
+          <a href="dashboard.html" style="color: var(--cream-dim); text-decoration: none;">Dashboard</a>
+          <span>/</span>
+          <span>Track Requests</span>
+        </div>
+        <h1 class="dashboard-title">TRACK REQUESTS</h1>
+        <p class="dashboard-subtitle">Monitor the progress of your submitted document and certificate requests.</p>
+      </div>
+    </div>
+
+    <!-- Section 1: Request Selection -->
+    <section class="track-section">
+      <h2 class="section-title">
+        <div class="section-title-icon">
+          <span class="material-symbols-outlined">assignment</span>
+        </div>
+        Request Selection
+      </h2>
+      <div class="request-select-group">
+        <label class="request-select-label">Select Request</label>
+        <select class="request-select" id="requestSelect" onchange="updateTrackingData()">
+          <option value="">-- Choose a request --</option>
+          <option value="001">Education Certificate (REF-20260508-001)</option>
+          <option value="002">Professional License Renewal (REF-20260511-002)</option>
+          <option value="003">Birth Certificate (REF-20260501-003)</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Section 2: Request Status -->
+    <section class="track-section">
+      <h2 class="section-title">
+        <div class="section-title-icon">
+          <span class="material-symbols-outlined">trending_up</span>
+        </div>
+        Request Status
+      </h2>
+
+      <!-- Progress Tracker -->
+      <div class="progress-tracker" id="progressTracker">
+        <div class="progress-stage completed">
+          <div class="stage-dot">✓</div>
+          <div class="stage-label">Submitted</div>
+        </div>
+        <div class="progress-stage completed">
+          <div class="stage-dot">✓</div>
+          <div class="stage-label">Under Review</div>
+        </div>
+        <div class="progress-stage current">
+          <div class="stage-dot">○</div>
+          <div class="stage-label">Verification</div>
+        </div>
+        <div class="progress-stage">
+          <div class="stage-dot">○</div>
+          <div class="stage-label">Approval</div>
+        </div>
+        <div class="progress-stage">
+          <div class="stage-dot">○</div>
+          <div class="stage-label">Ready</div>
+        </div>
+      </div>
+
+      <!-- Request Details -->
+      <div class="request-details" id="requestDetails">
+        <div class="detail-item">
+          <div class="detail-label">Reference Number</div>
+          <div class="detail-value">REF-20260508-001</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Document Type</div>
+          <div class="detail-value">Education Certificate</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Submission Date</div>
+          <div class="detail-value">8 May 2026</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Estimated Completion</div>
+          <div class="detail-value">15 May 2026</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Current Status</div>
+          <div class="detail-value">Under Verification</div>
+          <div class="detail-subvalue">In progress</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Progress</div>
+          <div class="detail-value">60%</div>
+          <div class="detail-subvalue">Expected completion: 2 days</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Status History -->
+    <section class="track-section">
+      <h2 class="section-title">
+        <div class="section-title-icon">
+          <span class="material-symbols-outlined">history</span>
+        </div>
+        Status History
+      </h2>
+
+      <div class="timeline">
+        <div class="timeline-entry">
+          <div class="timeline-dot">✓</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Request Submitted</div>
+            <div class="timeline-description">Your request for Education Certificate has been successfully submitted to the system.</div>
+            <div class="timeline-datetime">8 May 2026, 10:30 AM</div>
+          </div>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-dot">✓</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Initial Review Started</div>
+            <div class="timeline-description">Your request has been received and initial document verification is in progress.</div>
+            <div class="timeline-datetime">8 May 2026, 2:15 PM</div>
+          </div>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-dot">✓</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Under Review</div>
+            <div class="timeline-description">Your documents are being reviewed by the certification department. All submitted materials are complete.</div>
+            <div class="timeline-datetime">9 May 2026, 9:45 AM</div>
+          </div>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-dot">→</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Verification in Progress</div>
+            <div class="timeline-description">Your request is currently in the verification stage. Documents are being validated against official records.</div>
+            <div class="timeline-datetime">10 May 2026, 11:20 AM</div>
+          </div>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-dot">○</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Awaiting Approval</div>
+            <div class="timeline-description">Your request will proceed to final approval once verification is complete.</div>
+            <div class="timeline-datetime">--</div>
+          </div>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-dot">○</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Ready for Pickup</div>
+            <div class="timeline-description">Your certificate will be ready for collection once the approval stage is complete.</div>
+            <div class="timeline-datetime">--</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Mock data for requests
+    const requestData = {
+      '001': {
+        refNo: 'REF-20260508-001',
+        docType: 'Education Certificate',
+        submitted: '8 May 2026',
+        estimated: '15 May 2026',
+        status: 'Under Verification',
+        progress: '60%',
+        currentStage: 2,
+        timelineEvents: [
+          { title: 'Request Submitted', desc: 'Your request for Education Certificate has been successfully submitted to the system.', datetime: '8 May 2026, 10:30 AM', completed: true },
+          { title: 'Initial Review Started', desc: 'Your request has been received and initial document verification is in progress.', datetime: '8 May 2026, 2:15 PM', completed: true },
+          { title: 'Under Review', desc: 'Your documents are being reviewed by the certification department. All submitted materials are complete.', datetime: '9 May 2026, 9:45 AM', completed: true },
+          { title: 'Verification in Progress', desc: 'Your request is currently in the verification stage. Documents are being validated against official records.', datetime: '10 May 2026, 11:20 AM', completed: false },
+          { title: 'Awaiting Approval', desc: 'Your request will proceed to final approval once verification is complete.', datetime: '--', completed: false },
+          { title: 'Ready for Pickup', desc: 'Your certificate will be ready for collection once the approval stage is complete.', datetime: '--', completed: false }
+        ]
+      },
+      '002': {
+        refNo: 'REF-20260511-002',
+        docType: 'Professional License Renewal',
+        submitted: '11 May 2026',
+        estimated: '20 May 2026',
+        status: 'Submitted',
+        progress: '20%',
+        currentStage: 0,
+        timelineEvents: [
+          { title: 'Request Submitted', desc: 'Your Professional License Renewal request has been successfully submitted.', datetime: '11 May 2026, 3:00 PM', completed: true },
+          { title: 'Initial Review Started', desc: 'Initial processing has begun.', datetime: '--', completed: false },
+          { title: 'Under Review', desc: 'Documents will be reviewed by the licensing authority.', datetime: '--', completed: false },
+          { title: 'Verification in Progress', desc: 'Professional qualifications will be verified.', datetime: '--', completed: false },
+          { title: 'Awaiting Approval', desc: 'Final approval will be issued.', datetime: '--', completed: false },
+          { title: 'Ready for Pickup', desc: 'Your license renewal will be ready.', datetime: '--', completed: false }
+        ]
+      },
+      '003': {
+        refNo: 'REF-20260501-003',
+        docType: 'Birth Certificate',
+        submitted: '1 May 2026',
+        estimated: '8 May 2026',
+        status: 'Ready',
+        progress: '100%',
+        currentStage: 4,
+        timelineEvents: [
+          { title: 'Request Submitted', desc: 'Birth Certificate request submitted.', datetime: '1 May 2026, 9:00 AM', completed: true },
+          { title: 'Initial Review Started', desc: 'Processing has commenced.', datetime: '1 May 2026, 10:30 AM', completed: true },
+          { title: 'Under Review', desc: 'Documents are being reviewed.', datetime: '2 May 2026, 2:00 PM', completed: true },
+          { title: 'Verification in Progress', desc: 'Details verified successfully.', datetime: '3 May 2026, 11:00 AM', completed: true },
+          { title: 'Awaiting Approval', desc: 'Final approval granted.', datetime: '4 May 2026, 4:30 PM', completed: true },
+          { title: 'Ready for Pickup', desc: 'Your certificate is ready for collection.', datetime: '5 May 2026, 8:00 AM', completed: true }
+        ]
+      }
+    };
+
+    function updateTrackingData() {
+      const select = document.getElementById('requestSelect');
+      const selectedId = select.value;
+
+      if (!selectedId || !requestData[selectedId]) {
+        return;
+      }
+
+      const data = requestData[selectedId];
+
+      // Update progress tracker
+      const progressStages = document.querySelectorAll('.progress-stage');
+      progressStages.forEach((stage, index) => {
+        stage.classList.remove('completed', 'current');
+        if (index < data.currentStage) {
+          stage.classList.add('completed');
+        } else if (index === data.currentStage) {
+          stage.classList.add('current');
+        }
+      });
+
+      // Update request details
+      document.querySelectorAll('.detail-item')[0].innerHTML = `<div class="detail-label">Reference Number</div><div class="detail-value">${data.refNo}</div>`;
+      document.querySelectorAll('.detail-item')[1].innerHTML = `<div class="detail-label">Document Type</div><div class="detail-value">${data.docType}</div>`;
+      document.querySelectorAll('.detail-item')[2].innerHTML = `<div class="detail-label">Submission Date</div><div class="detail-value">${data.submitted}</div>`;
+      document.querySelectorAll('.detail-item')[3].innerHTML = `<div class="detail-label">Estimated Completion</div><div class="detail-value">${data.estimated}</div>`;
+      document.querySelectorAll('.detail-item')[4].innerHTML = `<div class="detail-label">Current Status</div><div class="detail-value">${data.status}</div><div class="detail-subvalue">In progress</div>`;
+      document.querySelectorAll('.detail-item')[5].innerHTML = `<div class="detail-label">Progress</div><div class="detail-value">${data.progress}</div><div class="detail-subvalue">Expected completion: 2 days</div>`;
+
+      // Update timeline
+      const timeline = document.querySelector('.timeline');
+      timeline.innerHTML = data.timelineEvents.map((event, index) => `
+        <div class="timeline-entry">
+          <div class="timeline-dot">${event.completed ? '✓' : (index === data.timelineEvents.findIndex(e => !e.completed) ? '→' : '○')}</div>
+          <div class="timeline-content">
+            <div class="timeline-title">${event.title}</div>
+            <div class="timeline-description">${event.desc}</div>
+            <div class="timeline-datetime">${event.datetime}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+
+</html>
