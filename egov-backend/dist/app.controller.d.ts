@@ -1,5 +1,4 @@
 import { AppService } from './app.service';
-import * as express from 'express';
 import { AuthService } from './auth/auth.service';
 import { DocumentsService } from './documents/documents.service';
 export declare class AppController {
@@ -27,6 +26,14 @@ export declare class AppController {
     submitView(): {
         title: string;
     };
-    getCitizenMetrics(req: any, res: express.Response): Promise<express.Response<any, Record<string, any>>>;
-    getLostDocumentSchema(type: string, res: express.Response): express.Response<any, Record<string, any>>;
+    getCitizenMetrics(req: any): Promise<{
+        status: string;
+        data: {
+            totalDocuments: number;
+            approvedDocuments: number;
+            pendingActions: number;
+            rejectedDocuments: number;
+        };
+    }>;
+    getLostDocumentSchema(type: string): any;
 }

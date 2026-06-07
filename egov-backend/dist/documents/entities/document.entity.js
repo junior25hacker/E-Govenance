@@ -19,6 +19,12 @@ let Document = class Document {
     data;
     status;
     verifiedBy;
+    originalFilename;
+    storedFilename;
+    mimeType;
+    fileSize;
+    fullName;
+    nationalId;
     createdAt;
     updatedAt;
 };
@@ -36,11 +42,11 @@ __decorate([
     __metadata("design:type", String)
 ], Document.prototype, "documentType", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ default: 'Central Registry' }),
     __metadata("design:type", String)
 ], Document.prototype, "councilJurisdiction", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
 ], Document.prototype, "data", void 0);
 __decorate([
@@ -51,6 +57,30 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Document.prototype, "verifiedBy", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "originalFilename", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "storedFilename", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "mimeType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'integer', nullable: true }),
+    __metadata("design:type", Number)
+], Document.prototype, "fileSize", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "fullName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "nationalId", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

@@ -117,7 +117,7 @@ let AuthService = class AuthService {
             citizen: {
                 id: user.citizenId,
                 email: user.email,
-                role: 'SUPER_ADMIN'
+                role: user.role
             }
         };
     }
@@ -145,6 +145,39 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('User not found');
         const { passwordHash, ...result } = user;
         return result;
+    }
+    async getVerifiedCitizenProfileByCitizenId(citizenId) {
+        const user = await this.userRepository.findOneBy({ citizenId });
+        if (!user)
+            throw new common_1.UnauthorizedException('Citizen not found');
+        if (!user.profileComplete)
+            throw new common_1.UnauthorizedException('Citizen profile is not verified');
+        const { passwordHash, ...result } = user;
+        return result;
+    }
+    async seedAdmins() {
+        const admins = [
+            { citizenId: 'admin_doc', email: 'doc@citizennode.com', password: 'password123', role: 'DOCUMENT_VALIDATOR', fullName: 'Doc Validator' },
+            { citizenId: 'admin_req', email: 'req@citizennode.com', password: 'password123', role: 'REQUEST_HANDLER', fullName: 'Request Handler' },
+            { citizenId: 'admin_rep', email: 'rep@citizennode.com', password: 'password123', role: 'REPORT_HANDLER', fullName: 'Report Handler' },
+        ];
+        for (const admin of admins) {
+            const existing = await this.userRepository.findOneBy({ citizenId: admin.citizenId });
+            if (!existing) {
+                const salt = await bcrypt.genSalt();
+                const hash = await bcrypt.hash(admin.password, salt);
+                const user = this.userRepository.create({
+                    citizenId: admin.citizenId,
+                    email: admin.email,
+                    passwordHash: hash,
+                    fullName: admin.fullName,
+                    role: admin.role,
+                    profileComplete: true,
+                });
+                await this.userRepository.save(user);
+                console.log(`[AUTH] Seeded admin: ${admin.citizenId}`);
+            }
+        }
     }
 };
 exports.AuthService = AuthService;

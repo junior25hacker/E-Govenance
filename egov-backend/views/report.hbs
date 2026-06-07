@@ -159,6 +159,7 @@
     .report-status.open { background: rgba(59,130,246,0.15); color: #3b82f6; }
     .report-status.in-progress { background: rgba(245,158,11,0.15); color: #f59e0b; }
     .report-status.resolved { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .report-status.closed { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
 
     @media (max-width: 768px) {
       .sidebar { display: none; }
@@ -167,6 +168,7 @@
       .form-row { grid-template-columns: 1fr; }
     }
   </style>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 <body>
   <aside class="sidebar">
@@ -254,38 +256,8 @@
 
         <div class="form-card">
           <h3>Your Recent Reports</h3>
-          <div class="reports-list">
-            <div class="report-item">
-              <div class="report-info">
-                <h4>Pothole on Main Street</h4>
-                <p>May 20, 2026</p>
-              </div>
-              <span class="report-status in-progress">In Progress</span>
-            </div>
-
-            <div class="report-item">
-              <div class="report-info">
-                <h4>Broken Street Light</h4>
-                <p>May 15, 2026</p>
-              </div>
-              <span class="report-status resolved">Resolved</span>
-            </div>
-
-            <div class="report-item">
-              <div class="report-info">
-                <h4>Overflowing Waste Bin</h4>
-                <p>May 10, 2026</p>
-              </div>
-              <span class="report-status resolved">Resolved</span>
-            </div>
-
-            <div class="report-item">
-              <div class="report-info">
-                <h4>Water Supply Interruption</h4>
-                <p>April 28, 2026</p>
-              </div>
-              <span class="report-status open">Open</span>
-            </div>
+          <div class="reports-list" id="reports-container">
+            <p style="color: var(--cream-dim); font-size: 13px; text-align: center;">Loading reports...</p>
           </div>
         </div>
       </div>
@@ -293,6 +265,88 @@
   </main>
 
   <script>
+    // Sync token from server cookie to localStorage if present
+    const serverToken = '{{token}}';
+    if (serverToken) {
+      localStorage.setItem('egov_token', serverToken);
+    }
+    const serverCitizenId = '{{user.citizenId}}';
+    if (serverCitizenId) {
+      localStorage.setItem('egov_citizenId', serverCitizenId);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchReports);
+
+    async function fetchReports() {
+      const container = document.getElementById('reports-container');
+      const token = localStorage.getItem('egov_token');
+      if (!token) {
+        container.innerHTML = '<p style="color: var(--cream-dim); font-size: 13px; text-align: center;">Please sign in to view your reports.</p>';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/v1/documents/reports', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          container.innerHTML = '<p style="color: var(--danger); font-size: 13px; text-align: center;">Failed to load reports.</p>';
+          return;
+        }
+
+        const reports = json.data || [];
+        if (reports.length === 0) {
+          container.innerHTML = '<p style="color: var(--cream-dim); font-size: 13px; text-align: center;">You have not submitted any reports yet.</p>';
+          return;
+        }
+
+        const categoryMap = {
+          road: 'Road & Pavement',
+          waste: 'Waste Management',
+          water: 'Water & Sanitation',
+          electricity: 'Electricity',
+          security: 'Public Safety',
+          other: 'Other'
+        };
+
+        container.innerHTML = reports.map(rpt => {
+          const dateStr = new Date(rpt.createdAt).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+          const categoryLabel = categoryMap[rpt.category] || rpt.category || 'Other';
+          const statusLower = (rpt.status || 'open').toLowerCase().replace('_', '-');
+          
+          let statusLabel = rpt.status || 'OPEN';
+          if (rpt.status === 'IN_PROGRESS') statusLabel = 'In Progress';
+          else if (rpt.status === 'RESOLVED') statusLabel = 'Resolved';
+          else if (rpt.status === 'OPEN') statusLabel = 'Open';
+          else if (rpt.status === 'CLOSED') statusLabel = 'Closed';
+
+          const refText = rpt.referenceId ? ` (${rpt.referenceId})` : '';
+
+          return `
+            <div class="report-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+              <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                <h4 style="color: var(--white); font-size: 14px;">${categoryLabel}${refText}</h4>
+                <span class="report-status ${statusLower}">${statusLabel}</span>
+              </div>
+              <p style="font-size: 13px; color: var(--cream); opacity: 0.85; margin: 2px 0;">${rpt.description}</p>
+              <div style="display: flex; justify-content: space-between; width: 100%; font-size: 11px; color: var(--cream-dim);">
+                <span>Location: ${rpt.location}</span>
+                <span>${dateStr}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+        container.innerHTML = '<p style="color: var(--danger); font-size: 13px; text-align: center;">Error loading reports.</p>';
+      }
+    }
+
     async function handleSubmit(event) {
       event.preventDefault();
       const category = document.getElementById('category').value;
@@ -309,7 +363,7 @@
       const token = localStorage.getItem('egov_token');
       if (!token) {
         alert('Please sign in to submit reports.');
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
       }
 
@@ -332,10 +386,11 @@
             <span class="material-symbols-outlined" style="font-size: 48px; display: block; margin-bottom: 12px;">check_circle</span>
             <h3 style="margin-bottom: 8px;">Report Submitted Successfully</h3>
             <p style="font-size: 14px; color: var(--cream-dim); margin-bottom: 16px;">Your issue has been logged. A reference number has been generated for tracking.</p>
-            <p style="font-size: 13px; color: var(--gold); font-weight: 600;">Reference: ${data.data?.id || 'RPT-2026-XXXXX'}</p>
+            <p style="font-size: 13px; color: var(--gold); font-weight: 600; margin-bottom: 16px;">Reference: ${data.data?.referenceId || 'RPT-2026-XXXXX'}</p>
             <button type="button" style="background: var(--gold); color: var(--navy); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600;" onclick="location.reload();">Back to Form</button>
           </div>
         `;
+        fetchReports(); // Refresh the list immediately
       } catch (err) {
         console.error('Report submit error', err);
         alert('Network error — could not submit report');

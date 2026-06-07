@@ -1,10 +1,17 @@
-import { Controller, Post, Body, Get, UseGuards, Req, Param, Query, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller, Post, Body, Get, UseGuards, Req, Param, Query, Res,
+  HttpException, HttpStatus, UseInterceptors, UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { Response } from 'express';
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { SubmitDocumentRequestDto } from './dto/submit-document-request.dto';
 import { SubmitReportDto } from './dto/submit-report.dto';
+import { DigitalizeDocumentDto } from './dto/digitalize-document.dto';
 import { VerifyStatusDto } from './dto/verify-status.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import * as fs from 'fs';
 
 @Controller('api/v1/documents')
 export class DocumentsController {
@@ -29,14 +36,16 @@ export class DocumentsController {
     }
 
     // Authenticated user mode — return user's own documents
-    if (!req.user) {
+    const citizenId = req.user?.citizenId || req.query.citizenId;
+    
+    if (!citizenId) {
       throw new HttpException(
-        { status: 'error', message: 'Authentication required', code: 'AUTH_REQUIRED' },
+        { status: 'error', message: 'Authentication or citizenId required', code: 'AUTH_REQUIRED' },
         HttpStatus.UNAUTHORIZED,
       );
     }
-    console.log('[DOCUMENTS] Fetch user documents for:', req.user.citizenId);
-    const documents = await this.documentsService.findByCitizen(req.user.citizenId);
+    console.log('[DOCUMENTS] Fetch user documents for:', citizenId);
+    const documents = await this.documentsService.findByCitizen(citizenId);
     return {
       status: 'success',
       data: documents,
@@ -44,8 +53,129 @@ export class DocumentsController {
   }
 
   /**
+   * POST /api/v1/documents/digitalize
+   * Production endpoint for document digitalization.
+   * Accepts multipart/form-data with a file attachment + form fields.
+   * Requires JWT authentication — the citizen must be logged in.
+   */
+  @UseGuards(JwtAuthGuard)
+  @Post('digitalize')
+  @UseInterceptors(FileInterceptor('file', {
+    limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
+  }))
+  async digitalizeDocument(
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: DigitalizeDocumentDto,
+  ): Promise<any> {
+    console.log('[DOCUMENTS] Digitalize request received:', {
+      citizenId: req.user.citizenId,
+      documentType: dto.documentType,
+      fullName: dto.fullName,
+      fileName: file?.originalname,
+      fileSize: file?.size,
+    });
+
+    const result = await this.documentsService.digitalizeDocument(
+      req.user.citizenId,
+      dto,
+      file,
+    );
+
+    return {
+      status: 'success',
+      message: 'Document submitted for digitalization. You can track its status in My Documents.',
+      trackingId: result.id,
+      data: {
+        id: result.id,
+        documentType: result.documentType,
+        fullName: result.fullName,
+        originalFilename: result.originalFilename,
+        fileSize: result.fileSize,
+        mimeType: result.mimeType,
+        status: result.status,
+        createdAt: result.createdAt,
+      },
+    };
+  }
+
+  /**
+   * GET /api/v1/documents/:id/download
+   * Serves the uploaded file as a downloadable stream.
+   * No auth required — JavaFX admin needs to download files.
+   */
+  @Get(':id/download')
+  async downloadFile(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const documentId = parseInt(id, 10);
+    if (isNaN(documentId)) {
+      throw new HttpException(
+        { status: 'error', message: 'Invalid document ID', code: 'INVALID_ID' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const { filePath, doc } = await this.documentsService.getDocumentFile(documentId);
+
+    // Set appropriate headers for file download
+    res.setHeader('Content-Type', doc.mimeType || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${doc.originalFilename || 'document'}"`);
+    res.setHeader('Content-Length', doc.fileSize?.toString() || '0');
+
+    // Stream the file
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+  }
+
+  /**
+   * GET /api/v1/documents/:id/file-info
+   * Returns file metadata without the actual file content.
+   * Useful for JavaFX admin preview before downloading.
+   */
+  @Get(':id/file-info')
+  async getFileInfo(@Param('id') id: string): Promise<any> {
+    const documentId = parseInt(id, 10);
+    if (isNaN(documentId)) {
+      throw new HttpException(
+        { status: 'error', message: 'Invalid document ID', code: 'INVALID_ID' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const doc = await this.documentsService.findById(documentId);
+    if (!doc) {
+      throw new HttpException(
+        { status: 'error', message: `Document with ID ${documentId} not found`, code: 'NOT_FOUND' },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      status: 'success',
+      data: {
+        id: doc.id,
+        documentType: doc.documentType,
+        fullName: doc.fullName,
+        nationalId: doc.nationalId,
+        originalFilename: doc.originalFilename,
+        mimeType: doc.mimeType,
+        fileSize: doc.fileSize,
+        fileSizeFormatted: doc.fileSize
+          ? `${(doc.fileSize / 1024 / 1024).toFixed(2)} MB`
+          : null,
+        hasFile: !!doc.storedFilename,
+        status: doc.status,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+      },
+    };
+  }
+
+  /**
    * POST /api/v1/documents/submit
-   * Wired to the frontend "Digitize New Document" button.
+   * Legacy endpoint. Wired to the frontend "Digitize New Document" button.
    * Also callable from JavaFX admin with citizenId in body.
    */
   @Post('submit')
@@ -78,8 +208,6 @@ export class DocumentsController {
       );
     }
     
-    // In a real app we'd fetch this specific document by ID. 
-    // Since DocumentsService lacks findById, let's fetch all and filter for now (or implement findById).
     const doc = await this.documentsService.findById(documentId);
     if (!doc) {
       throw new HttpException(
@@ -172,6 +300,40 @@ export class DocumentsController {
     return {
       status: 'success',
       data: reports,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('reports/admin')
+  async getAdminReports(@Query('status') status?: string): Promise<any> {
+    console.log(`[REPORTS] Admin fetching reports, status filter: ${status}`);
+    const reports = await this.documentsService.findAllReports(status);
+    return {
+      status: 'success',
+      count: reports.length,
+      data: reports,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('reports/:id/status')
+  async updateReportStatus(
+    @Param('id') id: string,
+    @Body() body: { status: string },
+  ): Promise<any> {
+    const reportId = parseInt(id, 10);
+    if (isNaN(reportId)) {
+      throw new HttpException(
+        { status: 'error', message: 'Invalid report ID', code: 'INVALID_ID' },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    console.log(`[REPORTS] Update status for report ${reportId} to ${body.status}`);
+    const result = await this.documentsService.updateReportStatus(reportId, body.status);
+    return {
+      status: 'success',
+      message: `Report status updated to ${body.status} successfully`,
+      data: result,
     };
   }
 }

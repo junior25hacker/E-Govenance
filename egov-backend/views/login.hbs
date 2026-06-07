@@ -1122,6 +1122,7 @@
       background: rgba(201, 168, 76, 0.4);
     }
   </style>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 
 <body>
@@ -1433,6 +1434,8 @@
         if (data.status === 'success') {
           // Store citizen id globally for the UI
           window.registeredCitizenId = data.citizenId;
+          localStorage.setItem('egov_token', data.token);
+          localStorage.setItem('egov_citizenId', data.citizenId);
           setTimeout(transitionToPhase2, 1000);
         } else {
           throw new Error(data.message || 'Registration failed');
@@ -1557,6 +1560,8 @@
         const data = await res.json();
 
         if (res.ok && data.status === 'success') {
+          localStorage.setItem('egov_token', data.token);
+          localStorage.setItem('egov_citizenId', data.citizen.citizenId);
           window.location.replace('/dashboard');
           return;
         }

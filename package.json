@@ -1,0 +1,11 @@
+{
+  "name": "citizen-node-web-app",
+  "version": "1.0.0",
+  "description": "CitizenNode Web App Workspace",
+  "private": true,
+  "scripts": {
+    "start": "cd egov-backend && npm start",
+    "start:dev": "cd egov-backend && npm run start:dev",
+    "install:all": "cd egov-backend && npm install && cd ../back_end && npm install"
+  }
+}

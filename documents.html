@@ -150,6 +150,7 @@
       .search-box { width: 100%; }
     }
   </style>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
   <aside class="sidebar">
@@ -192,6 +193,9 @@
         <button class="filter-btn">
           <span class="material-symbols-outlined">tune</span>
           Filter
+        </button>
+        <button class="btn btn-primary" onclick="digitizeDocument(event)">
+          <span class="material-symbols-outlined">document_scanner</span> Digitize
         </button>
       </div>
 
@@ -280,17 +284,52 @@
     </div>
   </main>
 
+  <!-- Digitalize Modal -->
+  <div id="digitalizeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;">
+    <div style="background:var(--navy-2);border:1px solid var(--border-b);border-radius:var(--r-lg);width:100%;max-width:500px;padding:24px;">
+      <h3 style="font-family:'Cinzel',serif;font-size:20px;color:var(--white);margin-bottom:16px;">Digitize Document</h3>
+      <form id="digitalizeForm">
+        <div style="margin-bottom:12px;">
+          <label style="display:block;margin-bottom:6px;font-size:13px;color:var(--cream-dim);">Document Type</label>
+          <select id="docType" required style="width:100%;padding:10px;background:var(--navy);border:1px solid var(--border);color:var(--white);border-radius:var(--r);">
+            <option value="Birth Certificate">Birth Certificate</option>
+            <option value="National ID">National ID</option>
+            <option value="Marriage Certificate">Marriage Certificate</option>
+            <option value="Education Certificate">Education Certificate</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;margin-bottom:6px;font-size:13px;color:var(--cream-dim);">Full Name</label>
+          <input type="text" id="docFullName" required style="width:100%;padding:10px;background:var(--navy);border:1px solid var(--border);color:var(--white);border-radius:var(--r);" />
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;margin-bottom:6px;font-size:13px;color:var(--cream-dim);">File (PDF, JPG, PNG - Max 20MB)</label>
+          <input type="file" id="docFile" required accept=".pdf,.jpg,.jpeg,.png" style="width:100%;padding:10px;background:var(--navy);border:1px solid var(--border);color:var(--white);border-radius:var(--r);" />
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:24px;">
+          <button type="button" onclick="closeDigitalizeModal()" class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitDigitize">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .doc-status.rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
+  </style>
+
   <script>
     const token = localStorage.getItem('egov_token');
+    const citizenId = localStorage.getItem('egov_citizenId');
 
     async function fetchDocuments() {
       try {
-        if (!token) {
+        if (!token || !citizenId) {
           // Not authenticated
           return;
         }
 
-        const res = await fetch('/api/v1/documents', {
+        const res = await fetch(`/api/v1/documents?citizenId=${citizenId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -319,21 +358,21 @@
           <div class="doc-header">
             <div class="doc-icon"><span class="material-symbols-outlined">description</span></div>
             <div class="doc-info">
-              <div class="doc-name">${doc.documentName || doc.documentType}</div>
+              <div class="doc-name">${doc.originalFilename || doc.documentType}</div>
               <div class="doc-type">${doc.documentType}</div>
             </div>
           </div>
-          <div class="doc-date">Issued: ${doc.issuedDate || ''}</div>
-          <div class="doc-status ${doc.status === 'VERIFIED' ? 'verified' : 'pending'}">
-            <span class="material-symbols-outlined" style="font-size: 14px;">${doc.status === 'VERIFIED' ? 'check_circle' : 'schedule'}</span>
+          <div class="doc-date">Submitted: ${new Date(doc.createdAt).toLocaleDateString()}</div>
+          <div class="doc-status ${doc.status === 'verified' ? 'verified' : (doc.status === 'rejected' ? 'rejected' : 'pending')}">
+            <span class="material-symbols-outlined" style="font-size: 14px;">${doc.status === 'verified' ? 'check_circle' : (doc.status === 'rejected' ? 'cancel' : 'schedule')}</span>
             ${doc.status}
           </div>
           <div class="doc-actions">
-            <button class="doc-action-btn" onclick="downloadDocument('${doc.id}', '${doc.documentName || ''}')">
+            <button class="doc-action-btn" onclick="downloadDocument('${doc.id}', '${doc.originalFilename || 'document'}')">
               <span class="material-symbols-outlined">download</span>
               Download
             </button>
-            <button class="doc-action-btn" onclick="shareDocument('${doc.id}', '${doc.documentName || ''}')">
+            <button class="doc-action-btn" onclick="shareDocument('${doc.id}', '${doc.originalFilename || 'document'}')">
               <span class="material-symbols-outlined">share</span>
               Share
             </button>
@@ -347,11 +386,19 @@
       try {
         if (!token) { alert('Please sign in to download documents.'); window.location.href = 'login.html'; return; }
         const res = await fetch(`/api/v1/documents/${id}/download`, { headers: { Authorization: `Bearer ${token}` } });
-        const data = await res.json();
         if (res.ok) {
-          alert(`Download ready for ${name}: ${data.data.downloadUrl}`);
+          const blob = await res.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = name;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
         } else {
-          alert(data.message || 'Unable to generate download');
+          const data = await res.json();
+          alert(data.message || 'Unable to download document');
         }
       } catch (err) {
         console.error(err);
@@ -366,6 +413,54 @@
     function requestRenewal(docName) {
       alert(`Renewal request for ${docName} has been initiated.\n\nYou will receive further instructions via email.`);
     }
+
+    function digitizeDocument(e) {
+      if(e) e.preventDefault();
+      document.getElementById('digitalizeModal').style.display = 'flex';
+    }
+
+    function closeDigitalizeModal() {
+      document.getElementById('digitalizeModal').style.display = 'none';
+    }
+
+    document.getElementById('digitalizeForm')?.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitDigitize');
+      const originalText = btn.textContent;
+      btn.textContent = 'Uploading...';
+      btn.disabled = true;
+
+      const formData = new FormData();
+      formData.append('documentType', document.getElementById('docType').value);
+      formData.append('fullName', document.getElementById('docFullName').value);
+      formData.append('file', document.getElementById('docFile').files[0]);
+
+      try {
+        const res = await fetch('/api/v1/documents/digitalize', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+        if(res.ok) {
+          alert('Document submitted for digitalization!');
+          closeDigitalizeModal();
+          this.reset();
+          fetchDocuments(); // Refresh the list
+        } else {
+          alert(data.message || 'Error uploading document');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error while uploading');
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
 
     // Search/filter
     document.getElementById('search-input').addEventListener('keyup', function(e) {

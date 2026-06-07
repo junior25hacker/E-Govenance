@@ -58,6 +58,10 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
+    async seed() {
+        await this.authService.seedAdmins();
+        return { status: 'success', message: 'Seeded admins' };
+    }
     async register(registerDto, res) {
         const result = await this.authService.register(registerDto);
         res.cookie('token', result.token, {
@@ -67,7 +71,7 @@ let AuthController = class AuthController {
             path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
-        return { status: 'success', citizenId: result.citizenId };
+        return { status: 'success', citizenId: result.citizenId, token: result.token };
     }
     async citizenLogin(loginDto, res) {
         return this._handleLogin(loginDto, res);
@@ -98,12 +102,21 @@ let AuthController = class AuthController {
     async getProfile(req) {
         return this.authService.getUserProfile(req.user.id);
     }
+    async getThirdPartyIdentity(citizenId) {
+        return this.authService.getVerifiedCitizenProfileByCitizenId(citizenId);
+    }
     async logout(res) {
         res.clearCookie('token');
         return { status: 'success' };
     }
 };
 exports.AuthController = AuthController;
+__decorate([
+    (0, common_1.Get)('seed'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "seed", null);
 __decorate([
     (0, common_1.Post)('citizen/register'),
     __param(0, (0, common_1.Body)()),
@@ -153,6 +166,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Get)('third-party/identity/:citizenId'),
+    __param(0, (0, common_1.Param)('citizenId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "getThirdPartyIdentity", null);
 __decorate([
     (0, common_1.Post)('citizen/logout'),
     (0, common_1.Post)('logout'),

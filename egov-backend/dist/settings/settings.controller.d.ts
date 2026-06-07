@@ -11,4 +11,5 @@ export declare class SettingsController {
     updatePreferences(req: any, updatePreferencesDto: UpdatePreferencesDto): Promise<any>;
     exportData(req: any, format?: string): Promise<any>;
     deleteAccount(req: any): Promise<any>;
+    uploadAvatar(req: any, file: Express.Multer.File): Promise<any>;
 }

@@ -6,6 +6,12 @@ export declare class Document {
     data: string;
     status: string;
     verifiedBy: string;
+    originalFilename: string;
+    storedFilename: string;
+    mimeType: string;
+    fileSize: number;
+    fullName: string;
+    nationalId: string;
     createdAt: Date;
     updatedAt: Date;
 }

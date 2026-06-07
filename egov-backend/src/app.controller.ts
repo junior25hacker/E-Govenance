@@ -36,6 +36,7 @@ export class AppController {
     return {
       title: 'CitizenNode | Dashboard',
       user: userProfile,
+      token: req.cookies?.token,
       documents: documents,
       documentCount: documents.length,
       approvedCount: metrics.approvedDocuments,
@@ -55,7 +56,7 @@ export class AppController {
   @Render('documents')
   async documentsView(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
-    return { title: 'CitizenNode | My Documents', user: userProfile };
+    return { title: 'CitizenNode | My Documents', user: userProfile, token: req.cookies?.token };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -63,7 +64,7 @@ export class AppController {
   @Render('request')
   async requestView(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
-    return { title: 'CitizenNode | New Request', user: userProfile };
+    return { title: 'CitizenNode | New Request', user: userProfile, token: req.cookies?.token };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -71,7 +72,7 @@ export class AppController {
   @Render('report')
   async reportView(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
-    return { title: 'CitizenNode | Report Issue', user: userProfile };
+    return { title: 'CitizenNode | Report Issue', user: userProfile, token: req.cookies?.token };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -79,7 +80,7 @@ export class AppController {
   @Render('settings')
   async settingsView(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
-    return { title: 'CitizenNode | Settings', user: userProfile };
+    return { title: 'CitizenNode | Settings', user: userProfile, token: req.cookies?.token };
   }
 
   @Get('help')
@@ -97,29 +98,29 @@ export class AppController {
   // ── API: Citizen Metrics (for dashboard KPI cards & frontend JS loaders) ──
 
   @Get('api/v1/citizen/metrics')
-  async getCitizenMetrics(@Req() req, @Res() res: express.Response) {
+  async getCitizenMetrics(@Req() req) {
     try {
       // If authenticated, return user-specific metrics
       const citizenId = req.user?.citizenId || undefined;
       const metrics = await this.documentsService.getMetrics(citizenId);
-      return res.status(HttpStatus.OK).json({
+      return {
         status: 'success',
         data: metrics,
-      });
+      };
     } catch {
       // Unauthenticated: return global metrics
       const metrics = await this.documentsService.getMetrics();
-      return res.status(HttpStatus.OK).json({
+      return {
         status: 'success',
         data: metrics,
-      });
+      };
     }
   }
 
   // FIXED: Using express.Response explicitly so the decorator metadata can safely generate
   @Get('api/lost-doc-schema')
-  getLostDocumentSchema(@Query('type') type: string, @Res() res: express.Response) {
+  getLostDocumentSchema(@Query('type') type: string) {
     const dataSchema = this.appService.getDocumentSchema(type);
-    return res.status(HttpStatus.OK).json(dataSchema);
+    return dataSchema;
   }
 }

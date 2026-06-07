@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Document } from './entities/document.entity';
@@ -7,6 +7,24 @@ import { Report } from './entities/report.entity';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { SubmitDocumentRequestDto } from './dto/submit-document-request.dto';
 import { SubmitReportDto } from './dto/submit-report.dto';
+import { DigitalizeDocumentDto } from './dto/digitalize-document.dto';
+import { v4 as uuidv4 } from 'uuid';
+import * as path from 'path';
+import * as fs from 'fs';
+
+/** Absolute path to the uploads directory */
+const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads', 'documents');
+
+/** Allowed MIME types for document uploads */
+const ALLOWED_MIME_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+];
+
+/** Maximum file size in bytes (20 MB) */
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 @Injectable()
 export class DocumentsService {
@@ -17,9 +35,20 @@ export class DocumentsService {
     private readonly requestRepository: Repository<DocumentRequest>,
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
-  ) {}
+  ) {
+    // Ensure the uploads directory exists at service startup
+    this.ensureUploadsDirExists();
+  }
 
-  // ── Document CRUD ──
+  /** Create uploads directory if it doesn't exist */
+  private ensureUploadsDirExists(): void {
+    if (!fs.existsSync(UPLOADS_DIR)) {
+      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+      console.log('[DOCUMENTS] Created uploads directory:', UPLOADS_DIR);
+    }
+  }
+
+  // ── Legacy Document CRUD ──
 
   async create(citizenId: string, dto: CreateDocumentDto) {
     const doc = this.documentRepository.create({
@@ -51,6 +80,97 @@ export class DocumentsService {
     console.log('[DOCUMENTS] Document submitted for verification:', saved.id);
     return saved;
   }
+
+  // ── Digitalize Document (File Upload) ──
+
+  /**
+   * Handles the full digitalization flow:
+   * 1. Validates the uploaded file
+   * 2. Generates a UUID filename
+   * 3. Writes the file to disk
+   * 4. Persists metadata to the database
+   */
+  async digitalizeDocument(
+    citizenId: string,
+    dto: DigitalizeDocumentDto,
+    file: Express.Multer.File,
+  ): Promise<Document> {
+    // Validate file presence
+    if (!file) {
+      throw new BadRequestException('No file uploaded. Please attach a document file.');
+    }
+
+    // Validate MIME type
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      throw new BadRequestException(
+        `Unsupported file type: ${file.mimetype}. Allowed types: PDF, JPEG, PNG.`,
+      );
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      throw new BadRequestException(
+        `File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed: 20 MB.`,
+      );
+    }
+
+    // Generate UUID-based stored filename
+    const ext = path.extname(file.originalname).toLowerCase() || '.pdf';
+    const storedFilename = `${uuidv4()}${ext}`;
+    const storedPath = path.join(UPLOADS_DIR, storedFilename);
+
+    // Write file to disk
+    try {
+      fs.writeFileSync(storedPath, file.buffer);
+      console.log(`[DOCUMENTS] File written: ${storedPath} (${file.size} bytes)`);
+    } catch (err) {
+      console.error('[DOCUMENTS] Failed to write file:', err);
+      throw new BadRequestException('Failed to store the uploaded file. Please try again.');
+    }
+
+    // Create database record
+    const doc = this.documentRepository.create({
+      citizenId,
+      documentType: dto.documentType,
+      councilJurisdiction: dto.councilJurisdiction || 'Central Registry',
+      fullName: dto.fullName,
+      nationalId: dto.nationalId,
+      originalFilename: file.originalname,
+      storedFilename,
+      mimeType: file.mimetype,
+      fileSize: file.size,
+      status: 'pending',
+    });
+
+    const saved = await this.documentRepository.save(doc);
+    console.log(`[DOCUMENTS] Document digitalized: ID=${saved.id}, type=${dto.documentType}, citizen=${citizenId}`);
+    return saved;
+  }
+
+  /**
+   * Returns file path and metadata for downloading a document's file.
+   * Throws if the document or its file is missing.
+   */
+  async getDocumentFile(id: number): Promise<{ filePath: string; doc: Document }> {
+    const doc = await this.documentRepository.findOneBy({ id });
+    if (!doc) {
+      throw new NotFoundException(`Document with ID ${id} not found`);
+    }
+
+    if (!doc.storedFilename) {
+      throw new NotFoundException(`Document ${id} has no associated file`);
+    }
+
+    const filePath = path.join(UPLOADS_DIR, doc.storedFilename);
+    if (!fs.existsSync(filePath)) {
+      console.error(`[DOCUMENTS] File missing on disk: ${filePath}`);
+      throw new NotFoundException(`File for document ${id} is missing from storage`);
+    }
+
+    return { filePath, doc };
+  }
+
+  // ── Queries ──
 
   async findByCitizen(citizenId: string) {
     return this.documentRepository.find({
@@ -89,6 +209,29 @@ export class DocumentsService {
     doc.status = status;
     doc.verifiedBy = verifiedBy;
     // updatedAt is handled automatically by @UpdateDateColumn
+
+    // If the document is approved (verified) but has no file, attach a dummy digitalized file
+    if (status.toLowerCase() === 'verified' && !doc.storedFilename) {
+      const ext = '.pdf';
+      const newFileName = `${uuidv4()}${ext}`;
+      const destPath = path.join(UPLOADS_DIR, newFileName);
+      
+      const dummyPath = path.join(process.cwd(), 'dummy.pdf');
+      if (fs.existsSync(dummyPath)) {
+        try {
+          fs.copyFileSync(dummyPath, destPath);
+          doc.storedFilename = newFileName;
+          doc.mimeType = 'application/pdf';
+          doc.originalFilename = `${doc.documentType || 'Digitalized_Document'}.pdf`;
+          doc.fileSize = fs.statSync(dummyPath).size;
+          console.log(`[DOCUMENTS] Automatically digitalized document ${id} with dummy file.`);
+        } catch (err) {
+          console.error(`[DOCUMENTS] Failed to copy dummy file for document ${id}:`, err);
+        }
+      } else {
+        console.warn('[DOCUMENTS] dummy.pdf not found in root directory. Cannot attach dummy file.');
+      }
+    }
 
     const saved = await this.documentRepository.save(doc);
     console.log(`[DOCUMENTS] Document ${id} status updated to ${status} by ${verifiedBy}`);
@@ -180,5 +323,32 @@ export class DocumentsService {
       where: { citizenId },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async findAllReports(status?: string) {
+    if (status) {
+      return this.reportRepository.find({
+        where: { status: status.toUpperCase() },
+        order: { createdAt: 'DESC' },
+      });
+    }
+    return this.reportRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async updateReportStatus(id: number, status: string) {
+    const report = await this.reportRepository.findOneBy({ id });
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${id} not found`);
+    }
+    const upperStatus = status.toUpperCase();
+    if (!['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'].includes(upperStatus)) {
+      throw new BadRequestException(`Invalid report status: ${status}`);
+    }
+    report.status = upperStatus;
+    const saved = await this.reportRepository.save(report);
+    console.log(`[REPORTS] Report ${id} status updated to ${upperStatus}`);
+    return saved;
   }
 }

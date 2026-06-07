@@ -222,6 +222,7 @@
       }
     }
   </style>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 <body>
   <aside class="sidebar">
@@ -285,11 +286,15 @@
         <div class="settings-content active" id="account">
           <div class="setting-section">
             <div class="profile-section">
-              <div class="profile-avatar">👤</div>
+              <div class="profile-avatar" id="avatar-container">
+                <span id="avatar-placeholder">👤</span>
+                <img id="avatar-image" style="display: none; width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+              </div>
               <div class="profile-info">
-                <h4>John David Okonkwo</h4>
-                <p>Registered since May 2025</p>
-                <button class="btn-secondary" style="margin-top: 8px; font-size: 12px;" onclick="changeAvatar()">Change Avatar</button>
+                <h4 id="display-name">Loading...</h4>
+                <p id="display-registered">Loading...</p>
+                <button class="btn-secondary" style="margin-top: 8px; font-size: 12px;" onclick="document.getElementById('avatar-upload').click()">Change Avatar</button>
+                <input type="file" id="avatar-upload" style="display: none;" accept="image/*" onchange="uploadAvatar(this)" />
               </div>
             </div>
           </div>
@@ -298,21 +303,21 @@
             <h3><span class="material-symbols-outlined">person</span> Personal Information</h3>
             <div class="form-group">
               <label>Full Name</label>
-              <input type="text" value="John David Okonkwo" />
+              <input type="text" id="input-fullName" placeholder="Your Full Name" />
             </div>
             <div class="form-group">
               <label>Email Address</label>
-              <input type="email" value="john.okonkwo@example.com" />
+              <input type="email" id="input-email" placeholder="Your Email Address" />
             </div>
             <div class="form-group">
               <label>Phone Number</label>
-              <input type="tel" value="+234 812 345 6789" />
+              <input type="tel" id="input-phone" placeholder="Your Phone Number" />
             </div>
             <div class="form-group">
               <label>National ID / Passport</label>
-              <input type="text" value="NG-123-456-789" />
+              <input type="text" id="input-nationalId" placeholder="Your National ID or Passport" />
             </div>
-            <button class="btn-primary" onclick="savePersonalInfo()">Save Changes</button>
+            <button class="btn-primary" id="btn-save-profile" onclick="savePersonalInfo()">Save Changes</button>
           </div>
         </div>
 
@@ -483,6 +488,61 @@
   </main>
 
   <script>
+    // Sync token from server cookie to localStorage if present
+    const serverToken = '{{token}}';
+    if (serverToken) {
+      localStorage.setItem('egov_token', serverToken);
+    }
+    const serverCitizenId = '{{user.citizenId}}';
+    if (serverCitizenId) {
+      localStorage.setItem('egov_citizenId', serverCitizenId);
+    }
+
+    // Load profile on start
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const token = localStorage.getItem('egov_token') || '';
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        const res = await fetch('/api/v1/settings/profile', { headers });
+        if (res.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        
+        const data = await res.json();
+        if (data.status === 'success') {
+          const p = data.data;
+          
+          // Populate display info
+          document.getElementById('display-name').textContent = p.fullName || p.email;
+          const regDate = new Date(p.registeredDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+          document.getElementById('display-registered').textContent = `Registered since ${regDate}`;
+          
+          // Set avatar
+          if (p.avatar) {
+            document.getElementById('avatar-placeholder').style.display = 'none';
+            const img = document.getElementById('avatar-image');
+            img.src = p.avatar;
+            img.style.display = 'block';
+          }
+          
+          // Populate inputs
+          document.getElementById('input-fullName').value = p.fullName || '';
+          document.getElementById('input-email').value = p.email || '';
+          document.getElementById('input-phone').value = p.phone || '';
+          document.getElementById('input-nationalId').value = p.nationalId || '';
+          
+          // Populate preferences (if any)
+          // Add pref mapping logic here if needed...
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+      }
+    });
+
     function switchSettings(event, sectionId) {
       event.preventDefault();
 
@@ -503,22 +563,96 @@
       element.classList.toggle('active');
     }
 
-    function changeAvatar() {
-      alert('Avatar upload feature coming soon!\\n\\nYou will be able to upload a profile picture.');
+    async function uploadAvatar(input) {
+      if (!input.files || input.files.length === 0) return;
+      
+      const file = input.files[0];
+      const formData = new FormData();
+      formData.append('avatar', file);
+      
+      try {
+        const btn = document.querySelector('.profile-info button');
+        const oldText = btn.textContent;
+        btn.textContent = 'Uploading...';
+        btn.disabled = true;
+        
+        const token = localStorage.getItem('egov_token') || '';
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        const res = await fetch('/api/v1/settings/avatar', {
+          method: 'POST',
+          headers,
+          body: formData
+        });
+        
+        if (res.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('avatar-placeholder').style.display = 'none';
+          const img = document.getElementById('avatar-image');
+          img.src = data.data.avatarUrl;
+          img.style.display = 'block';
+          alert('Profile picture updated successfully!');
+        } else {
+          alert('Upload failed: ' + (data.message || 'Unknown error'));
+        }
+        
+        btn.textContent = oldText;
+        btn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred during upload.');
+      }
     }
 
-    function savePersonalInfo() {
-      const fullName = document.querySelectorAll('input[type="text"]')[0].value;
-      const email = document.querySelectorAll('input[type="email"]')[0].value;
-      const phone = document.querySelectorAll('input[type="tel"]')[0].value;
-      const id = document.querySelectorAll('input[type="text"]')[1].value;
-
-      if (!fullName || !email || !phone || !id) {
-        alert('Please fill in all fields.');
-        return;
+    async function savePersonalInfo() {
+      const fullName = document.getElementById('input-fullName').value;
+      const email = document.getElementById('input-email').value;
+      const phone = document.getElementById('input-phone').value;
+      const nationalId = document.getElementById('input-nationalId').value;
+      
+      const btn = document.getElementById('btn-save-profile');
+      
+      try {
+        btn.textContent = 'Saving...';
+        btn.disabled = true;
+        
+        const token = localStorage.getItem('egov_token') || '';
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        const res = await fetch('/api/v1/settings/profile', {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ fullName, email, phone, nationalId })
+        });
+        
+        if (res.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+        
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('display-name').textContent = fullName || email;
+          alert('Your personal information has been updated successfully!');
+        } else {
+          alert('Failed to save profile: ' + data.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred while saving.');
+      } finally {
+        btn.textContent = 'Save Changes';
+        btn.disabled = false;
       }
-
-      alert('Your personal information has been updated successfully!');
     }
 
     function updatePassword() {
@@ -541,8 +675,8 @@
         return;
       }
 
-      alert('Password updated successfully!\\n\\nYou will be logged out and need to sign in again.');
-      setTimeout(() => location.href = 'login.html', 1500);
+      alert('Password updated successfully!\n\nYou will be logged out and need to sign in again.');
+      setTimeout(() => location.href = '/login', 1500);
     }
 
     function signOutOtherSessions() {
@@ -552,14 +686,14 @@
     }
 
     function exportData(format) {
-      alert(`Exporting your data as ${format.toUpperCase()}...\\n\\nThis may take a few moments. Download will start automatically.`);
+      alert(`Exporting your data as ${format.toUpperCase()}...\n\nThis may take a few moments. Download will start automatically.`);
     }
 
     function deleteAccount() {
-      if (confirm('Are you absolutely sure you want to delete your account?\\n\\nThis action cannot be undone and all your data will be permanently deleted.')) {
-        if (confirm('Type your email to confirm account deletion.\\n\\nThis is a confirmation - in a real app you would type your email.')) {
-          alert('Your account has been permanently deleted.\\n\\nRedirecting to home page...');
-          setTimeout(() => location.href = 'index.html', 1500);
+      if (confirm('Are you absolutely sure you want to delete your account?\n\nThis action cannot be undone and all your data will be permanently deleted.')) {
+        if (confirm('Type your email to confirm account deletion.\n\nThis is a confirmation - in a real app you would type your email.')) {
+          alert('Your account has been permanently deleted.\n\nRedirecting to home page...');
+          setTimeout(() => location.href = '/', 1500);
         }
       }
     }

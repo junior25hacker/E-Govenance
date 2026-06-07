@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -19,6 +52,17 @@ const typeorm_2 = require("typeorm");
 const document_entity_1 = require("./entities/document.entity");
 const document_request_entity_1 = require("./entities/document-request.entity");
 const report_entity_1 = require("./entities/report.entity");
+const uuid_1 = require("uuid");
+const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
+const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads', 'documents');
+const ALLOWED_MIME_TYPES = [
+    'application/pdf',
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+];
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 let DocumentsService = class DocumentsService {
     documentRepository;
     requestRepository;
@@ -27,6 +71,13 @@ let DocumentsService = class DocumentsService {
         this.documentRepository = documentRepository;
         this.requestRepository = requestRepository;
         this.reportRepository = reportRepository;
+        this.ensureUploadsDirExists();
+    }
+    ensureUploadsDirExists() {
+        if (!fs.existsSync(UPLOADS_DIR)) {
+            fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+            console.log('[DOCUMENTS] Created uploads directory:', UPLOADS_DIR);
+        }
     }
     async create(citizenId, dto) {
         const doc = this.documentRepository.create({
@@ -52,6 +103,58 @@ let DocumentsService = class DocumentsService {
         console.log('[DOCUMENTS] Document submitted for verification:', saved.id);
         return saved;
     }
+    async digitalizeDocument(citizenId, dto, file) {
+        if (!file) {
+            throw new common_1.BadRequestException('No file uploaded. Please attach a document file.');
+        }
+        if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+            throw new common_1.BadRequestException(`Unsupported file type: ${file.mimetype}. Allowed types: PDF, JPEG, PNG.`);
+        }
+        if (file.size > MAX_FILE_SIZE) {
+            throw new common_1.BadRequestException(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum allowed: 20 MB.`);
+        }
+        const ext = path.extname(file.originalname).toLowerCase() || '.pdf';
+        const storedFilename = `${(0, uuid_1.v4)()}${ext}`;
+        const storedPath = path.join(UPLOADS_DIR, storedFilename);
+        try {
+            fs.writeFileSync(storedPath, file.buffer);
+            console.log(`[DOCUMENTS] File written: ${storedPath} (${file.size} bytes)`);
+        }
+        catch (err) {
+            console.error('[DOCUMENTS] Failed to write file:', err);
+            throw new common_1.BadRequestException('Failed to store the uploaded file. Please try again.');
+        }
+        const doc = this.documentRepository.create({
+            citizenId,
+            documentType: dto.documentType,
+            councilJurisdiction: dto.councilJurisdiction || 'Central Registry',
+            fullName: dto.fullName,
+            nationalId: dto.nationalId,
+            originalFilename: file.originalname,
+            storedFilename,
+            mimeType: file.mimetype,
+            fileSize: file.size,
+            status: 'pending',
+        });
+        const saved = await this.documentRepository.save(doc);
+        console.log(`[DOCUMENTS] Document digitalized: ID=${saved.id}, type=${dto.documentType}, citizen=${citizenId}`);
+        return saved;
+    }
+    async getDocumentFile(id) {
+        const doc = await this.documentRepository.findOneBy({ id });
+        if (!doc) {
+            throw new common_1.NotFoundException(`Document with ID ${id} not found`);
+        }
+        if (!doc.storedFilename) {
+            throw new common_1.NotFoundException(`Document ${id} has no associated file`);
+        }
+        const filePath = path.join(UPLOADS_DIR, doc.storedFilename);
+        if (!fs.existsSync(filePath)) {
+            console.error(`[DOCUMENTS] File missing on disk: ${filePath}`);
+            throw new common_1.NotFoundException(`File for document ${id} is missing from storage`);
+        }
+        return { filePath, doc };
+    }
     async findByCitizen(citizenId) {
         return this.documentRepository.find({
             where: { citizenId },
@@ -74,6 +177,28 @@ let DocumentsService = class DocumentsService {
         }
         doc.status = status;
         doc.verifiedBy = verifiedBy;
+        if (status.toLowerCase() === 'verified' && !doc.storedFilename) {
+            const ext = '.pdf';
+            const newFileName = `${(0, uuid_1.v4)()}${ext}`;
+            const destPath = path.join(UPLOADS_DIR, newFileName);
+            const dummyPath = path.join(process.cwd(), 'dummy.pdf');
+            if (fs.existsSync(dummyPath)) {
+                try {
+                    fs.copyFileSync(dummyPath, destPath);
+                    doc.storedFilename = newFileName;
+                    doc.mimeType = 'application/pdf';
+                    doc.originalFilename = `${doc.documentType || 'Digitalized_Document'}.pdf`;
+                    doc.fileSize = fs.statSync(dummyPath).size;
+                    console.log(`[DOCUMENTS] Automatically digitalized document ${id} with dummy file.`);
+                }
+                catch (err) {
+                    console.error(`[DOCUMENTS] Failed to copy dummy file for document ${id}:`, err);
+                }
+            }
+            else {
+                console.warn('[DOCUMENTS] dummy.pdf not found in root directory. Cannot attach dummy file.');
+            }
+        }
         const saved = await this.documentRepository.save(doc);
         console.log(`[DOCUMENTS] Document ${id} status updated to ${status} by ${verifiedBy}`);
         return saved;
@@ -149,6 +274,31 @@ let DocumentsService = class DocumentsService {
             where: { citizenId },
             order: { createdAt: 'DESC' },
         });
+    }
+    async findAllReports(status) {
+        if (status) {
+            return this.reportRepository.find({
+                where: { status: status.toUpperCase() },
+                order: { createdAt: 'DESC' },
+            });
+        }
+        return this.reportRepository.find({
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async updateReportStatus(id, status) {
+        const report = await this.reportRepository.findOneBy({ id });
+        if (!report) {
+            throw new common_1.NotFoundException(`Report with ID ${id} not found`);
+        }
+        const upperStatus = status.toUpperCase();
+        if (!['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'].includes(upperStatus)) {
+            throw new common_1.BadRequestException(`Invalid report status: ${status}`);
+        }
+        report.status = upperStatus;
+        const saved = await this.reportRepository.save(report);
+        console.log(`[REPORTS] Report ${id} status updated to ${upperStatus}`);
+        return saved;
     }
 };
 exports.DocumentsService = DocumentsService;

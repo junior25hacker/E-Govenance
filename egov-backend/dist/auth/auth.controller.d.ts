@@ -6,9 +6,14 @@ import { VerifyDocumentDto } from './dto/verify-document.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
+    seed(): Promise<{
+        status: string;
+        message: string;
+    }>;
     register(registerDto: RegisterDto, res: express.Response): Promise<{
         status: string;
         citizenId: string;
+        token: string;
     }>;
     citizenLogin(loginDto: LoginDto, res: express.Response): Promise<{
         status: string;
@@ -42,9 +47,30 @@ export declare class AuthController {
         citizenId: string;
         email: string;
         fullName: string;
+        phone: string;
+        nationalId: string;
+        avatar: string;
+        preferences: string;
         profileComplete: boolean;
         verificationDocType: string;
         verificationDocPath: string;
+        role: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    getThirdPartyIdentity(citizenId: string): Promise<{
+        id: number;
+        citizenId: string;
+        email: string;
+        fullName: string;
+        phone: string;
+        nationalId: string;
+        avatar: string;
+        preferences: string;
+        profileComplete: boolean;
+        verificationDocType: string;
+        verificationDocPath: string;
+        role: string;
         createdAt: Date;
         updatedAt: Date;
     }>;

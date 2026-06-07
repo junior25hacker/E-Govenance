@@ -17,9 +17,14 @@ let User = class User {
     email;
     passwordHash;
     fullName;
+    phone;
+    nationalId;
+    avatar;
+    preferences;
     profileComplete;
     verificationDocType;
     verificationDocPath;
+    role;
     createdAt;
     updatedAt;
 };
@@ -45,6 +50,22 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "fullName", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "phone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "nationalId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "avatar", void 0);
+__decorate([
+    (0, typeorm_1.Column)('text', { nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "preferences", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], User.prototype, "profileComplete", void 0);
@@ -56,6 +77,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "verificationDocPath", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 'CITIZEN' }),
+    __metadata("design:type", String)
+], User.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

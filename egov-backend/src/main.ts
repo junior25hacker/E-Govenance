@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as fs from 'fs';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 const cookieParser = require('cookie-parser');
@@ -23,7 +24,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false, // Allow extra fields from multipart forms
       transform: true,
     }),
   );
@@ -56,8 +57,16 @@ async function bootstrap() {
   });
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads' });
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
+
+  // Ensure uploads directory exists
+  const uploadsDir = join(process.cwd(), 'uploads', 'documents');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('[BACKEND] 📁 Created uploads directory:', uploadsDir);
+  }
 
   // Register Handlebars helpers
   hbs.registerHelper('eq', (a: any, b: any) => a === b);
@@ -74,5 +83,6 @@ async function bootstrap() {
   console.log(`[BACKEND] 📦 Database: ${process.env.DB_PATH || './database.sqlite'}`);
   console.log(`[BACKEND] 🔐 JWT Secret: ${process.env.JWT_SECRET ? '(from .env)' : '(default)'}`);
   console.log(`[BACKEND] 🌐 CORS Origins: ${corsOrigins.join(', ')}`);
+  console.log(`[BACKEND] 📁 Uploads: ${uploadsDir}`);
 }
 bootstrap();

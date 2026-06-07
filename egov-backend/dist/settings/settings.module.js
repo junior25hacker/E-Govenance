@@ -8,13 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SettingsModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const settings_controller_1 = require("./settings.controller");
 const settings_service_1 = require("./settings.service");
+const user_entity_1 = require("../auth/entities/user.entity");
 let SettingsModule = class SettingsModule {
 };
 exports.SettingsModule = SettingsModule;
 exports.SettingsModule = SettingsModule = __decorate([
     (0, common_1.Module)({
+        imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User])],
         controllers: [settings_controller_1.SettingsController],
         providers: [settings_service_1.SettingsService],
         exports: [settings_service_1.SettingsService],

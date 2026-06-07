@@ -189,6 +189,7 @@
       .form-card { max-width: 100%; }
     }
   </style>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 <body>
   <aside class="sidebar">
@@ -339,6 +340,16 @@
   </main>
 
   <script>
+    // Sync token from server cookie to localStorage if present
+    const serverToken = '{{token}}';
+    if (serverToken) {
+      localStorage.setItem('egov_token', serverToken);
+    }
+    const serverCitizenId = '{{user.citizenId}}';
+    if (serverCitizenId) {
+      localStorage.setItem('egov_citizenId', serverCitizenId);
+    }
+
     let selectedType = null;
 
     function showComingSoon() {
@@ -400,9 +411,14 @@
       };
 
       try {
+        const token = localStorage.getItem('egov_token') || '';
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
         const res = await fetch('/api/v1/documents/request', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify(payload),
         });
 

@@ -36,10 +36,32 @@ export declare class AuthService {
         citizenId: string;
         email: string;
         fullName: string;
+        phone: string;
+        nationalId: string;
+        avatar: string;
+        preferences: string;
         profileComplete: boolean;
         verificationDocType: string;
         verificationDocPath: string;
+        role: string;
         createdAt: Date;
         updatedAt: Date;
     }>;
+    getVerifiedCitizenProfileByCitizenId(citizenId: string): Promise<{
+        id: number;
+        citizenId: string;
+        email: string;
+        fullName: string;
+        phone: string;
+        nationalId: string;
+        avatar: string;
+        preferences: string;
+        profileComplete: boolean;
+        verificationDocType: string;
+        verificationDocPath: string;
+        role: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    seedAdmins(): Promise<void>;
 }

@@ -17,6 +17,18 @@ export class User {
     @Column({ nullable: true })
     fullName: string;
 
+    @Column({ nullable: true })
+    phone: string;
+
+    @Column({ nullable: true })
+    nationalId: string;
+
+    @Column({ nullable: true })
+    avatar: string;
+
+    @Column('text', { nullable: true })
+    preferences: string; // Stored as JSON string
+
     @Column({ default: false })
     profileComplete: boolean;
 
@@ -25,6 +37,9 @@ export class User {
 
     @Column({ nullable: true })
     verificationDocPath: string;
+
+    @Column({ default: 'CITIZEN' })
+    role: string;
 
     @CreateDateColumn()
     createdAt: Date;

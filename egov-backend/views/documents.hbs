@@ -195,6 +195,7 @@
     .doc-status.rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
 </style>
 
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 <body>
   <aside class="sidebar">
@@ -350,6 +351,14 @@
           </select>
         </div>
         <div class="form-group">
+          <label class="form-label">Full Legal Name</label>
+          <input type="text" class="form-control" id="full-name" placeholder="Enter your full name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">National ID</label>
+          <input type="text" class="form-control" id="national-id" placeholder="Enter your National ID" required />
+        </div>
+        <div class="form-group">
           <label class="form-label">Council Jurisdiction</label>
           <select class="form-control" id="council-jurisdiction" required>
             <option value="" disabled selected>Select council jurisdiction...</option>
@@ -376,7 +385,17 @@
 
   <div class="toast-container" id="toast-container"></div>
 <script>
-    const token = localStorage.getItem('egov_token');
+    // Sync token from server cookie to localStorage if present
+    const serverToken = '{{token}}';
+    if (serverToken) {
+      localStorage.setItem('egov_token', serverToken);
+    }
+    const serverCitizenId = '{{user.citizenId}}';
+    if (serverCitizenId) {
+      localStorage.setItem('egov_citizenId', serverCitizenId);
+    }
+
+    const token = localStorage.getItem('egov_token') || '';
     const citizenId = '{{user.citizenId}}';
 
     function openModal() {
@@ -424,28 +443,22 @@
       try {
         const docType = document.getElementById('doc-type').value;
         const council = document.getElementById('council-jurisdiction').value;
+        const fullName = document.getElementById('full-name').value;
+        const nationalId = document.getElementById('national-id').value;
         const fileInput = document.getElementById('doc-file');
         
-        let filePath = "mock_path_or_base64";
+        const formData = new FormData();
+        formData.append('documentType', docType);
+        formData.append('councilJurisdiction', council);
+        formData.append('fullName', fullName);
+        formData.append('nationalId', nationalId);
         if (fileInput.files.length > 0) {
-          filePath = await fileToBase64(fileInput.files[0]);
+          formData.append('file', fileInput.files[0]);
         }
 
-        const payload = {
-          citizenId: citizenId,
-          documentType: docType,
-          councilJurisdiction: council,
-          filePath: filePath,
-          purpose: "Verification"
-        };
-
-        const res = await fetch('/api/v1/documents/submit', {
+        const res = await fetch('/api/v1/documents/digitalize', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
+          body: formData
         });
 
         const data = await res.json();
@@ -468,10 +481,15 @@
 
     async function fetchWalletDocuments() {
       try {
-        if (!token) return;
+        if (!citizenId) return;
+
+        const headers = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
 
         const res = await fetch(`/api/v1/documents?citizenId=${citizenId}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers
         });
 
         if (res.status === 401) {
@@ -513,11 +531,11 @@
         if (statusLower === 'verified') {
           badgeHtml = `<div class="doc-status verified">
             <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
-            Verified
+            Verified & Digitalized
           </div>`;
           actionHtml = `<div class="doc-actions">
             <button class="doc-action-btn" onclick="downloadDocument('${doc.id}', '${doc.documentType}')">
-              <span class="material-symbols-outlined">download</span> View/Download
+              <span class="material-symbols-outlined">download</span> Download
             </button>
           </div>`;
         } else if (statusLower === 'rejected') {
@@ -560,7 +578,22 @@
     }
 
     async function downloadDocument(id, name) {
-      alert(`Downloading/Viewing ${name}...`);
+      showToast(`Preparing download for ${name}...`);
+      try {
+        const res = await fetch(`/api/v1/documents/${id}/download`);
+        if (!res.ok) throw new Error('Download failed');
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name || 'document';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      } catch (err) {
+        showToast('Error downloading document', true);
+      }
     }
 
     // Search/filter

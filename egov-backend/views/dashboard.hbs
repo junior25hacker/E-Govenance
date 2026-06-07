@@ -1290,6 +1290,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
 
 <body>
@@ -1334,7 +1335,7 @@
 
     <div class="sidebar-footer">
       <div class="sidebar-user-pill">
-        <div class="sidebar-avatar">{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}</div>
+        <div class="sidebar-avatar">{{#if user.avatar}}<img src="{{user.avatar}}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />{{else}}{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}{{/if}}</div>
         <div class="sidebar-user-info">
           <div class="sidebar-user-name">{{#if user.fullName}}{{user.fullName}}{{else}}Citizen{{/if}}</div>
           <div class="sidebar-user-role">{{user.citizenId}}</div>
@@ -1357,7 +1358,7 @@
           style="font-size:20px">mail_outline</span></div>
       <div class="nav-divider"></div>
       <div class="top-nav-user" id="userMenuBtn">
-        <div class="user-avatar">{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}</div>
+        <div class="user-avatar">{{#if user.avatar}}<img src="{{user.avatar}}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />{{else}}{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}{{/if}}</div>
         <div class="user-info">
           <div class="user-name">{{user.email}}</div>
           <div class="user-role">Authenticated Citizen</div>
@@ -1524,7 +1525,30 @@
           </div>
         </section>
 
-        <section class="widget-card col-12 s4">
+        <section class="widget-card col-4 s4">
+          <div class="widget-header">
+            <div class="widget-header-left">
+              <div class="widget-icon"><span class="material-symbols-outlined">bolt</span></div>
+              <div>
+                <div class="widget-title">Quick Actions</div>
+                <div class="widget-subtitle">Frequently used tools</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <a href="#" class="btn btn-primary" onclick="openDigitizeModal(event)" style="justify-content:center;">
+              <span class="material-symbols-outlined">document_scanner</span> Digitize Document
+            </a>
+            <a href="#" class="btn btn-ghost" onclick="generatePassport(event)" style="justify-content:center;">
+              <span class="material-symbols-outlined">badge</span> Generate Passport
+            </a>
+            <a href="#" class="btn btn-ghost" onclick="downloadAll(event)" style="justify-content:center;">
+              <span class="material-symbols-outlined">download</span> Download Documents
+            </a>
+          </div>
+        </section>
+
+        <section class="widget-card col-8 s4">
           <div class="widget-header">
             <div class="widget-header-left">
               <div class="widget-icon"><span class="material-symbols-outlined">history</span></div>
@@ -1726,6 +1750,14 @@
           </select>
         </div>
         <div class="form-group">
+          <label class="form-label">Full Legal Name</label>
+          <input type="text" class="form-control" id="full-name" placeholder="Enter your full name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">National ID</label>
+          <input type="text" class="form-control" id="national-id" placeholder="Enter your National ID" required />
+        </div>
+        <div class="form-group">
           <label class="form-label">Council Jurisdiction</label>
           <select class="form-control" id="council-jurisdiction" required>
             <option value="" disabled selected>Select council jurisdiction...</option>
@@ -1751,6 +1783,15 @@
   </div>
 
 <script>
+    // Sync token from server cookie to localStorage if present
+    const serverToken = '{{token}}';
+    if (serverToken) {
+      localStorage.setItem('egov_token', serverToken);
+    }
+    const serverCitizenId = '{{user.citizenId}}';
+    if (serverCitizenId) {
+      localStorage.setItem('egov_citizenId', serverCitizenId);
+    }
 
     async function logout() {
       await fetch('/api/v1/auth/citizen/logout', { method: 'POST' });
@@ -1884,25 +1925,30 @@
       btn.disabled = true;
 
       try {
-        const res = await fetch('http://localhost:3000/api/v1/documents/submit', {
+        const token = localStorage.getItem('egov_token') || '';
+        const res = await fetch('/api/v1/documents/report', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
-            citizenId: "CITIZEN-9921",
-            citizenFullName: "Verified Citizen",
-            documentType: `LOST_${chosenDocType.toUpperCase()}`,
-            councilJurisdiction: answers.jurisdiction || "Central Node",
-            filePath: JSON.stringify(answers)
+            category: `LOST_${chosenDocType.toUpperCase()}`,
+            priority: 'HIGH',
+            location: answers.jurisdiction || 'Central Node',
+            description: `Lost document report. Details: ${JSON.stringify(answers)}`,
+            phone: '{{user.phone}}' || ''
           })
         });
 
         const result = await res.json();
-        if (result.status === 'success') {
-          document.getElementById('lost-ref-code').textContent = result.data.id.substring(0, 8).toUpperCase();
+        if (res.ok && (result.status === 'success' || result.referenceId)) {
+          const reportData = result.data || result;
+          document.getElementById('lost-ref-code').textContent = reportData.referenceId || 'LD-PENDING';
           document.getElementById('lost-step-2').style.display = 'none';
           document.getElementById('lost-step-3').style.display = 'block';
         } else {
-          showToast("Error: " + result.message);
+          showToast("Error: " + (result.message || 'Failed to submit report'));
         }
       } catch (e) {
         showToast("Network failure. Please try again.");
@@ -1936,29 +1982,22 @@
       try {
         const docType = document.getElementById('doc-type').value;
         const council = document.getElementById('council-jurisdiction').value;
+        const fullName = document.getElementById('full-name').value;
+        const nationalId = document.getElementById('national-id').value;
         const fileInput = document.getElementById('doc-file');
         
-        // Store just the file name — avoids the "request too large" error
-        // from sending multi-MB base64 blobs in JSON
-        let filePath = 'no_file_selected';
+        const formData = new FormData();
+        formData.append('documentType', docType);
+        formData.append('councilJurisdiction', council);
+        formData.append('fullName', fullName);
+        formData.append('nationalId', nationalId);
         if (fileInput.files.length > 0) {
-          filePath = fileInput.files[0].name;
+          formData.append('file', fileInput.files[0]);
         }
 
-        const payload = {
-          citizenId: citizenId,
-          documentType: docType,
-          councilJurisdiction: council,
-          filePath: filePath,
-          purpose: "Verification"
-        };
-
-        const res = await fetch('/api/v1/documents/submit', {
+        const res = await fetch('/api/v1/documents/digitalize', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
+          body: formData
         });
 
         const data = await res.json();
