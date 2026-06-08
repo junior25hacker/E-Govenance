@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Team | E-Governance</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f5f9;
+      color: #1f2937;
+    }
+    .page-header {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+    .page-header h1 {
+      margin: 0;
+      font-size: 2.8rem;
+      letter-spacing: 0.03em;
+    }
+    .page-header p {
+      margin: 1rem auto 0;
+      max-width: 640px;
+      font-size: 1.05rem;
+      opacity: 0.9;
+    }
+    .team-grid {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    .team-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .team-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+    }
+    .team-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      display: block;
+    }
+    .team-card-content {
+      padding: 1.5rem;
+    }
+    .team-card-content h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.35rem;
+    }
+    .team-card-content p {
+      margin: 0;
+      color: #475569;
+      line-height: 1.6;
+    }
+    .roles-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 0;
+      color: #334155;
+      font-size: 0.975rem;
+      line-height: 1.7;
+    }
+    .roles-list li::before {
+      content: "•";
+      color: #2563eb;
+      display: inline-block;
+      width: 1rem;
+    }
+    .footer-note {
+      text-align: center;
+      padding-bottom: 2rem;
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1>Meet the Design Team</h1>
+    <p>These are the people who shaped the look, feel, and user experience of this website. Each has played an important role in design, development, and delivery.</p>
+  </header>
+  <main class="team-grid">
+    <article class="team-card">
+      <img src="pictures/EUNICE.jpeg" alt="Eunice" />
+      <div class="team-card-content">
+        <h2>Eunice</h2>
+        <p>Lead UI/UX Designer</p>
+        <ul class="roles-list">
+          <li>Created the website’s visual design system</li>
+          <li>Designed the navigation and page layouts</li>
+          <li>Optimized user flows for citizen interaction</li>
+        </ul>
+      </div>
+    </article>
+    <article class="team-card">
+      <img src="pictures/GIFT.jpeg" alt="Gift" />
+      <div class="team-card-content">
+        <h2>Gift</h2>
+        <p>Frontend Designer</p>
+        <ul class="roles-list">
+          <li>Implemented responsive page components</li>
+          <li>Styled interactive forms and dashboards</li>
+          <li>Ensured accessibility across devices</li>
+        </ul>
+      </div>
+    </article>
+    <article class="team-card">
+      <img src="pictures/HUELER.jpeg" alt="Hueler" />
+      <div class="team-card-content">
+        <h2>Hueler</h2>
+        <p>Graphic Designer</p>
+        <ul class="roles-list">
+          <li>Created imagery and icons for the site</li>
+          <li>Developed the color palette and branding</li>
+          <li>Designed promotional visuals and layouts</li>
+        </ul>
+      </div>
+    </article>
+    <article class="team-card">
+      <img src="pictures/OLIVER.jpeg" alt="Oliver" />
+      <div class="team-card-content">
+        <h2>Oliver</h2>
+        <p>Product Design Lead</p>
+        <ul class="roles-list">
+          <li>Defined product goals and user needs</li>
+          <li>Coordinated design reviews and feedback</li>
+          <li>Aligned design with government service workflows</li>
+        </ul>
+      </div>
+    </article>
+    <article class="team-card">
+      <img src="pictures/PEREZ.jpeg" alt="Perez" />
+      <div class="team-card-content">
+        <h2>Perez</h2>
+        <p>Project Manager</p>
+        <ul class="roles-list">
+          <li>Managed timelines and delivery milestones</li>
+          <li>Facilitated communication across teams</li>
+          <li>Ensured the site met stakeholder expectations</li>
+        </ul>
+      </div>
+    </article>
+  </main>
+  <div class="footer-note">Designed for the E-Governance website team. View the full site from the home page or continue exploring project pages.</div>
+</body>
+</html>

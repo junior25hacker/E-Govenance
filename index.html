@@ -332,6 +332,38 @@
     .benefit-title { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 10px; }
     .benefit-desc  { font-size: 13px; color: var(--cream-dim); line-height: 1.65; }
 
+    .team-section {
+      padding: 100px 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .team-heading { text-align: center; margin-bottom: 48px; }
+    .team-heading .section-label { color: var(--gold); }
+    .team-heading .section-title { color: var(--white); }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .team-card {
+      background: rgba(10,24,51,0.85);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.18);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .team-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.35); }
+    .team-card img {
+      width: 100%; height: 280px; object-fit: cover;
+      display: block;
+    }
+    .team-card-body { padding: 22px; }
+    .team-name { font-family: 'Cinzel', serif; font-size: 1.2rem; margin-bottom: 6px; color: var(--white); }
+    .team-role { font-size: 0.94rem; color: var(--gold); margin-bottom: 14px; }
+    .team-bio { font-size: 14px; color: var(--cream-dim); line-height: 1.7; }
+
     /* ─── SECURITY ─── */
     .security { padding: 100px 0; background: var(--navy-2); position: relative; overflow: hidden; }
     .security-grid {
@@ -688,6 +720,58 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="team-section" id="team">
+  <div class="container">
+    <div class="team-heading reveal">
+      <p class="section-label">// 06 — Design Team</p>
+      <h2 class="section-title">Built by the People<br>Behind the Experience.</h2>
+      <p class="section-sub">This website was crafted by a dedicated design team focused on clarity, visual quality, and seamless citizen journeys.</p>
+    </div>
+    <div class="team-grid">
+      <article class="team-card reveal" style="transition-delay:0.1s">
+        <img src="pictures/EUNICE.jpeg" alt="Eunice" />
+        <div class="team-card-body">
+          <div class="team-name">Eunice</div>
+          <div class="team-role">Lead UI/UX Designer</div>
+          <p class="team-bio">Spearheaded the visual system, page hierarchy, and interaction design to make the portal intuitive for every citizen.</p>
+        </div>
+      </article>
+      <article class="team-card reveal" style="transition-delay:0.15s">
+        <img src="pictures/GIFT.jpeg" alt="Gift" />
+        <div class="team-card-body">
+          <div class="team-name">Gift</div>
+          <div class="team-role">Frontend Designer</div>
+          <p class="team-bio">Implemented responsive components and polished the interfaces across desktop and mobile devices.</p>
+        </div>
+      </article>
+      <article class="team-card reveal" style="transition-delay:0.2s">
+        <img src="pictures/HUELER.jpeg" alt="Hueler" />
+        <div class="team-card-body">
+          <div class="team-name">Hueler</div>
+          <div class="team-role">Graphic Designer</div>
+          <p class="team-bio">Created the imagery, iconography, and branding assets that give the portal its modern and trusted presence.</p>
+        </div>
+      </article>
+      <article class="team-card reveal" style="transition-delay:0.25s">
+        <img src="pictures/OLIVER.jpeg" alt="Oliver" />
+        <div class="team-card-body">
+          <div class="team-name">Oliver</div>
+          <div class="team-role">Product Design Lead</div>
+          <p class="team-bio">Aligned the product experience with user needs and council workflows, keeping the design grounded in real use cases.</p>
+        </div>
+      </article>
+      <article class="team-card reveal" style="transition-delay:0.3s">
+        <img src="pictures/PEREZ.jpeg" alt="Perez" />
+        <div class="team-card-body">
+          <div class="team-name">Perez</div>
+          <div class="team-role">Project Manager</div>
+          <p class="team-bio">Coordinated the team, timelines, and requirements to ensure the website launched on schedule.</p>
+        </div>
+      </article>
     </div>
   </div>
 </section>
