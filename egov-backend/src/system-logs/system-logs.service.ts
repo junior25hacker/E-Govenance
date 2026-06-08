@@ -21,4 +21,12 @@ export class SystemLogsService {
       order: { timestamp: 'DESC' },
     });
   }
+
+  async getRecentLogsByUser(userId: string, limit: number = 5): Promise<SystemActivityLog[]> {
+    return await this.logsRepository.find({
+      where: { userId },
+      order: { timestamp: 'DESC' },
+      take: limit,
+    });
+  }
 }

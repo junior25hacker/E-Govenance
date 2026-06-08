@@ -1571,50 +1571,11 @@
                 <div class="widget-subtitle">Last 7 days</div>
               </div>
             </div>
-            <a href="#" class="widget-action-link">View log <span class="material-symbols-outlined"
+            <a href="/system-activity" class="widget-action-link">View log <span class="material-symbols-outlined"
                 style="font-size:15px">arrow_forward</span></a>
           </div>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-icon"><span class="material-symbols-outlined">check_circle</span></div>
-              <div class="activity-content">
-                <div class="activity-row">
-                  <div class="activity-title">National ID Verified</div>
-                  <div class="activity-time">2 days ago</div>
-                </div>
-                <div class="activity-description">Your identity has been successfully verified and is now active.</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon"><span class="material-symbols-outlined">upload_file</span></div>
-              <div class="activity-content">
-                <div class="activity-row">
-                  <div class="activity-title">Birth Certificate Uploaded</div>
-                  <div class="activity-time">5 days ago</div>
-                </div>
-                <div class="activity-description">Scanned and stored your birth certificate in the secure vault.</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon"><span class="material-symbols-outlined">search</span></div>
-              <div class="activity-content">
-                <div class="activity-row">
-                  <div class="activity-title">Document Search</div>
-                  <div class="activity-time">Today, 09:14</div>
-                </div>
-                <div class="activity-description">Searched for marriage certificate templates.</div>
-              </div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-icon"><span class="material-symbols-outlined">manage_accounts</span></div>
-              <div class="activity-content">
-                <div class="activity-row">
-                  <div class="activity-title">Profile Updated</div>
-                  <div class="activity-time">Yesterday</div>
-                </div>
-                <div class="activity-description">Updated contact information and security preferences.</div>
-              </div>
-            </div>
+          <div class="activity-list" id="recent-activity-list">
+            <div style="text-align: center; color: var(--cream-dim); padding: 20px; font-style: italic;">Loading recent activity...</div>
           </div>
         </section>
 
@@ -2071,9 +2032,51 @@
       }
     }
 
+    async function fetchRecentActivity() {
+      const list = document.getElementById('recent-activity-list');
+      if(!list) return;
+      try {
+        const res = await fetch('/activity/recent');
+        const result = await res.json();
+        if (result.data && result.data.length > 0) {
+          list.innerHTML = '';
+          result.data.forEach(log => {
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            
+            let icon = 'history';
+            if(log.sourceModule === 'Requests') icon = 'receipt_long';
+            else if(log.sourceModule === 'Security') icon = 'security';
+            else if(log.sourceModule === 'Documents') icon = 'description';
+            else if(log.sourceModule === 'Account') icon = 'manage_accounts';
+            
+            const dateStr = new Date(log.timestamp).toLocaleString();
+
+            item.innerHTML = `
+              <div class="activity-icon"><span class="material-symbols-outlined">${icon}</span></div>
+              <div class="activity-content">
+                <div class="activity-row">
+                  <div class="activity-title">${log.title}</div>
+                  <div class="activity-time">${dateStr}</div>
+                </div>
+                <div class="activity-description">${log.description}</div>
+              </div>
+            `;
+            list.appendChild(item);
+          });
+        } else {
+          list.innerHTML = '<div style="text-align: center; color: var(--cream-dim); padding: 20px; font-style: italic;">No recent activity.</div>';
+        }
+      } catch(e) {
+        console.error('Failed to load recent activity', e);
+        list.innerHTML = '<div style="text-align: center; color: var(--error); padding: 20px; font-style: italic;">Error loading activity.</div>';
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       fetchSidebarRequests();
       fetchPendingRequests();
+      fetchRecentActivity();
     });
 
 </script>

@@ -19,13 +19,24 @@ export class SystemLogsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('api/v1/system-logs')
+  @Get(['api/v1/system-logs', 'activity/logs'])
   async getLogs(@Req() req) {
     try {
       const logs = await this.systemLogsService.getLogsByUser(req.user.citizenId);
       return { status: 'success', data: logs };
     } catch (e) {
       return { status: 'error', message: 'Failed to fetch logs' };
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('activity/recent')
+  async getRecentLogs(@Req() req) {
+    try {
+      const logs = await this.systemLogsService.getRecentLogsByUser(req.user.citizenId, 5);
+      return { status: 'success', data: logs };
+    } catch (e) {
+      return { status: 'error', message: 'Failed to fetch recent logs' };
     }
   }
 }
