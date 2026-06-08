@@ -32,11 +32,11 @@ export declare class DocumentsService {
         rejectedDocuments: number;
     }>;
     private generateRequestId;
-    submitRequest(citizenId: string, dto: SubmitDocumentRequestDto): Promise<DocumentRequest>;
+    submitRequest(citizenId: string, dto: SubmitDocumentRequestDto): Promise<any>;
     getRequests(citizenId: string): Promise<DocumentRequest[]>;
     private generateReportId;
-    submitReport(citizenId: string, dto: SubmitReportDto): Promise<Report>;
+    submitReport(citizenId: string, dto: SubmitReportDto): Promise<any>;
     getReports(citizenId: string): Promise<Report[]>;
     findAllReports(status?: string): Promise<Report[]>;
-    updateReportStatus(id: number, status: string): Promise<Report>;
+    updateReportStatus(id: number, status: string): Promise<any>;
 }

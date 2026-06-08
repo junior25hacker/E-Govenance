@@ -187,7 +187,7 @@
       <li><a href="/documents"><span class="material-symbols-outlined">description</span> My Documents</a></li>
       <li><a href="/request"><span class="material-symbols-outlined">add_circle</span> New Request</a></li>
       <li><a href="/track-requests"><span class="material-symbols-outlined">track_changes</span> Track Requests</a></li>
-      <li><a href="/system-activity" class="active">
+      <li><a href="/system-activity-log" class="active">
           <span class="material-symbols-outlined">history</span>
           <span>System Activity Log</span>
         </a></li>
@@ -376,8 +376,8 @@
       }
 
       async function fetchActivityLogs() {
-          try {
-              const res = await fetch('/api/v1/system-logs');
+            try {
+              const res = await fetch('/activity/logs');
               const result = await res.json();
               if (result.data) {
                   logsData = result.data;

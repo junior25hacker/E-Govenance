@@ -10,9 +10,9 @@ files.forEach(file => {
   // Look for Track Requests <li> block
   const regex = /(<li>\s*<a[^>]*href="\/track-requests"[^>]*>[\s\S]*?<\/a>\s*<\/li>)/;
   
-  if (regex.test(content) && !content.includes('/system-activity')) {
+  if (regex.test(content) && !content.includes('/system-activity-log')) {
     const replacement = `$1
-      <li><a href="/system-activity"${file === 'system-activity.hbs' ? ' class="active"' : ''}>
+      <li><a href="/system-activity-log"${file === 'system-activity.hbs' ? ' class="active"' : ''}>
           <span class="material-symbols-outlined">history</span>
           <span>System Activity Log</span>
         </a></li>`;

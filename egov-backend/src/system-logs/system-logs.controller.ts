@@ -11,7 +11,7 @@ export class SystemLogsController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('system-activity')
+  @Get('system-activity-log')
   @Render('system-activity')
   async activityView(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
