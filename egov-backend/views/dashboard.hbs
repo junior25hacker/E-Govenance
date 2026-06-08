@@ -1319,6 +1319,14 @@
           <span class="material-symbols-outlined">add_task</span>
           <span>Request Certificate</span>
         </a></li>
+      <li><a href="/track-requests">
+          <span class="material-symbols-outlined">track_changes</span>
+          <span>Track Requests</span>
+        </a></li>
+      <li><a href="/system-activity">
+          <span class="material-symbols-outlined">history</span>
+          <span>System Activity Log</span>
+        </a></li>
       <li><a id="nav-report-lost" onclick="switchView('report-lost', event)">
           <span class="material-symbols-outlined">report</span>
           <span>Report Lost Doc</span>
@@ -1333,6 +1341,12 @@
       <li><a onclick="logout()"><span class="material-symbols-outlined">logout</span><span>Secure Logout</span></a></li>
     </ul>
 
+    <div class="sidebar-requests-section" style="padding: 12px 20px; border-top: 1px solid var(--border);">
+      <div style="font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">My Requests</div>
+      <ul id="sidebar-requests-list" style="list-style: none; padding: 0; margin: 0; font-size: 13px;">
+        <!-- Dynamically populated -->
+      </ul>
+    </div>
     <div class="sidebar-footer">
       <div class="sidebar-user-pill">
         <div class="sidebar-avatar">{{#if user.avatar}}<img src="{{user.avatar}}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />{{else}}{{#if user.fullName}}{{user.fullName.[0]}}{{else}}C{{/if}}{{/if}}</div>
@@ -1626,24 +1640,8 @@
                 <th>Action</th>
               </tr>
             </thead>
-            <tbody>
-              {{#each documents}}
-              <tr>
-                <td>
-                  <div class="doc-name">{{this.documentType}}</div>
-                  <div class="doc-ref">{{this.id}}</div>
-                </td>
-                <td style="color:var(--cream-dim);font-size:13px">{{this.createdAt}}</td>
-                <td style="color:var(--cream-dim);font-size:13px">TBD</td>
-                <td><span class="status-pill {{#if (eq this.status 'VERIFIED')}}verified{{else}}processing{{/if}}">{{this.status}}</span></td>
-                <td><button class="table-action">Track <span class="material-symbols-outlined"
-                      style="font-size:14px">open_in_new</span></button></td>
-              </tr>
-              {{else}}
-              <tr>
-                <td colspan="5" style="text-align:center; color:var(--cream-dim); padding: 40px;">No active requests found.</td>
-              </tr>
-              {{/each}}
+            <tbody id="pending-requests-tbody">
+              <!-- Dynamically populated -->
             </tbody>
           </table>
         </section>
@@ -2017,6 +2015,66 @@
         btn.disabled = false;
       }
     }
+
+    async function fetchSidebarRequests() {
+      const list = document.getElementById('sidebar-requests-list');
+      if(!list) return;
+      try {
+        const res = await fetch('/tracking');
+        const result = await res.json();
+        if (result.data && result.data.length > 0) {
+          list.innerHTML = '';
+          result.data.forEach(req => {
+            const li = document.createElement('li');
+            li.style.marginBottom = '6px';
+            li.innerHTML = `<a href="/tracking-request/${req.requestId}" onmouseover="this.style.background='var(--glass-b)'; this.style.color='var(--white)';" onmouseout="this.style.background='transparent'; this.style.color='var(--cream-dim)';" style="color: var(--cream-dim); text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; transition: background 0.2s, color 0.2s;"><span class="material-symbols-outlined" style="font-size: 16px;">receipt_long</span> <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;">${req.title}</span></a>`;
+            list.appendChild(li);
+          });
+        } else {
+          list.innerHTML = '<li style="color: var(--cream-dim); padding: 6px 8px; font-style: italic;">No requests found.</li>';
+        }
+      } catch(e) {
+        console.error('Failed to load sidebar requests', e);
+      }
+    }
+
+    async function fetchPendingRequests() {
+      const tbody = document.getElementById('pending-requests-tbody');
+      if (!tbody) return;
+      try {
+        const response = await fetch('/requests/pending');
+        const result = await response.json();
+        
+        tbody.innerHTML = '';
+        if (result.data && result.data.length > 0) {
+          result.data.forEach(req => {
+            const tr = document.createElement('tr');
+            const dateStr = new Date(req.createdAt).toISOString().split('T')[0];
+            tr.innerHTML = `
+              <td>
+                <div class="doc-name">${req.title}</div>
+                <div class="doc-ref">${req.requestId}</div>
+              </td>
+              <td style="color:var(--cream-dim);font-size:13px">${dateStr}</td>
+              <td style="color:var(--cream-dim);font-size:13px">TBD</td>
+              <td><span class="status-pill processing">${req.currentStatus}</span></td>
+              <td><button class="table-action" onclick="window.location.href='/tracking-request/${req.requestId}'">Track <span class="material-symbols-outlined" style="font-size:14px">open_in_new</span></button></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--cream-dim);font-style:italic;">No requests found.</td></tr>';
+        }
+      } catch(e) {
+        console.error('Failed to fetch pending requests', e);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--error);font-style:italic;">Error loading requests.</td></tr>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchSidebarRequests();
+      fetchPendingRequests();
+    });
 
 </script>
 </body>

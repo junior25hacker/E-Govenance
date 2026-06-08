@@ -1,4 +1,5 @@
-import { Controller, Get, Render, Query, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Query, Res, HttpStatus, UseGuards, Req, Render, Param } from '@nestjs/common';
+import { join } from 'path';
 import { AppService } from './app.service';
 import * as express from 'express';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -14,9 +15,13 @@ export class AppController {
   ) { }
 
   @Get()
-  @Render('index')
-  root() {
-    return { title: 'CitizenNode | Home' };
+  root(@Res() res: express.Response) {
+    return res.sendFile(join(process.cwd(), 'public', 'index.html'));
+  }
+
+  @Get('landing')
+  landing(@Res() res: express.Response) {
+    return res.sendFile(join(process.cwd(), 'public', 'index.html'));
   }
 
   @Get('login')
@@ -70,6 +75,14 @@ export class AppController {
       createdAtFormatted: r.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     }));
     return { title: 'CitizenNode | New Request', user: userProfile, token: req.cookies?.token, requests };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(['track-requests', 'tracking-request', 'tracking-request/:requestId'])
+  @Render('track-requests')
+  async trackRequestsView(@Req() req, @Param('requestId') requestId?: string): Promise<any> {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    return { title: 'CitizenNode | Track Requests', user: userProfile, token: req.cookies?.token, requestId };
   }
 
   @UseGuards(JwtAuthGuard)

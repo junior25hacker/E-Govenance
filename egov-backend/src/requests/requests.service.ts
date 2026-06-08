@@ -6,6 +6,8 @@ import { RequestLog } from './entities/request-log.entity';
 import { CreateRequestDto } from './dto/create-request.dto';
 import { DocumentRequest } from '../documents/entities/document-request.entity';
 import { Document } from '../documents/entities/document.entity';
+import { SystemLogsService } from '../system-logs/system-logs.service';
+import { LogSeverity, SourceModule } from '../system-logs/entities/system-log.entity';
 
 @Injectable()
 export class RequestsService {
@@ -18,6 +20,7 @@ export class RequestsService {
     private readonly docRequestRepo: Repository<DocumentRequest>,
     @InjectRepository(Document)
     private readonly documentRepo: Repository<Document>,
+    private readonly systemLogsService: SystemLogsService,
   ) {}
 
   // The allowed progression sequence
@@ -47,6 +50,16 @@ export class RequestsService {
       performedBy,
       'Request automatically added to tracking system upon creation.'
     );
+
+    await this.systemLogsService.createLog({
+      title: 'Request Created',
+      description: `Request '${dto.title}' was submitted successfully.`,
+      userId: dto.userId,
+      performedBy: dto.userId,
+      sourceModule: SourceModule.REQUESTS,
+      severity: LogSeverity.LOW,
+      referenceId: savedRequest.requestId,
+    });
 
     return savedRequest;
   }
@@ -135,6 +148,16 @@ export class RequestsService {
       performedBy || 'System',
       description || `Request automatically moved to ${newStatus} stage.`
     );
+
+    await this.systemLogsService.createLog({
+      title: `Request ${newStatus.charAt(0) + newStatus.slice(1).toLowerCase().replace('_', ' ')}`,
+      description: `Request '${savedRequest.title}' status changed from ${previousStatus} to ${newStatus}.`,
+      userId: savedRequest.userId,
+      performedBy: performedBy || 'System',
+      sourceModule: SourceModule.REQUESTS,
+      severity: newStatus === RequestStage.REJECTED ? LogSeverity.HIGH : LogSeverity.MEDIUM,
+      referenceId: savedRequest.requestId,
+    });
 
     return savedRequest;
   }

@@ -3,11 +3,13 @@ import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { User } from './entities/user.entity';
 import { SettingsService } from '../settings/settings.service';
+import { SystemLogsService } from '../system-logs/system-logs.service';
 export declare class AuthService {
     private readonly userRepository;
     private jwtService;
     private settingsService;
-    constructor(userRepository: Repository<User>, jwtService: JwtService, settingsService: SettingsService);
+    private systemLogsService;
+    constructor(userRepository: Repository<User>, jwtService: JwtService, settingsService: SettingsService, systemLogsService: SystemLogsService);
     generateCitizenId(): Promise<string>;
     register(dto: RegisterDto): Promise<{
         status: string;

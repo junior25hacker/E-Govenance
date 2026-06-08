@@ -1,4 +1,5 @@
 import { AppService } from './app.service';
+import * as express from 'express';
 import { AuthService } from './auth/auth.service';
 import { DocumentsService } from './documents/documents.service';
 export declare class AppController {
@@ -6,9 +7,8 @@ export declare class AppController {
     private readonly authService;
     private readonly documentsService;
     constructor(appService: AppService, authService: AuthService, documentsService: DocumentsService);
-    root(): {
-        title: string;
-    };
+    root(res: express.Response): void;
+    landing(res: express.Response): void;
     login(): {
         title: string;
     };
@@ -18,6 +18,7 @@ export declare class AppController {
     };
     documentsView(req: any): Promise<any>;
     requestView(req: any): Promise<any>;
+    trackRequestsView(req: any, requestId?: string): Promise<any>;
     reportView(req: any): Promise<any>;
     settingsView(req: any): Promise<any>;
     helpView(): {

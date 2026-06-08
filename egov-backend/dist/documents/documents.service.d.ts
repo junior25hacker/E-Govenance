@@ -6,11 +6,13 @@ import { CreateDocumentDto } from './dto/create-document.dto';
 import { SubmitDocumentRequestDto } from './dto/submit-document-request.dto';
 import { SubmitReportDto } from './dto/submit-report.dto';
 import { DigitalizeDocumentDto } from './dto/digitalize-document.dto';
+import { SystemLogsService } from '../system-logs/system-logs.service';
 export declare class DocumentsService {
     private readonly documentRepository;
     private readonly requestRepository;
     private readonly reportRepository;
-    constructor(documentRepository: Repository<Document>, requestRepository: Repository<DocumentRequest>, reportRepository: Repository<Report>);
+    private readonly systemLogsService;
+    constructor(documentRepository: Repository<Document>, requestRepository: Repository<DocumentRequest>, reportRepository: Repository<Report>, systemLogsService: SystemLogsService);
     private ensureUploadsDirExists;
     create(citizenId: string, dto: CreateDocumentDto): Promise<Document>;
     submitDocument(citizenId: string, dto: SubmitDocumentRequestDto): Promise<Document>;
