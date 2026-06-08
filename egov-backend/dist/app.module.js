@@ -22,6 +22,8 @@ const document_request_entity_1 = require("./documents/entities/document-request
 const report_entity_1 = require("./documents/entities/report.entity");
 const request_entity_1 = require("./requests/entities/request.entity");
 const request_log_entity_1 = require("./requests/entities/request-log.entity");
+const system_logs_module_1 = require("./system-logs/system-logs.module");
+const system_log_entity_1 = require("./system-logs/entities/system-log.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,14 +39,15 @@ exports.AppModule = AppModule = __decorate([
                 url: process.env.DATABASE_URL,
                 database: process.env.DATABASE_URL ? undefined : (process.env.DB_PATH || './database.sqlite'),
                 ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
-                entities: [user_entity_1.User, document_entity_1.Document, document_request_entity_1.DocumentRequest, report_entity_1.Report, request_entity_1.TrackingRequest, request_log_entity_1.RequestLog],
-                synchronize: process.env.NODE_ENV !== 'production',
+                entities: [user_entity_1.User, document_entity_1.Document, document_request_entity_1.DocumentRequest, report_entity_1.Report, request_entity_1.TrackingRequest, request_log_entity_1.RequestLog, system_log_entity_1.SystemActivityLog],
+                synchronize: true,
                 logging: process.env.NODE_ENV === 'development',
             }),
             settings_module_1.SettingsModule,
             auth_module_1.AuthModule,
             documents_module_1.DocumentsModule,
             requests_module_1.RequestsModule,
+            system_logs_module_1.SystemLogsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

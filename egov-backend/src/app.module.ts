@@ -16,6 +16,8 @@ import { DocumentRequest } from './documents/entities/document-request.entity';
 import { Report } from './documents/entities/report.entity';
 import { TrackingRequest } from './requests/entities/request.entity';
 import { RequestLog } from './requests/entities/request-log.entity';
+import { SystemLogsModule } from './system-logs/system-logs.module';
+import { SystemActivityLog } from './system-logs/entities/system-log.entity';
 
 @Module({
   imports: [
@@ -31,7 +33,7 @@ import { RequestLog } from './requests/entities/request-log.entity';
       url: process.env.DATABASE_URL,
       database: process.env.DATABASE_URL ? undefined : (process.env.DB_PATH || './database.sqlite'),
       ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
-      entities: [User, Document, DocumentRequest, Report, TrackingRequest, RequestLog],
+      entities: [User, Document, DocumentRequest, Report, TrackingRequest, RequestLog, SystemActivityLog],
       synchronize: true, // Temporary for DB migration: process.env.NODE_ENV !== 'production'
       logging: process.env.NODE_ENV === 'development',
     }),
@@ -40,6 +42,7 @@ import { RequestLog } from './requests/entities/request-log.entity';
     AuthModule,
     DocumentsModule,
     RequestsModule,
+    SystemLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -54,6 +54,8 @@ const document_request_entity_1 = require("./entities/document-request.entity");
 const report_entity_1 = require("./entities/report.entity");
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
+const system_logs_service_1 = require("../system-logs/system-logs.service");
+const system_log_entity_1 = require("../system-logs/entities/system-log.entity");
 const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads', 'documents');
 const ALLOWED_MIME_TYPES = [
     'application/pdf',
@@ -66,10 +68,12 @@ let DocumentsService = class DocumentsService {
     documentRepository;
     requestRepository;
     reportRepository;
-    constructor(documentRepository, requestRepository, reportRepository) {
+    systemLogsService;
+    constructor(documentRepository, requestRepository, reportRepository, systemLogsService) {
         this.documentRepository = documentRepository;
         this.requestRepository = requestRepository;
         this.reportRepository = reportRepository;
+        this.systemLogsService = systemLogsService;
         this.ensureUploadsDirExists();
     }
     ensureUploadsDirExists() {
@@ -126,6 +130,15 @@ let DocumentsService = class DocumentsService {
             data: base64Data,
         });
         const saved = await this.documentRepository.save(doc);
+        await this.systemLogsService.createLog({
+            title: 'Document Digitalized',
+            description: `New document of type '${dto.documentType}' was uploaded.`,
+            userId: citizenId,
+            performedBy: citizenId,
+            sourceModule: system_log_entity_1.SourceModule.DOCUMENTS,
+            severity: system_log_entity_1.LogSeverity.LOW,
+            referenceId: saved.id.toString(),
+        });
         console.log(`[DOCUMENTS] Document digitalized: ID=${saved.id}, type=${dto.documentType}, citizen=${citizenId}`);
         return saved;
     }
@@ -290,6 +303,7 @@ exports.DocumentsService = DocumentsService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(report_entity_1.Report)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        system_logs_service_1.SystemLogsService])
 ], DocumentsService);
 //# sourceMappingURL=documents.service.js.map

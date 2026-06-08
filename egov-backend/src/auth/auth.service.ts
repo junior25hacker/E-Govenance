@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { User } from './entities/user.entity';
 import { SettingsService } from '../settings/settings.service';
+import { SystemLogsService } from '../system-logs/system-logs.service';
+import { LogSeverity, SourceModule } from '../system-logs/entities/system-log.entity';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     private jwtService: JwtService,
     private settingsService: SettingsService,
+    private systemLogsService: SystemLogsService,
   ) {}
 
   async generateCitizenId(): Promise<string> {
@@ -50,6 +53,15 @@ export class AuthService {
     // Initialize settings for new user
     this.settingsService.initializeSettings(savedUser.id, savedUser.citizenId, savedUser.email);
 
+    await this.systemLogsService.createLog({
+      title: 'Account Registered',
+      description: `New user account created.`,
+      userId: savedUser.citizenId,
+      performedBy: savedUser.citizenId,
+      sourceModule: SourceModule.SECURITY,
+      severity: LogSeverity.MEDIUM,
+    });
+
     console.log('[AUTH] User registered:', citizenId);
 
     const payload = { sub: savedUser.id, email: savedUser.email, citizenId: savedUser.citizenId };
@@ -70,10 +82,27 @@ export class AuthService {
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
     if (!passwordMatch) {
       console.log('[AUTH] Login failed: password mismatch for', citizenId);
+      await this.systemLogsService.createLog({
+        title: 'Failed Login Attempt',
+        description: `Invalid password attempt for account.`,
+        userId: user.citizenId,
+        performedBy: 'System',
+        sourceModule: SourceModule.SECURITY,
+        severity: LogSeverity.HIGH,
+      });
       return null;
     }
 
     console.log('[AUTH] Login successful for', citizenId);
+    await this.systemLogsService.createLog({
+      title: 'Successful Login',
+      description: `User signed in successfully.`,
+      userId: user.citizenId,
+      performedBy: user.citizenId,
+      sourceModule: SourceModule.SECURITY,
+      severity: LogSeverity.LOW,
+    });
+    
     const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
     return {
       status: 'success',
@@ -95,6 +124,15 @@ export class AuthService {
     user.profileComplete = true;
 
     await this.userRepository.save(user);
+
+    await this.systemLogsService.createLog({
+      title: 'Profile Updated',
+      description: `Profile verification document submitted (${docType}).`,
+      userId: user.citizenId,
+      performedBy: user.citizenId,
+      sourceModule: SourceModule.ACCOUNT,
+      severity: LogSeverity.LOW,
+    });
 
     console.log('[AUTH] Profile completed for user', userId);
     return { status: 'success', message: 'Profile verified' };

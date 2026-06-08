@@ -186,10 +186,19 @@
       <li><a href="/dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a></li>
       <li><a href="/documents"><span class="material-symbols-outlined">description</span> My Documents</a></li>
       <li><a href="/request"><span class="material-symbols-outlined">add_circle</span> New Request</a></li>
-      <li><a href="/track-requests" class="active"><span class="material-symbols-outlined">track_changes</span> Track Requests</a></li>
-      <li><a href="/system-activity">
+      <li><a href="/track-requests"><span class="material-symbols-outlined">track_changes</span> Track Requests</a></li>
+      <li><a href="/system-activity" class="active">
           <span class="material-symbols-outlined">history</span>
           <span>System Activity Log</span>
+        </a></li>
+      <li><a href="/report"><span class="material-symbols-outlined">bug_report</span> Report Issue</a></li>
+      <li><a href="/settings"><span class="material-symbols-outlined">settings</span> Settings</a></li>
+      <li><a href="/help"><span class="material-symbols-outlined">help_outline</span> Help & Support</a></li>
+    </ul>
+
+    <div class="sidebar-requests-section" style="padding: 12px 20px; margin-top: auto; border-top: 1px solid var(--border);">
+      <div style="font-size: 11px; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">My Requests</div>
+      <ul id="sidebar-requests-list" style="list-style: none; padding: 0; margin: 0; font-size: 13px;">
         </a></li>
       <li><a href="/report"><span class="material-symbols-outlined">bug_report</span> Report Issue</a></li>
       <li><a href="/settings"><span class="material-symbols-outlined">settings</span> Settings</a></li>
@@ -206,185 +215,176 @@
 
   <main class="main-content">
     <nav class="top-nav">
-      <h1 class="page-title">Track Requests</h1>
-      <span class="material-symbols-outlined" style="color: var(--gold);">track_changes</span>
+      <h1 class="page-title">System Activity Log</h1>
+      <span class="material-symbols-outlined" style="color: var(--gold);">history</span>
     </nav>
 
     <div class="content-wrapper">
       <div class="page-header">
-        <h2 class="page-heading">TRACK REQUESTS</h2>
-        <p class="page-desc">Monitor the progress of your submitted document and certificate requests.</p>
+        <h2 class="page-heading">SYSTEM ACTIVITY LOG</h2>
+        <p class="page-desc">Chronological audit trail of system activity for transparency and accountability.</p>
       </div>
 
-      <!-- Dynamic Content Wrapper -->
-      <div id="tracking-content" style="display: none;">
-        <!-- Section 1: Request Header -->
-        <div class="track-section">
-          <h3 class="section-title">Request Details</h3>
-          <div class="details-grid" style="margin-top: 0; border-top: none; padding-top: 0;">
-              <div class="info-col">
-                  <span class="info-label">Title</span>
-                  <span class="info-val" id="det-title">-</span>
-              </div>
-              <div class="info-col">
-                  <span class="info-label">Reference Number</span>
-                  <span class="info-val" id="det-ref-num">-</span>
-              </div>
-              <div class="info-col">
-                  <span class="info-label">Current Status</span>
-                  <span class="info-val" id="det-status">-</span>
-              </div>
-          </div>
+      <!-- Controls Row -->
+      <div style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+          <input type="text" id="search-input" placeholder="Search events, IP addresses, users, or metadata..." style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--white); font-family: 'Space Grotesk', sans-serif;">
         </div>
-
-        <!-- Section 2: Request Status Timeline -->
-        <div class="track-section">
-          <h3 class="section-title">Request Status</h3>
-          
-          <div class="tracker-wrapper">
-              <div class="tracker-line-bg"></div>
-              <div class="tracker-line-fill" id="tracker-progress" style="width: 0%;"></div>
-              
-              <div class="tracker-steps" style="justify-content: space-between;">
-                  <div class="step" id="step-1" style="width: 33.3%;">
-                      <div class="step-icon"><span class="material-symbols-outlined">how_to_reg</span></div>
-                      <div class="step-label">Submitted</div>
-                  </div>
-                  <div class="step" id="step-2" style="width: 33.3%;">
-                      <div class="step-icon"><span class="material-symbols-outlined">policy</span></div>
-                      <div class="step-label">Under Review</div>
-                  </div>
-                  <div class="step" id="step-3" style="width: 33.3%;">
-                      <div class="step-icon" id="step-3-icon"><span class="material-symbols-outlined">task_alt</span></div>
-                      <div class="step-label" id="step-3-label">Approved / Rejected</div>
-                  </div>
-              </div>
-          </div>
-        </div>
-
-      <!-- Section 3: Status History -->
-      <div class="track-section">
-        <h3 class="section-title">Status History</h3>
-        <div class="timeline" id="history-timeline">
-            <!-- Dynamically populated -->
+        <div style="width: 200px;">
+          <select id="sort-select" style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--white); font-family: 'Space Grotesk', sans-serif;">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="important">Most Important</option>
+            <option value="least-important">Least Important</option>
+          </select>
         </div>
       </div>
-      </div> <!-- End dynamic wrapper -->
 
-      <!-- Empty State -->
-      <div id="empty-state" style="display: none; padding: 40px; text-align: center; background: var(--glass); border: 1px solid var(--border); border-radius: var(--r-lg);">
-          <span class="material-symbols-outlined" style="font-size: 48px; color: var(--border-b); margin-bottom: 16px;">search_off</span>
-          <h3 style="color: var(--white); font-family: 'Cinzel', serif;">No request selected for tracking.</h3>
-          <p style="color: var(--cream-dim); margin-top: 8px;">Please select a request from your pending list.</p>
-          <a href="/dashboard" class="btn btn-primary" style="margin-top: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;">
-              <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Return to Dashboard
-          </a>
+      <!-- Timeline Core Component -->
+      <div id="empty-state" style="display: none; text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--border);">
+        <span class="material-symbols-outlined" style="font-size: 48px; color: var(--border-b); margin-bottom: 16px;">receipt_long</span>
+        <h3 style="color: var(--white); margin-bottom: 8px;">No activity recorded yet.</h3>
       </div>
 
+      <div id="timeline-container" class="timeline" style="margin-left: 20px;">
+        <!-- Timeline items injected here via JS -->
+      </div>
     </div>
   </main>
 
   <script>
-      const pathParts = window.location.pathname.split('/');
-      const urlId = pathParts.pop();
-      const id = (urlId && urlId !== 'tracking-request' && urlId !== 'track-requests') ? urlId : '{{requestId}}';
+      let logsData = [];
 
-      async function fetchTrackingData() {
-          if (!id || id === '') {
-              document.getElementById('empty-state').style.display = 'block';
-              return;
+      function getSeverityColor(sev) {
+        switch((sev || '').toLowerCase()) {
+          case 'critical': return 'var(--error)';
+          case 'high': return '#f59e0b';
+          case 'medium': return '#3b82f6';
+          case 'low': default: return 'var(--success)';
+        }
+      }
+
+      function getSeverityWeight(sev) {
+        switch((sev || '').toLowerCase()) {
+          case 'critical': return 4;
+          case 'high': return 3;
+          case 'medium': return 2;
+          case 'low': default: return 1;
+        }
+      }
+
+      function getModuleIcon(mod) {
+        switch((mod || '').toLowerCase()) {
+          case 'requests': return 'receipt_long';
+          case 'security': return 'security';
+          case 'documents': return 'description';
+          case 'account': return 'manage_accounts';
+          default: return 'history';
+        }
+      }
+
+      function getLinkHref(item) {
+        if (!item.referenceId) return '#';
+        switch((item.sourceModule || '').toLowerCase()) {
+          case 'requests': return `/tracking-request/${item.referenceId}`;
+          case 'security': return `/settings`;
+          case 'documents': return `/documents`;
+          case 'account': return `/settings`;
+          default: return '#';
+        }
+      }
+
+      function renderLogs(logs) {
+        const container = document.getElementById('timeline-container');
+        container.innerHTML = '';
+        
+        if (!logs || logs.length === 0) {
+          document.getElementById('empty-state').style.display = 'block';
+          container.style.display = 'none';
+          return;
+        }
+        
+        document.getElementById('empty-state').style.display = 'none';
+        container.style.display = 'block';
+
+        let currentDateStr = '';
+
+        logs.forEach(item => {
+          const d = new Date(item.timestamp);
+          const dateStr = d.toLocaleDateString();
+          
+          if (dateStr !== currentDateStr) {
+            currentDateStr = dateStr;
+            const dateHeader = document.createElement('div');
+            dateHeader.style.fontSize = '12px';
+            dateHeader.style.color = 'var(--gold)';
+            dateHeader.style.letterSpacing = '0.1em';
+            dateHeader.style.textTransform = 'uppercase';
+            dateHeader.style.marginBottom = '16px';
+            dateHeader.style.marginTop = container.children.length ? '32px' : '0';
+            dateHeader.textContent = dateStr === new Date().toLocaleDateString() ? 'Today' : dateStr;
+            container.appendChild(dateHeader);
           }
 
+          const c = document.createElement('div');
+          c.className = 'timeline-item completed';
+          const sevColor = getSeverityColor(item.severity);
+          const icon = getModuleIcon(item.sourceModule);
+          const href = getLinkHref(item);
+          const clickableStyle = item.referenceId ? 'cursor: pointer;' : '';
+          
+          c.innerHTML = `
+              <div class="timeline-icon" style="background: ${sevColor}; border-color: ${sevColor}; color: var(--navy);"><span class="material-symbols-outlined" style="font-size: 14px;">${icon}</span></div>
+              <div class="timeline-content" style="${clickableStyle} transition: transform 0.2s;" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform='translateX(0)'" onclick="${item.referenceId ? `window.location.href='${href}'` : ''}">
+                  <div class="timeline-title">${item.title} <span class="timeline-date">${d.toLocaleTimeString()} UTC</span></div>
+                  <div class="timeline-desc">${item.description}</div>
+                  <div style="margin-top: 12px; display: flex; gap: 12px; font-size: 11px; color: var(--cream-dim);">
+                    <span><strong>Actor:</strong> ${item.performedBy || 'System'}</span>
+                    <span><strong>Source:</strong> ${item.sourceModule || 'System'}</span>
+                    ${item.ipAddress ? `<span><strong>IP:</strong> ${item.ipAddress}</span>` : ''}
+                    <span style="color: ${sevColor};"><strong>Severity:</strong> ${item.severity.toUpperCase()}</span>
+                  </div>
+              </div>
+          `;
+          container.appendChild(c);
+        });
+      }
+
+      function applyFilters() {
+        const term = document.getElementById('search-input').value.toLowerCase();
+        const sort = document.getElementById('sort-select').value;
+        
+        let filtered = logsData.filter(item => 
+          item.title.toLowerCase().includes(term) ||
+          item.description.toLowerCase().includes(term) ||
+          (item.ipAddress && item.ipAddress.toLowerCase().includes(term)) ||
+          (item.performedBy && item.performedBy.toLowerCase().includes(term)) ||
+          (item.metadata && item.metadata.toLowerCase().includes(term))
+        );
+
+        if (sort === 'newest') {
+          filtered.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        } else if (sort === 'oldest') {
+          filtered.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        } else if (sort === 'important') {
+          filtered.sort((a,b) => getSeverityWeight(b.severity) - getSeverityWeight(a.severity));
+        } else if (sort === 'least-important') {
+          filtered.sort((a,b) => getSeverityWeight(a.severity) - getSeverityWeight(b.severity));
+        }
+
+        renderLogs(filtered);
+      }
+
+      async function fetchActivityLogs() {
           try {
-              const res = await fetch(`/requests/${id}`);
+              const res = await fetch('/api/v1/system-logs');
               const result = await res.json();
-
-              if (result.status !== 'success' || !result.data) {
-                  document.getElementById('empty-state').style.display = 'block';
-                  return;
-              }
-
-              const data = result.data;
-              document.getElementById('tracking-content').style.display = 'block';
-
-              // Header
-              document.getElementById('det-title').innerText = data.title || 'N/A';
-              document.getElementById('det-ref-num').innerText = data.requestId;
-              document.getElementById('det-status').innerText = data.currentStatus;
-
-              let progress = 0;
-              let isRejected = data.currentStatus === 'REJECTED';
-              if (data.currentStatus === 'PENDING') progress = 0;
-              else if (data.currentStatus === 'UNDER REVIEW') progress = 50;
-              else progress = 100;
-
-              if (progress === 100) {
-                  document.getElementById('det-status').style.color = isRejected ? 'var(--danger)' : 'var(--success)';
+              if (result.data) {
+                  logsData = result.data;
+                  applyFilters();
               } else {
-                  document.getElementById('det-status').style.color = 'var(--warning)';
+                  document.getElementById('empty-state').style.display = 'block';
               }
-
-              document.getElementById('tracker-progress').style.width = progress + '%';
-              if (isRejected) {
-                  document.getElementById('tracker-progress').style.background = 'var(--danger)';
-              }
-
-              // Update Steps
-              const steps = [0, 50, 100];
-              for(let i=0; i<3; i++) {
-                  const el = document.getElementById('step-' + (i+1));
-                  el.className = 'step';
-                  let icon = i === 0 ? 'how_to_reg' : (i === 1 ? 'policy' : 'task_alt');
-                  
-                  if (progress > steps[i]) {
-                      el.classList.add('completed');
-                      icon = 'check'; 
-                  } else if (progress === steps[i]) {
-                      el.classList.add('active');
-                  }
-
-                  if (i === 2 && progress === 100) {
-                      el.classList.add('completed');
-                      if (isRejected) {
-                          icon = 'cancel';
-                          el.querySelector('.step-icon').style.background = 'var(--danger)';
-                          el.querySelector('.step-icon').style.borderColor = 'var(--danger)';
-                          document.getElementById('step-3-label').innerText = 'Rejected';
-                          document.getElementById('step-3-label').style.color = 'var(--danger)';
-                      } else {
-                          icon = 'check';
-                          document.getElementById('step-3-label').innerText = 'Approved';
-                      }
-                  }
-                  
-                  el.querySelector('.step-icon').innerHTML = '<span class="material-symbols-outlined">' + icon + '</span>';
-              }
-
-              // History Timeline
-              const histContainer = document.getElementById('history-timeline');
-              histContainer.innerHTML = '';
-              const logs = data.logs || [];
-              // Sort descending for display
-              logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-              logs.forEach((item, index) => {
-                  const isLatest = index === 0;
-                  const c = document.createElement('div');
-                  c.className = 'timeline-item ' + (progress === 100 && isLatest ? 'completed' : '');
-                  const dateStr = new Date(item.timestamp).toLocaleString();
-                  let iconStr = item.newStatus === 'REJECTED' ? 'cancel' : 'check';
-                  
-                  c.innerHTML = `
-                      <div class="timeline-icon"><span class="material-symbols-outlined" style="font-size:12px;">${iconStr}</span></div>
-                      <div class="timeline-content">
-                          <div class="timeline-title">${item.newStatus} <span class="timeline-date">${dateStr}</span></div>
-                          <div class="timeline-desc">System Message: ${item.description || 'Status updated'}</div>
-                          <div class="timeline-date" style="margin-top: 4px;">Actor: ${item.performedBy}</div>
-                      </div>
-                  `;
-                  histContainer.appendChild(c);
-              });
-
           } catch (err) {
               console.error(err);
               document.getElementById('empty-state').style.display = 'block';
@@ -402,7 +402,6 @@
             result.data.forEach(req => {
               const li = document.createElement('li');
               li.style.marginBottom = '6px';
-              // Hover effect via inline style events
               li.innerHTML = `<a href="/tracking-request/${req.requestId}" onmouseover="this.style.background='var(--glass-b)'; this.style.color='var(--white)';" onmouseout="this.style.background='transparent'; this.style.color='var(--cream-dim)';" style="color: var(--cream-dim); text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; transition: background 0.2s, color 0.2s;"><span class="material-symbols-outlined" style="font-size: 16px;">receipt_long</span> <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;">${req.title}</span></a>`;
               list.appendChild(li);
             });
@@ -414,8 +413,11 @@
         }
       }
 
+      document.getElementById('search-input').addEventListener('input', applyFilters);
+      document.getElementById('sort-select').addEventListener('change', applyFilters);
+
       window.onload = () => {
-        fetchTrackingData();
+        fetchActivityLogs();
         fetchSidebarRequests();
       };
   </script>
