@@ -32,7 +32,7 @@ import { RequestLog } from './requests/entities/request-log.entity';
       database: process.env.DATABASE_URL ? undefined : (process.env.DB_PATH || './database.sqlite'),
       ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
       entities: [User, Document, DocumentRequest, Report, TrackingRequest, RequestLog],
-      synchronize: process.env.NODE_ENV !== 'production', // Auto-create tables ONLY in development
+      synchronize: true, // Temporary for DB migration: process.env.NODE_ENV !== 'production'
       logging: process.env.NODE_ENV === 'development',
     }),
 
