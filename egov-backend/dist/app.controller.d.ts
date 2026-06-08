@@ -18,6 +18,7 @@ export declare class AppController {
     };
     documentsView(req: any): Promise<any>;
     requestView(req: any): Promise<any>;
+    trackRequestsView(req: any, requestId?: string): Promise<any>;
     reportView(req: any): Promise<any>;
     settingsView(req: any): Promise<any>;
     helpView(): {

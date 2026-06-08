@@ -1,0 +1,10 @@
+
+> citizen-node-web-app@1.0.0 start
+> cd egov-backend && npm start
+
+
+> egov-backend@0.0.1 start
+> nest start
+
+Found 7 error(s).
+
