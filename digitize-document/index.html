@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digitize Your Document | e-Governance Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=DM+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #050d1f;
+      --navy-2: #0a1833;
+      --navy-3: #0f2347;
+      --blue-mid: #1a3a6b;
+      --blue-acc: #2563b0;
+      --gold: #c9a84c;
+      --gold-lt: #e8c96a;
+      --gold-dim: #7a5f20;
+      --cream: #f2eedf;
+      --cream-dim: #cdc8b4;
+      --white: #ffffff;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-b: rgba(255, 255, 255, 0.10);
+      --border: rgba(201, 168, 76, 0.18);
+      --border-b: rgba(201, 168, 76, 0.35);
+      --r: 8px;
+      --r-lg: 16px;
+      --r-xl: 24px;
+    }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; width: 100%; min-height: 100%; }
+    body {
+      width: 100vw;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.6;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+
+    .page-shell {
+      width: 100vw;
+      min-height: 100vh;
+      padding: 30px 40px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 12px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.02);
+      color: var(--gold);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .page-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2rem, 2.5vw, 2.5rem);
+      color: var(--cream);
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .page-subtitle {
+      color: var(--cream-dim);
+      font-size: 0.95rem;
+      max-width: none;
+    }
+
+    .user-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: var(--navy);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .user-name { font-weight: 700; color: var(--cream); }
+    .user-role { color: var(--gold); font-size: 0.88rem; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 65% 35%;
+      gap: 24px;
+      align-items: start;
+      width: 100%;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.35);
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .panel-header {
+      padding: 32px 36px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .panel-title { font-family: 'Cinzel', serif; font-size: 1.7rem; margin-bottom: 12px; color: var(--cream); }
+    .panel-copy { color: var(--cream-dim); font-size: 1rem; line-height: 1.7; max-width: none; }
+
+    .upload-section { padding: 28px 32px 32px; display: grid; gap: 20px; }
+
+    .dropzone {
+      border: 2px dashed rgba(201,168,76,0.16);
+      border-radius: 18px;
+      min-height: 260px;
+      background: rgba(255,255,255,0.02);
+      display: grid;
+      place-items: center;
+      gap: 14px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dropzone.dragover { border-color: var(--gold); background: rgba(201,168,76,0.04); box-shadow: 0 14px 40px rgba(0,0,0,0.32); }
+    .dropzone.uploaded { border-style: solid; border-color: var(--gold); background: rgba(201,168,76,0.05); }
+
+    .dropzone-icon {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      color: var(--gold);
+      font-size: 2.2rem;
+    }
+
+    .dropzone strong { font-size: 1.1rem; color: var(--cream); }
+    .dropzone p { color: var(--cream-dim); font-size: 0.98rem; max-width: 100%; margin: 0 auto; }
+
+    .browse-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 12px;
+      padding: 12px 18px;
+      border: none;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: var(--navy);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .browse-button:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(201,168,76,0.18); }
+
+    .field-group { display: grid; gap: 10px; }
+    .field-label { font-size: 0.92rem; font-weight: 700; color: var(--cream); }
+    .field-select, .field-textarea { width: 100%; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); padding: 14px 16px; color: var(--cream); outline: none; transition: border-color 0.2s ease, background 0.2s ease; }
+    .field-select:focus, .field-textarea:focus { border-color: var(--gold); background: rgba(255,255,255,0.05); }
+    .field-select { appearance: none; }
+    .field-textarea { min-height: 140px; resize: vertical; }
+
+    .preview-panel {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 20px;
+      display: none;
+      width: 100%;
+    }
+
+    .preview-inner { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .preview-thumb {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.05);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      overflow: hidden;
+    }
+
+    .preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .preview-desc strong { display: block; color: var(--cream); margin-bottom: 4px; }
+    .preview-desc span { color: var(--cream-dim); font-size: 0.95rem; }
+    .preview-status { margin-left: auto; display: none; align-items: center; gap: 10px; color: var(--gold); font-weight: 700; }
+
+    .actions-row { display: flex; justify-content: flex-start; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 22px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(201,168,76,0.18); }
+
+    .message-box { display: none; border-radius: 18px; border: 1px solid transparent; padding: 18px 20px; font-size: 0.98rem; }
+    .message-box.visible { display: block; }
+    .message-box.error { background: #fdecea; border-color: #f0b6af; color: #8a2a2a; }
+    .message-box.success { background: #f4f7e9; border-color: #d8e1b8; color: #33401d; }
+
+    .status-panel { display: grid; gap: 22px; }
+    .status-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 18px; box-shadow: 0 14px 36px rgba(0,0,0,0.28); padding: 24px; }
+    .status-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+    .status-head h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--cream); margin-bottom: 4px; }
+    .status-head p { color: var(--cream-dim); }
+    .status-head a { color: var(--cream); font-weight: 600; }
+
+    .request-item { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); }
+    .request-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .request-label { display: inline-flex; align-items: center; gap: 10px; color: var(--cream); font-weight: 700; }
+    .request-label .material-symbols-outlined { font-size: 1.1rem; color: var(--gold); }
+    .request-path { color: var(--cream-dim); font-size: 0.95rem; }
+    .status-pill { display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+    .status-pill.pending { background: rgba(255,255,255,0.02); color: var(--cream); border: 1px solid rgba(255,255,255,0.08); }
+    .status-pill.review { background: rgba(37,99,176,0.08); color: var(--cream); }
+    .status-pill.processing { background: rgba(201,168,76,0.08); color: var(--gold); }
+    .status-pill.completed { background: rgba(34,197,94,0.08); color: #bff4c9; }
+
+    @media (max-width: 1160px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: stretch; }
+    }
+
+    @media (max-width: 760px) {
+      .page-shell { padding: 20px 18px 32px; }
+      .panel-header { padding: 24px 26px 16px; }
+      .upload-section { padding: 24px 26px 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button id="backBtn" class="back-button"><span class="material-symbols-outlined">arrow_back</span>Back</button>
+        <div>
+          <div class="page-title">Digitize Document</div>
+          <div class="page-subtitle">Upload scanned documents securely and track their review progress.</div>
+        </div>
+      </div>
+      <a class="user-chip" href="dashboard.html">
+        <span class="user-avatar">JD</span>
+        <div>
+          <div class="user-name">John Doe</div>
+          <div class="user-role">Authenticated Citizen</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="main-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Upload Document</div>
+          <p class="panel-copy">Drag and drop your document file, select the correct category, and add any notes for review. Accepted file types are PDF, PNG, and JPG.</p>
+        </div>
+        <div class="upload-section">
+          <div id="dropZone" class="dropzone">
+            <div class="dropzone-icon">cloud_upload</div>
+            <strong>Drag & drop your file here</strong>
+            <p>PDF, JPG, PNG • Max 10MB</p>
+            <button type="button" class="browse-button" id="browseButton"><span class="material-symbols-outlined">file_upload</span>Browse files</button>
+            <input id="documentFile" name="documentFile" type="file" accept="application/pdf,image/jpeg,image/png" hidden />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="documentType">Document Type</label>
+            <select id="documentType" class="field-select" required>
+              <option value="">Select document type</option>
+              <option value="Birth Certificate">Birth Certificate</option>
+              <option value="National ID">National ID</option>
+              <option value="Marriage Certificate">Marriage Certificate</option>
+              <option value="Land Title">Land Title</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="description">Optional Description</label>
+            <textarea id="description" class="field-textarea" placeholder="Provide any additional context for the verification officer..."></textarea>
+          </div>
+
+          <div id="previewPanel" class="preview-panel">
+            <div class="preview-inner">
+              <div class="preview-thumb">
+                <img id="previewThumb" src="" alt="Preview thumb" style="display:none;" />
+                <span id="previewIcon" class="material-symbols-outlined">description</span>
+              </div>
+              <div class="preview-desc">
+                <strong id="previewName">No file selected</strong>
+                <span id="previewMeta">Select a file to preview its details.</span>
+              </div>
+              <div id="previewStatus" class="preview-status">
+                <span class="material-symbols-outlined">check_circle</span>
+                Uploaded
+              </div>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button id="submitBtn" class="btn-primary">Send for Digitization<span class="material-symbols-outlined">arrow_forward</span></button>
+          </div>
+
+          <div id="messageBox" class="message-box"></div>
+        </div>
+      </section>
+
+      <aside class="status-panel">
+        <article class="status-card">
+          <div class="status-head">
+            <div>
+              <h2>Submission Status</h2>
+              <p>Monitor the current status of your latest document uploads.</p>
+            </div>
+            <a href="/pending-requests/">View all</a>
+          </div>
+          <div id="statusList" class="status-list"></div>
+        </article>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'egovDigitizeRequests';
+    const dropZone = document.getElementById('dropZone');
+    const browseButton = document.getElementById('browseButton');
+    const fileInput = document.getElementById('documentFile');
+    const previewPanel = document.getElementById('previewPanel');
+    const previewName = document.getElementById('previewName');
+    const previewMeta = document.getElementById('previewMeta');
+    const previewStatus = document.getElementById('previewStatus');
+    const messageBox = document.getElementById('messageBox');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusList = document.getElementById('statusList');
+    const acceptedTypes = ['application/pdf', 'image/png', 'image/jpeg'];
+    const maxBytes = 10 * 1024 * 1024;
+    let selectedFile = null;
+    let previewUrl = null;
+
+    const sampleRequests = [
+      { id: 'REQ-001', name: 'Marriage_Cert_V2.pdf', status: 'Pending', detail: 'Submitted 2h ago' },
+      { id: 'REQ-002', name: 'National_ID_Renewal.jpg', status: 'Processing', detail: 'Yesterday at 4:12 PM' }
+    ];
+
+    async function submitToBackend(request) {
+      const payload = {
+        citizenId: 'anonymous',
+        documentType: request.type,
+        councilJurisdiction: request.description,
+        filePath: request.name,
+        requestId: request.id,
+        createdAt: request.createdAt,
+      };
+
+      try {
+        const res = await fetch('/api/v1/documents/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (res.ok) return true;
+      } catch (e) {}
+
+      try {
+        const res = await fetch('http://localhost:3000/api/v1/documents/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function setMessage(message, type = 'success') {
+      messageBox.textContent = message;
+      messageBox.className = `message-box visible ${type}`;
+    }
+
+    function clearMessage() {
+      messageBox.textContent = '';
+      messageBox.className = 'message-box';
+    }
+
+    function renderStatusList() {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const requests = [...stored.slice(-2).reverse(), ...sampleRequests];
+      statusList.innerHTML = requests.map(req => `
+        <div class="request-item">
+          <div class="request-meta">
+            <div class="request-label"><span class="material-symbols-outlined">description</span>${req.name}</div>
+            <span class="status-pill ${req.status.toLowerCase().replace(' ', '-')}">${req.status}</span>
+          </div>
+          <div class="request-path">${req.detail}</div>
+        </div>
+      `).join('');
+    }
+
+    function revokePreviewUrl() {
+      try {
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+          previewUrl = null;
+        }
+      } catch (e) {}
+    }
+
+    function updatePreview(file) {
+      if (!file) {
+        previewPanel.style.display = 'none';
+        dropZone.classList.remove('uploaded');
+        revokePreviewUrl();
+        return;
+      }
+
+      previewPanel.style.display = 'block';
+      previewName.textContent = file.name;
+      previewMeta.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.type}`;
+      const thumb = document.getElementById('previewThumb');
+      const icon = document.getElementById('previewIcon');
+
+      if (file.type.startsWith('image/')) {
+        try {
+          revokePreviewUrl();
+          const url = URL.createObjectURL(file);
+          previewUrl = url;
+          thumb.src = url;
+          thumb.style.display = 'block';
+          icon.style.display = 'none';
+          thumb.onload = () => { try { URL.revokeObjectURL(url); previewUrl = null; } catch (e) {} };
+        } catch (e) {
+          thumb.style.display = 'none';
+          icon.style.display = 'block';
+        }
+      } else {
+        thumb.style.display = 'none';
+        icon.style.display = 'block';
+      }
+
+      dropZone.classList.add('uploaded');
+      previewStatus.style.display = 'inline-flex';
+    }
+
+    function handleFile(file) {
+      if (!file) return;
+      if (!acceptedTypes.includes(file.type)) {
+        setMessage('Invalid file type. Only PDF, JPG, and PNG are allowed.', 'error');
+        return;
+      }
+      if (file.size > maxBytes) {
+        setMessage('File is too large. Maximum size is 10MB.', 'error');
+        return;
+      }
+      clearMessage();
+      selectedFile = file;
+      updatePreview(file);
+      setMessage('File selected and ready to upload.', 'success');
+    }
+
+    browseButton.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (event) => { handleFile(event.target.files[0]); });
+
+    dropZone.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFile(event.dataTransfer.files[0]);
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => { window.location.href = 'dashboard.html'; });
+
+    submitBtn.addEventListener('click', async () => {
+      clearMessage();
+      const documentType = document.getElementById('documentType').value;
+      const description = document.getElementById('description').value.trim();
+      if (!selectedFile) { setMessage('Please choose a file before submitting.', 'error'); return; }
+      if (!documentType) { setMessage('Please select the document type.', 'error'); return; }
+
+      const request = {
+        id: `REQ-${Date.now()}`,
+        name: selectedFile.name,
+        status: 'Pending',
+        detail: 'Submitted just now',
+        type: documentType,
+        description,
+        createdAt: new Date().toISOString()
+      };
+      const requests = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([request, ...requests]));
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Uploading...';
+      const backendOk = await submitToBackend(request);
+      if (backendOk) {
+        setMessage('Upload successful. Your document is now pending review.', 'success');
+      } else {
+        setMessage('Upload saved locally. Backend unavailable.', 'success');
+      }
+      setTimeout(() => { window.location.href = '/pending-requests/'; }, 900);
+    });
+
+    renderStatusList();
+  </script>
+</body>
+</html>
