@@ -1,4 +1,4 @@
-import { Controller, Get, Render, Query, Res, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Render, Query, Res, HttpStatus, UseGuards, Req, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import * as express from 'express';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
@@ -65,6 +65,14 @@ export class AppController {
   async requestView(@Req() req): Promise<any> {
     const userProfile = await this.authService.getUserProfile(req.user.id);
     return { title: 'CitizenNode | New Request', user: userProfile, token: req.cookies?.token };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(['track-requests', 'tracking-request', 'tracking-request/:requestId'])
+  @Render('track-requests')
+  async trackRequestsView(@Req() req, @Param('requestId') requestId?: string): Promise<any> {
+    const userProfile = await this.authService.getUserProfile(req.user.id);
+    return { title: 'CitizenNode | Track Requests', user: userProfile, token: req.cookies?.token, requestId };
   }
 
   @UseGuards(JwtAuthGuard)

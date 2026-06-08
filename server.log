@@ -1,0 +1,85 @@
+
+> citizen-node-web-app@1.0.0 start
+> cd egov-backend && npm start
+
+
+> egov-backend@0.0.1 start
+> nest start
+
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:42 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +217ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMulterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +3ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+[90m[4mquery:[24m[39m [94mBEGIN[0m [37mTRANSACTION[0m
+[90m[4mquery:[24m[39m [94mSELECT[0m [37m*[0m [94mFROM[0m [37m"sqlite_master"[0m [94mWHERE[0m [37m"type"[0m [37m=[0m [37m'table'[0m [94mAND[0m [37m"name"[0m [94mIN[0m [37m([0m[37m'users'[0m[37m,[0m[37m'documents'[0m[37m,[0m[37m'document_requests'[0m[37m,[0m[37m'reports'[0m[37m)[0m
+[90m[4mquery:[24m[39m [94mSELECT[0m [37m*[0m [94mFROM[0m [37m"sqlite_master"[0m [94mWHERE[0m [37m"type"[0m [37m=[0m [37m'index'[0m [94mAND[0m [37m"tbl_name"[0m [94mIN[0m [37m([0m[37m'users'[0m[37m,[0m[37m'documents'[0m[37m,[0m[37m'document_requests'[0m[37m,[0m[37m'reports'[0m[37m)[0m
+[90m[4mquery:[24m[39m [94mPRAGMA[0m [95mindex_info[0m[37m([0m[37m"sqlite_autoindex_users_2"[0m[37m)[0m
+[90m[4mquery:[24m[39m [94mPRAGMA[0m [95mindex_info[0m[37m([0m[37m"sqlite_autoindex_users_1"[0m[37m)[0m
+[90m[4mquery:[24m[39m [94mSELECT[0m [37m*[0m [94mFROM[0m [37m"sqlite_master"[0m [94mWHERE[0m [37m"type"[0m [37m=[0m [37m'table'[0m [94mAND[0m [37m"name"[0m [37m=[0m [37m?[0m [90m-- PARAMETERS: ["typeorm_metadata"][0m
+[90m[4mquery:[24m[39m [94mCOMMIT[0m
+[DOCUMENTS] Created uploads directory: C:\Users\GOLD COMPUTERS\Desktop\E-Governac\egov-backend\uploads\documents
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +101ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSettingsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDocumentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +172ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +6ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/login, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/dashboard, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/civil-status, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/documents, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/request, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/report, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/settings, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/help, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/submit, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/citizen/metrics, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/lost-doc-schema, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSettingsController {/api/v1/settings}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/profile, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/profile, PUT} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/change-password, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/preferences, PUT} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/export, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/account, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/settings/avatar, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/v1/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/seed, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/citizen/register, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/citizen/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/citizen/verify-document, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/citizen/skip-verification, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/citizen/profile, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/third-party/identity/:citizenId, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/auth/citizen/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mDocumentsController {/api/v1/documents}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/digitalize, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/:id/download, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/:id/file-info, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/submit, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/:id/verify-status, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/request, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/report, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/requests, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/reports, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/reports/admin, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/v1/documents/reports/:id/status, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7572  - [39m06/08/2026, 4:08:43 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +5ms[39m
+[BACKEND] 🚀 E-Governance Backend & Portal running on: http://localhost:3000
+[BACKEND] 📚 Swagger API Documentation available at: http://localhost:3000/api/docs
+[BACKEND] 📦 Database: SQLite (./database.sqlite)
+[BACKEND] 🔐 JWT Secret: (from .env)
+[BACKEND] 🌐 CORS Origins: http://localhost:3000, http://localhost:8080
+[BACKEND] 📁 Uploads: C:\Users\GOLD COMPUTERS\Desktop\E-Governac\egov-backend\uploads\documents

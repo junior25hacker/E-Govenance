@@ -59,6 +59,10 @@ let AppController = class AppController {
         const userProfile = await this.authService.getUserProfile(req.user.id);
         return { title: 'CitizenNode | New Request', user: userProfile, token: req.cookies?.token };
     }
+    async trackRequestsView(req, requestId) {
+        const userProfile = await this.authService.getUserProfile(req.user.id);
+        return { title: 'CitizenNode | Track Requests', user: userProfile, token: req.cookies?.token, requestId };
+    }
     async reportView(req) {
         const userProfile = await this.authService.getUserProfile(req.user.id);
         return { title: 'CitizenNode | Report Issue', user: userProfile, token: req.cookies?.token };
@@ -144,6 +148,16 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "requestView", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(['track-requests', 'tracking-request', 'tracking-request/:requestId']),
+    (0, common_1.Render)('track-requests'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('requestId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "trackRequestsView", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('report'),

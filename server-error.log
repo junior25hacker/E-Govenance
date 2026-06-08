@@ -1,0 +1,34 @@
+[96msrc/documents/documents.controller.ts[0m:[93m68[0m:[93m35[0m - [91merror[0m[90m TS2694: [0mNamespace 'global.Express' has no exported member 'Multer'.
+
+[7m68[0m     @UploadedFile() file: Express.Multer.File,
+[7m  [0m [91m                                  ~~~~~~[0m
+[96msrc/documents/documents.service.ts[0m:[93m11[0m:[93m30[0m - [91merror[0m[90m TS2307: [0mCannot find module 'uuid' or its corresponding type declarations.
+
+[7m11[0m import { v4 as uuidv4 } from 'uuid';
+[7m  [0m [91m                             ~~~~~~[0m
+[96msrc/documents/documents.service.ts[0m:[93m96[0m:[93m19[0m - [91merror[0m[90m TS2694: [0mNamespace 'global.Express' has no exported member 'Multer'.
+
+[7m96[0m     file: Express.Multer.File,
+[7m  [0m [91m                  ~~~~~~[0m
+[96msrc/git-sync/git-sync.service.ts[0m:[93m20[0m:[93m24[0m - [91merror[0m[90m TS2355: [0mA function whose declared type is neither 'undefined', 'void', nor 'any' must return a value.
+
+[7m20[0m   async syncFromEnv(): Promise<GitSyncResult> {
+[7m  [0m [91m                       ~~~~~~~~~~~~~~~~~~~~~~[0m
+[96msrc/git-sync/git-sync.service.ts[0m:[93m35[0m:[93m1[0m - [91merror[0m[90m TS1005: [0m'}' expected.
+
+[7m35[0m 
+[7m  [0m [91m[0m
+
+  [96msrc/git-sync/git-sync.service.ts[0m:[93m20[0m:[93m47[0m
+    [7m20[0m   async syncFromEnv(): Promise<GitSyncResult> {
+    [7m  [0m [96m                                              ~[0m
+    The parser expected to find a '}' to match the '{' token here.
+[96msrc/main.ts[0m:[93m3[0m:[93m48[0m - [91merror[0m[90m TS2307: [0mCannot find module '@nestjs/swagger' or its corresponding type declarations.
+
+[7m3[0m import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+[7m [0m [91m                                               ~~~~~~~~~~~~~~~~~[0m
+[96msrc/settings/settings.controller.ts[0m:[93m91[0m:[93m35[0m - [91merror[0m[90m TS2694: [0mNamespace 'global.Express' has no exported member 'Multer'.
+
+[7m91[0m     @UploadedFile() file: Express.Multer.File,
+[7m  [0m [91m                                  ~~~~~~[0m
+
