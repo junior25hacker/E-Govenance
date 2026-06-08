@@ -57,7 +57,12 @@ let AppController = class AppController {
     }
     async requestView(req) {
         const userProfile = await this.authService.getUserProfile(req.user.id);
-        return { title: 'CitizenNode | New Request', user: userProfile, token: req.cookies?.token };
+        const requestsData = await this.documentsService.getRequests(userProfile.citizenId);
+        const requests = requestsData.map(r => ({
+            ...r,
+            createdAtFormatted: r.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        }));
+        return { title: 'CitizenNode | New Request', user: userProfile, token: req.cookies?.token, requests };
     }
     async reportView(req) {
         const userProfile = await this.authService.getUserProfile(req.user.id);

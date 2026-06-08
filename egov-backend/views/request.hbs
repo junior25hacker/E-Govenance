@@ -303,37 +303,23 @@
       <div id="request-history" class="tab-content">
         <h3 style="color: var(--white); font-family: 'Cinzel', serif; margin-bottom: 16px;">Recent Requests</h3>
         <div class="request-history">
-          <div class="history-item">
-            <div class="history-info">
-              <h4>Birth Certificate</h4>
-              <p>Submitted: May 10, 2026</p>
+          {{#if requests.length}}
+            {{#each requests}}
+            <div class="history-item">
+              <div class="history-info">
+                <h4>{{this.documentType}}</h4>
+                <p>Submitted: {{this.createdAtFormatted}}</p>
+              </div>
+              <span class="request-badge {{#if (eq this.status 'APPROVED')}}approved{{else if (eq this.status 'REJECTED')}}rejected{{else}}processing{{/if}}">{{this.status}}</span>
             </div>
-            <span class="request-badge approved">Approved</span>
-          </div>
-
-          <div class="history-item">
-            <div class="history-info">
-              <h4>Certificate of Origin</h4>
-              <p>Submitted: May 5, 2026</p>
+            {{/each}}
+          {{else}}
+            <div style="text-align:center; padding:40px 20px; color:var(--cream-dim);">
+              <span class="material-symbols-outlined" style="font-size:48px; opacity:0.5; margin-bottom:12px; display:block;">history</span>
+              <p>No request history found.</p>
+              <p style="font-size:13px; margin-top:8px;">Your past requests will appear here once you submit them.</p>
             </div>
-            <span class="request-badge processing">Processing</span>
-          </div>
-
-          <div class="history-item">
-            <div class="history-info">
-              <h4>Residence Permit</h4>
-              <p>Submitted: April 28, 2026</p>
-            </div>
-            <span class="request-badge approved">Approved</span>
-          </div>
-
-          <div class="history-item">
-            <div class="history-info">
-              <h4>Legal Attestation</h4>
-              <p>Submitted: April 15, 2026</p>
-            </div>
-            <span class="request-badge rejected">Rejected</span>
-          </div>
+          {{/if}}
         </div>
       </div>
     </div>
