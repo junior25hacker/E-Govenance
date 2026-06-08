@@ -11,6 +11,8 @@ import { DigitalizeDocumentDto } from './dto/digitalize-document.dto';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import * as fs from 'fs';
+import { SystemLogsService } from '../system-logs/system-logs.service';
+import { LogSeverity, SourceModule } from '../system-logs/entities/system-log.entity';
 
 /** Absolute path to the uploads directory */
 const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads', 'documents');
@@ -35,6 +37,7 @@ export class DocumentsService {
     private readonly requestRepository: Repository<DocumentRequest>,
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
+    private readonly systemLogsService: SystemLogsService,
   ) {
     // Ensure the uploads directory exists at service startup
     this.ensureUploadsDirExists();
@@ -132,6 +135,17 @@ export class DocumentsService {
     });
 
     const saved = await this.documentRepository.save(doc);
+
+    await this.systemLogsService.createLog({
+      title: 'Document Digitalized',
+      description: `New document of type '${dto.documentType}' was uploaded.`,
+      userId: citizenId,
+      performedBy: citizenId,
+      sourceModule: SourceModule.DOCUMENTS,
+      severity: LogSeverity.LOW,
+      referenceId: saved.id.toString(),
+    });
+
     console.log(`[DOCUMENTS] Document digitalized: ID=${saved.id}, type=${dto.documentType}, citizen=${citizenId}`);
     return saved;
   }

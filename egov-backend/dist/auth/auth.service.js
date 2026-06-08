@@ -53,14 +53,18 @@ const jwt_1 = require("@nestjs/jwt");
 const bcrypt = __importStar(require("bcrypt"));
 const user_entity_1 = require("./entities/user.entity");
 const settings_service_1 = require("../settings/settings.service");
+const system_logs_service_1 = require("../system-logs/system-logs.service");
+const system_log_entity_1 = require("../system-logs/entities/system-log.entity");
 let AuthService = class AuthService {
     userRepository;
     jwtService;
     settingsService;
-    constructor(userRepository, jwtService, settingsService) {
+    systemLogsService;
+    constructor(userRepository, jwtService, settingsService, systemLogsService) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.settingsService = settingsService;
+        this.systemLogsService = systemLogsService;
     }
     async generateCitizenId() {
         let isUnique = false;
@@ -90,6 +94,14 @@ let AuthService = class AuthService {
         });
         const savedUser = await this.userRepository.save(user);
         this.settingsService.initializeSettings(savedUser.id, savedUser.citizenId, savedUser.email);
+        await this.systemLogsService.createLog({
+            title: 'Account Registered',
+            description: `New user account created.`,
+            userId: savedUser.citizenId,
+            performedBy: savedUser.citizenId,
+            sourceModule: system_log_entity_1.SourceModule.SECURITY,
+            severity: system_log_entity_1.LogSeverity.MEDIUM,
+        });
         console.log('[AUTH] User registered:', citizenId);
         const payload = { sub: savedUser.id, email: savedUser.email, citizenId: savedUser.citizenId };
         return {
@@ -107,9 +119,25 @@ let AuthService = class AuthService {
         const passwordMatch = await bcrypt.compare(password, user.passwordHash);
         if (!passwordMatch) {
             console.log('[AUTH] Login failed: password mismatch for', citizenId);
+            await this.systemLogsService.createLog({
+                title: 'Failed Login Attempt',
+                description: `Invalid password attempt for account.`,
+                userId: user.citizenId,
+                performedBy: 'System',
+                sourceModule: system_log_entity_1.SourceModule.SECURITY,
+                severity: system_log_entity_1.LogSeverity.HIGH,
+            });
             return null;
         }
         console.log('[AUTH] Login successful for', citizenId);
+        await this.systemLogsService.createLog({
+            title: 'Successful Login',
+            description: `User signed in successfully.`,
+            userId: user.citizenId,
+            performedBy: user.citizenId,
+            sourceModule: system_log_entity_1.SourceModule.SECURITY,
+            severity: system_log_entity_1.LogSeverity.LOW,
+        });
         const payload = { sub: user.id, email: user.email, citizenId: user.citizenId };
         return {
             status: 'success',
@@ -129,6 +157,14 @@ let AuthService = class AuthService {
         user.verificationDocPath = docPath || 'uploaded_doc.png';
         user.profileComplete = true;
         await this.userRepository.save(user);
+        await this.systemLogsService.createLog({
+            title: 'Profile Updated',
+            description: `Profile verification document submitted (${docType}).`,
+            userId: user.citizenId,
+            performedBy: user.citizenId,
+            sourceModule: system_log_entity_1.SourceModule.ACCOUNT,
+            severity: system_log_entity_1.LogSeverity.LOW,
+        });
         console.log('[AUTH] Profile completed for user', userId);
         return { status: 'success', message: 'Profile verified' };
     }
@@ -186,6 +222,7 @@ exports.AuthService = AuthService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         jwt_1.JwtService,
-        settings_service_1.SettingsService])
+        settings_service_1.SettingsService,
+        system_logs_service_1.SystemLogsService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
